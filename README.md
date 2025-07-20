@@ -1,4 +1,3 @@
-Elbette, anladım. Mevcut "tanıtım" metnini, bir yapay zeka kod asistanına veya bir geliştiriciye verilecek şekilde, "yapılacaklar listesi" veya "proje talimatları" formatına dönüştürüyorum. Tüm detayları koruyarak metni yeniden düzenledim.
 
 Proje Görevi: ASA AI Sales Agent WordPress Eklentisi Geliştirme Talimatları
 Genel Bakış
