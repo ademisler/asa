@@ -156,3 +156,7 @@ Eklentinin geliştiricisi olarak Adem İşler belirtilmelidir. Bu bilgi, kullan�
 *   **Web Sitesi:** [ademisler.com](https://ademisler.com)
 *   **Destek Ol:** [Buy Me a Coffee](https://buymeacoffee.com/ademisler)
 *   **İletişim:** [İletişim Formu](https://ademisler.com/iletisim)
+
+## Installation
+
+Upload the `asa-plugin` directory to your `wp-content/plugins` folder and activate the "ASA AI Sales Agent" plugin from the WordPress admin panel.
