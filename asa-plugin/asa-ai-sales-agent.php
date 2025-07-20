@@ -2,7 +2,7 @@
 /*
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
-Version: 0.3.0
+Version: 0.4.0
 Author: Adem İşler
 */
 
@@ -35,6 +35,7 @@ class ASAAISalesAgent {
 
     public function enqueue_assets() {
         wp_enqueue_style('asa-style', plugins_url('css/asa-style.css', __FILE__));
+        wp_enqueue_style('asa-fa', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
         wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery'), false, true);
         wp_localize_script('asa-script', 'asaSettings', [
             'apiKey' => get_option('asa_api_key'),
@@ -43,6 +44,7 @@ class ASAAISalesAgent {
             'subtitle' => get_option('asa_subtitle'),
             'primaryColor' => get_option('asa_primary_color', '#0083ff'),
             'avatar' => $this->get_avatar_url(),
+            'iconClass' => $this->get_icon_class(),
             'position' => get_option('asa_position', 'right'),
             'showCredit' => get_option('asa_show_credit', 'yes'),
             'proactiveMessage' => $this->generate_proactive_message(),
@@ -56,6 +58,7 @@ class ASAAISalesAgent {
         }
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_style('asa-admin-style', plugins_url('css/asa-admin.css', __FILE__));
+        wp_enqueue_style('asa-fa', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
         wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), false, true);
         wp_enqueue_style('thickbox');
     }
@@ -78,6 +81,8 @@ class ASAAISalesAgent {
         register_setting('asa_settings_group', 'asa_primary_color');
         register_setting('asa_settings_group', 'asa_avatar_choice');
         register_setting('asa_settings_group', 'asa_avatar_custom');
+        register_setting('asa_settings_group', 'asa_icon_choice');
+        register_setting('asa_settings_group', 'asa_icon_custom');
         register_setting('asa_settings_group', 'asa_position');
         register_setting('asa_settings_group', 'asa_show_credit');
     }
@@ -139,6 +144,20 @@ class ASAAISalesAgent {
                             </td>
                         </tr>
                         <tr valign="top">
+                            <th scope="row">Icon Avatar</th>
+                            <td>
+                                <fieldset>
+                                    <?php $icon = get_option('asa_icon_choice', 'fa-solid fa-robot'); ?>
+                                    <label><input type="radio" name="asa_icon_choice" value="fa-solid fa-robot" <?php checked($icon, 'fa-solid fa-robot'); ?> /> <i class="fa-solid fa-robot icon-thumb"></i></label>
+                                    <label><input type="radio" name="asa_icon_choice" value="fa-solid fa-user-astronaut" <?php checked($icon, 'fa-solid fa-user-astronaut'); ?> /> <i class="fa-solid fa-user-astronaut icon-thumb"></i></label>
+                                    <label><input type="radio" name="asa_icon_choice" value="fa-solid fa-comments" <?php checked($icon, 'fa-solid fa-comments'); ?> /> <i class="fa-solid fa-comments icon-thumb"></i></label>
+                                    <label><input type="radio" name="asa_icon_choice" value="custom" <?php checked($icon, 'custom'); ?> /> Custom</label>
+                                    <br />
+                                    <input type="text" id="asa_icon_custom" name="asa_icon_custom" value="<?php echo esc_attr(get_option('asa_icon_custom')); ?>" class="regular-text" />
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr valign="top">
                             <th scope="row">Position</th>
                             <td>
                                 <fieldset>
@@ -176,11 +195,20 @@ class ASAAISalesAgent {
         ?>
         <div id="asa-chatbot" class="asa-position-<?php echo esc_attr(get_option('asa_position', 'right')); ?>" style="--asa-color: <?php echo esc_attr(get_option('asa_primary_color', '#0083ff')); ?>">
             <div class="asa-launcher">
-                <img src="<?php echo esc_attr($this->get_avatar_url()); ?>" class="asa-avatar" />
+                <?php if($this->get_icon_class()): ?>
+                    <i class="<?php echo esc_attr($this->get_icon_class()); ?> asa-avatar"></i>
+                <?php else: ?>
+                    <img src="<?php echo esc_attr($this->get_avatar_url()); ?>" class="asa-avatar" />
+                <?php endif; ?>
                 <span class="asa-welcome"></span>
             </div>
             <div class="asa-window" style="display:none;">
                 <div class="asa-header">
+                    <?php if($this->get_icon_class()): ?>
+                        <i class="<?php echo esc_attr($this->get_icon_class()); ?> asa-avatar"></i>
+                    <?php else: ?>
+                        <img src="<?php echo esc_attr($this->get_avatar_url()); ?>" class="asa-avatar" />
+                    <?php endif; ?>
                     <span class="asa-title"><?php echo esc_html(get_option('asa_title', 'Sales Agent')); ?></span>
                     <span class="asa-subtitle"><?php echo esc_html(get_option('asa_subtitle')); ?></span>
                     <span class="asa-online"></span>
@@ -276,6 +304,17 @@ class ASAAISalesAgent {
             return $custom ? $custom : $this->default_avatar;
         }
         return plugins_url('img/' . $choice . '.svg', __FILE__);
+    }
+
+    private function get_icon_class() {
+        $choice = get_option('asa_icon_choice');
+        if (!$choice) {
+            return '';
+        }
+        if ($choice === 'custom') {
+            return get_option('asa_icon_custom', '');
+        }
+        return $choice;
     }
 
     public function print_chatbot() {

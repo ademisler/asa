@@ -22,6 +22,16 @@ jQuery(document).ready(function($){
     toggleCustomAvatar();
     $('input[name="asa_avatar_choice"]').on('change', toggleCustomAvatar);
 
+    function toggleCustomIcon(){
+        if($('input[name="asa_icon_choice"]:checked').val()==='custom'){
+            $('#asa_icon_custom').show();
+        }else{
+            $('#asa_icon_custom').hide();
+        }
+    }
+    toggleCustomIcon();
+    $('input[name="asa_icon_choice"]').on('change', toggleCustomIcon);
+
     var mediaUploader;
     $('#asa_avatar_upload').on('click', function(e){
         e.preventDefault();
