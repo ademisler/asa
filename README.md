@@ -160,3 +160,5 @@ Eklentinin geliştiricisi olarak Adem İşler belirtilmelidir. Bu bilgi, kullan�
 ## Installation
 
 Upload the `asa-plugin` directory to your `wp-content/plugins` folder and activate the "ASA AI Sales Agent" plugin from the WordPress admin panel. The chatbot will appear automatically on the front-end after you configure the settings. Alternatively you can place the widget manually using the `[asa_chatbot]` shortcode.
+
+Make sure to enter a valid Google AI Studio API key in the plugin settings. Without a valid key the chat input will remain disabled and no responses will be generated.
