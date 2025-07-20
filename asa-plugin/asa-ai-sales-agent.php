@@ -2,7 +2,7 @@
 /*
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
-Version: 0.1.0
+Version: 0.2.0
 Author: Adem İşler
 */
 
@@ -23,6 +23,7 @@ class ASAAISalesAgent {
     private function __construct() {
         add_action('admin_menu', array($this, 'register_settings_page'));
         add_action('admin_init', array($this, 'register_settings'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
         add_shortcode('asa_chatbot', array($this, 'render_chatbot'));
         add_action('wp_ajax_asa_chat', array($this, 'handle_chat_request'));
@@ -44,6 +45,16 @@ class ASAAISalesAgent {
             'proactiveMessage' => $this->generate_proactive_message(),
             'ajaxUrl' => admin_url('admin-ajax.php'),
         ]);
+    }
+
+    public function enqueue_admin_assets($hook) {
+        if ($hook !== 'settings_page_asa-ai-sales-agent') {
+            return;
+        }
+        wp_enqueue_style('wp-color-picker');
+        wp_enqueue_style('asa-admin-style', plugins_url('css/asa-admin.css', __FILE__));
+        wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), false, true);
+        wp_enqueue_style('thickbox');
     }
 
     public function register_settings_page() {
@@ -71,57 +82,79 @@ class ASAAISalesAgent {
         ?>
         <div class="wrap">
             <h1>ASA AI Sales Agent</h1>
+            <h2 class="nav-tab-wrapper asa-tabs">
+                <a href="#asa-tab-general" class="nav-tab nav-tab-active">Genel</a>
+                <a href="#asa-tab-appearance" class="nav-tab">Görünüm</a>
+                <a href="#asa-tab-behavior" class="nav-tab">Davranış</a>
+            </h2>
             <form method="post" action="options.php">
                 <?php settings_fields('asa_settings_group'); ?>
                 <?php do_settings_sections('asa_settings_group'); ?>
-                <h2>General</h2>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">Gemini API Key</th>
-                        <td><input type="text" name="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text" /></td>
-                    </tr>
-                </table>
-                <h2>Appearance</h2>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">Title</th>
-                        <td><input type="text" name="asa_title" value="<?php echo esc_attr(get_option('asa_title')); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Subtitle</th>
-                        <td><input type="text" name="asa_subtitle" value="<?php echo esc_attr(get_option('asa_subtitle')); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Primary Color</th>
-                        <td><input type="text" name="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#0083ff')); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Avatar URL</th>
-                        <td><input type="text" name="asa_avatar" value="<?php echo esc_attr(get_option('asa_avatar')); ?>" class="regular-text" /></td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Position</th>
-                        <td>
-                            <select name="asa_position">
-                                <option value="left" <?php selected(get_option('asa_position'), 'left'); ?>>Left</option>
-                                <option value="right" <?php selected(get_option('asa_position', 'right'), 'right'); ?>>Right</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr valign="top">
-                        <th scope="row">Show Developer Credit</th>
-                        <td><input type="checkbox" name="asa_show_credit" value="yes" <?php checked(get_option('asa_show_credit', 'yes'), 'yes'); ?> /></td>
-                    </tr>
-                </table>
-                <h2>Behavior</h2>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">System Prompt</th>
-                        <td><textarea name="asa_system_prompt" class="large-text" rows="5"><?php echo esc_textarea(get_option('asa_system_prompt')); ?></textarea></td>
-                    </tr>
-                </table>
+
+                <div id="asa-tab-general" class="asa-tab-content active">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Gemini API Key</th>
+                            <td>
+                                <input type="text" name="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text" />
+                                <p class="description"><a href="https://aistudio.google.com/app/apikey" target="_blank">AI Studio'dan anahtar alın</a></p>
+                                <p><a href="https://buymeacoffee.com/ademisler" target="_blank">Buy Me a Coffee</a> | <a href="https://ademisler.com/iletisim" target="_blank">Contact Us</a></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="asa-tab-appearance" class="asa-tab-content">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">Title</th>
+                            <td><input type="text" name="asa_title" value="<?php echo esc_attr(get_option('asa_title')); ?>" class="regular-text" /></td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">Subtitle</th>
+                            <td><input type="text" name="asa_subtitle" value="<?php echo esc_attr(get_option('asa_subtitle')); ?>" class="regular-text" /></td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">Primary Color</th>
+                            <td><input type="text" name="asa_primary_color" id="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#0083ff')); ?>" class="asa-color-field" /></td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">Avatar</th>
+                            <td>
+                                <input type="text" id="asa_avatar" name="asa_avatar" value="<?php echo esc_attr(get_option('asa_avatar')); ?>" class="regular-text" />
+                                <button class="button" id="asa_avatar_upload">Upload</button><br/>
+                                <img id="asa_avatar_preview" src="<?php echo esc_attr(get_option('asa_avatar')); ?>" />
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">Position</th>
+                            <td>
+                                <fieldset>
+                                    <label><input type="radio" name="asa_position" value="left" <?php checked(get_option('asa_position'), 'left'); ?> /> Left</label><br/>
+                                    <label><input type="radio" name="asa_position" value="right" <?php checked(get_option('asa_position', 'right'), 'right'); ?> /> Right</label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">Show Developer Credit</th>
+                            <td><input type="checkbox" name="asa_show_credit" value="yes" <?php checked(get_option('asa_show_credit', 'yes'), 'yes'); ?> /></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div id="asa-tab-behavior" class="asa-tab-content">
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">System Prompt</th>
+                            <td><textarea name="asa_system_prompt" class="large-text" rows="5" placeholder="You are a helpful sales agent."><?php echo esc_textarea(get_option('asa_system_prompt')); ?></textarea></td>
+                        </tr>
+                    </table>
+                </div>
+
                 <?php submit_button(); ?>
             </form>
+            <h2>Canlı Önizleme</h2>
+            <?php echo do_shortcode('[asa_chatbot]'); ?>
         </div>
         <?php
     }
@@ -138,12 +171,14 @@ class ASAAISalesAgent {
                 <div class="asa-header">
                     <span class="asa-title"><?php echo esc_html(get_option('asa_title', 'Sales Agent')); ?></span>
                     <span class="asa-subtitle"><?php echo esc_html(get_option('asa_subtitle')); ?></span>
+                    <span class="asa-online"></span>
                     <button class="asa-close">&times;</button>
                 </div>
                 <div class="asa-messages"></div>
+                <div class="asa-typing" style="display:none;"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
                 <div class="asa-input">
-                    <input type="text" class="asa-text" placeholder="Type your message" />
-                    <button class="asa-send">Send</button>
+                    <input type="text" class="asa-text" placeholder="Type your message" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> />
+                    <button class="asa-send" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?>>Send</button>
                 </div>
                 <?php if (get_option('asa_show_credit', 'yes') === 'yes'): ?>
                     <div class="asa-credit">Developed by: <a href="https://ademisler.com" target="_blank">Adem İşler</a></div>

@@ -1,0 +1,3 @@
+.asa-tab-content{display:none;}
+.asa-tab-content.active{display:block;}
+#asa_avatar_preview{max-width:60px;display:none;margin-top:5px;}
