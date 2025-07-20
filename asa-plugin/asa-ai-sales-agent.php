@@ -2,7 +2,7 @@
 /*
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
-Version: 0.4.0
+Version: 0.4.1
 Author: Adem İşler
 */
 
@@ -238,14 +238,18 @@ class ASAAISalesAgent {
 
         $system_prompt = get_option('asa_system_prompt', 'You are a helpful sales agent.');
         $payload = json_encode([
-            'model' => 'gemini-2.5-flash',
-            'messages' => [
-                ['role' => 'system', 'content' => $system_prompt],
-                ['role' => 'user', 'content' => $message]
+            'contents' => [
+                [
+                    'role' => 'user',
+                    'parts' => [ ['text' => $message] ]
+                ]
+            ],
+            'system_instruction' => [
+                'parts' => [ ['text' => $system_prompt] ]
             ]
         ]);
 
-        $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $api_key, [
+        $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $api_key, [
             'headers' => ['Content-Type' => 'application/json'],
             'body' => $payload,
             'timeout' => 20,
@@ -271,14 +275,18 @@ class ASAAISalesAgent {
         $page_content = substr(strip_tags(get_the_content()), 0, 2000);
 
         $payload = json_encode([
-            'model' => 'gemini-2.5-flash',
-            'messages' => [
-                ['role' => 'system', 'content' => $system_prompt],
-                ['role' => 'user', 'content' => $page_content]
+            'contents' => [
+                [
+                    'role' => 'user',
+                    'parts' => [ ['text' => $page_content] ]
+                ]
+            ],
+            'system_instruction' => [
+                'parts' => [ ['text' => $system_prompt] ]
             ]
         ]);
 
-        $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $api_key, [
+        $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $api_key, [
             'headers' => ['Content-Type' => 'application/json'],
             'body' => $payload,
             'timeout' => 15,

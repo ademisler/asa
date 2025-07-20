@@ -50,9 +50,27 @@ Duyarlı Tasarım: Sohbet robotu arayüzü hem masaüstü hem de mobil cihazlard
 
 API Başlatma Mantığı: Kullanıcının sağladığı API anahtarı ile Gemini API istemcisini başlatacak bir mekanizma kurulmalıdır. Anahtar değiştiğinde veya geçersiz olduğunda yeniden başlatma ve hata yönetimi yapılmalıdır.
 
+API'yi doğrudan test etmek için aşağıdaki örnek `curl` komutunu kullanabilirsiniz:
+
+```bash
+curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent" \
+  -H 'Content-Type: application/json' \
+  -H 'X-goog-api-key: <API_KEY>' \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          { "text": "Explain how AI works in a few words" }
+        ]
+      }
+    ]
+  }'
+```
+
 Proaktif Mesaj Oluşturma Fonksiyonu (generateProactiveMessage):
 
-Bu fonksiyon, gemini-2.5-flash modelini kullanmalıdır.
+Bu fonksiyon, gemini-2.0-flash modelini kullanmalıdır.
 
 Sistem istemcisini ve kullanıcının o anki sayfa içeriğinin ilk 2000 karakterini girdi olarak almalıdır.
 
