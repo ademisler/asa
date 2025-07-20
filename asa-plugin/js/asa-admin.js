@@ -12,6 +12,16 @@ jQuery(document).ready(function($){
         $('.asa-color-field').wpColorPicker();
     }
 
+    function toggleCustomAvatar(){
+        if($('input[name="asa_avatar_choice"]:checked').val()==='custom'){
+            $('#asa_avatar_custom, #asa_avatar_upload, #asa_avatar_preview').show();
+        }else{
+            $('#asa_avatar_custom, #asa_avatar_upload, #asa_avatar_preview').hide();
+        }
+    }
+    toggleCustomAvatar();
+    $('input[name="asa_avatar_choice"]').on('change', toggleCustomAvatar);
+
     var mediaUploader;
     $('#asa_avatar_upload').on('click', function(e){
         e.preventDefault();
@@ -26,7 +36,7 @@ jQuery(document).ready(function($){
         });
         mediaUploader.on('select', function(){
             var attachment = mediaUploader.state().get('selection').first().toJSON();
-            $('#asa_avatar').val(attachment.url);
+            $('#asa_avatar_custom').val(attachment.url);
             $('#asa_avatar_preview').attr('src', attachment.url).show();
         });
         mediaUploader.open();

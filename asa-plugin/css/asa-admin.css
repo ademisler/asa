@@ -1,3 +1,5 @@
 .asa-tab-content{display:none;}
 .asa-tab-content.active{display:block;}
 #asa_avatar_preview{max-width:60px;display:none;margin-top:5px;}
+.avatar-thumb{width:40px;height:40px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+#asa_avatar_custom,#asa_avatar_upload{display:none;}
