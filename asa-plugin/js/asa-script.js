@@ -3,6 +3,7 @@
     let launcher = chatbot.find('.asa-launcher');
     let windowEl = chatbot.find('.asa-window');
     let messagesEl = chatbot.find('.asa-messages');
+    let typingEl = chatbot.find('.asa-typing');
     let inputEl = chatbot.find('.asa-text');
     let sendBtn = chatbot.find('.asa-send');
     let welcomeEl = chatbot.find('.asa-welcome');
@@ -27,23 +28,30 @@
         }
     });
 
+    if(!asaSettings.apiKey){
+        inputEl.prop('disabled', true).attr('placeholder','Configure API key in settings');
+        sendBtn.prop('disabled', true);
+    }
+
     function sendMessage(){
         let text = inputEl.val();
         if(!text) return;
         addMessage('user', text);
         inputEl.val('');
-        addMessage('bot', '...');
+        typingEl.show();
         $.post(asaSettings.ajaxUrl, {
             action: 'asa_chat',
             message: text
         }, function(res){
-            messagesEl.find('.bot:last').text(res.data || 'Error');
+            typingEl.hide();
+            addMessage('bot', res.success ? res.data : 'Error');
         });
     }
 
     function addMessage(sender, text){
-        let msg = $('<div>').addClass(sender).text(text);
-        messagesEl.append(msg);
+        let wrapper = $('<div>').addClass(sender);
+        $('<div>').addClass('bubble').text(text).appendTo(wrapper);
+        messagesEl.append(wrapper);
         messagesEl.scrollTop(messagesEl.prop('scrollHeight'));
     }
 })(jQuery);

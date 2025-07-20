@@ -53,6 +53,49 @@
     padding: 10px;
     overflow-y: auto;
 }
+#asa-chatbot .asa-messages .user{
+    text-align:right;
+    margin:4px 0;
+}
+#asa-chatbot .asa-messages .bot{
+    text-align:left;
+    margin:4px 0;
+}
+#asa-chatbot .asa-messages .bubble{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:12px;
+    max-width:80%;
+}
+#asa-chatbot .asa-messages .user .bubble{
+    background:var(--asa-color, #0083ff);
+    color:#fff;
+}
+#asa-chatbot .asa-messages .bot .bubble{
+    background:#f1f1f1;
+    color:#000;
+}
+#asa-chatbot .asa-online{
+    width:8px;
+    height:8px;
+    background:#4caf50;
+    border-radius:50%;
+    display:inline-block;
+    margin-left:6px;
+}
+#asa-chatbot .asa-typing{padding:5px 10px;}
+#asa-chatbot .asa-typing .dot{
+    height:6px;
+    width:6px;
+    margin-right:3px;
+    display:inline-block;
+    border-radius:50%;
+    background:#ccc;
+    animation: asa-bounce 1s infinite ease-in-out;
+}
+#asa-chatbot .asa-typing .dot:nth-child(2){animation-delay:0.2s;}
+#asa-chatbot .asa-typing .dot:nth-child(3){animation-delay:0.4s;}
+@keyframes asa-bounce{0%,80%,100%{transform:scale(0);}40%{transform:scale(1);}}
 #asa-chatbot .asa-input {
     padding: 10px;
     border-top: 1px solid #ccc;
