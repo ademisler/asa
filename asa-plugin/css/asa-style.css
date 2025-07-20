@@ -21,6 +21,11 @@
     justify-content: center;
     cursor: pointer;
 }
+#asa-chatbot .asa-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
 #asa-chatbot .asa-window {
     width: 320px;
     height: 420px;
