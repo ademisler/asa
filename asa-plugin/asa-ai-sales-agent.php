@@ -144,7 +144,7 @@ class ASAAISalesAgent {
         ?>
         <div class="wrap">
             <div class="asa-page-header">
-                <h1><img src="<?php echo plugins_url('icon-256x256.png', __FILE__); ?>" class="asa-admin-logo" alt="ASA Logo"><?php esc_html_e('ASA AI Sales Agent', 'asa'); ?></h1>
+                <h1><?php esc_html_e('ASA AI Sales Agent', 'asa'); ?></h1>
                 <div class="asa-header-links">
                     <div class="asa-support-wrapper">
                         <a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-bmac-button">

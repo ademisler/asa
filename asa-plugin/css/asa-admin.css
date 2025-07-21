@@ -37,20 +37,16 @@ body { background-color: var(--asa-bg-main); }
 }
 .asa-page-header h1 {
     margin: 0;
-    font-size: 1.8em;
-    color: var(--asa-text-dark);
-    display: flex; /* Use flexbox for alignment */
-    align-items: center; /* Vertically align items */
-    gap: 10px; /* Space between logo and text */
+    font-size: 2.2em; /* Larger font size */
+    color: var(--asa-primary-dark); /* Darker color for prominence */
+    font-weight: 700; /* Bolder font weight */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle text shadow */
+    padding-bottom: 5px; /* Small padding at the bottom */
+    border-bottom: 2px solid var(--asa-primary); /* Underline effect */
+    display: inline-block; /* To make border-bottom work correctly */
 }
 
-.asa-admin-logo {
-    height: 40px; /* Adjust size as needed */
-    width: auto;
-    vertical-align: middle;
-    border-radius: 4px; /* Slightly rounded corners for the logo */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow for depth */
-}
+
 .asa-header-links { display: flex; align-items: center; gap: 15px; }
 .asa-support-wrapper {
     display: flex;
@@ -127,23 +123,24 @@ body { background-color: var(--asa-bg-main); }
 }
 
 .asa-api-key-link-button {
-    background: var(--asa-primary);
-    color: var(--asa-text-white) !important;
-    padding: 8px 12px;
+    background: var(--asa-bg-card); /* White background */
+    color: var(--asa-primary) !important; /* Dark text */
+    padding: 12px 18px; /* Adjusted padding to match input height */
     border-radius: var(--asa-radius);
     font-weight: 600;
     text-decoration: none;
     transition: all 0.25s ease;
     flex-shrink: 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    height: 45px; /* Match height of other buttons/inputs */
+    height: 45px; /* Match height of input */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid var(--asa-border); /* Add border for definition */
 }
 
 .asa-api-key-link-button:hover {
-    background: var(--asa-primary-dark);
+    background: var(--asa-bg-main); /* Slightly darker background on hover */
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
