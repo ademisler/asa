@@ -101,6 +101,18 @@ body { background-color: var(--asa-bg-main); }
 
 /* 9. Icon Picker Modal
 -------------------------------------------------- */
-#asa-icon-picker-modal { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+#asa-icon-picker-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999; /* Ensure it's on top of other elements */
+}
 .asa-icon-picker-modal-content { border-radius: var(--asa-radius); }
 .asa-icon-list i:hover { background-color: var(--asa-primary); color: var(--asa-text-white); transform: scale(1.1); }
