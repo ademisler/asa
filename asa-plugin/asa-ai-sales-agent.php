@@ -43,8 +43,8 @@ class ASAAISalesAgent {
             'title' => get_option('asa_title'),
             'subtitle' => get_option('asa_subtitle'),
             'primaryColor' => get_option('asa_primary_color', '#0083ff'),
-            'avatar' => $this->get_avatar_url(),
-            'iconClass' => $this->get_icon_class(),
+            'avatar_image_url' => get_option('asa_avatar_image_url'),
+            'avatar_icon' => get_option('asa_avatar_icon', 'fas fa-robot'),
             'position' => get_option('asa_position', 'right'),
             'showCredit' => get_option('asa_show_credit', 'yes'),
             'proactiveMessage' => $this->generate_proactive_message(),
@@ -79,10 +79,8 @@ class ASAAISalesAgent {
         register_setting('asa_settings_group', 'asa_title');
         register_setting('asa_settings_group', 'asa_subtitle');
         register_setting('asa_settings_group', 'asa_primary_color');
-        register_setting('asa_settings_group', 'asa_avatar_choice');
-        register_setting('asa_settings_group', 'asa_avatar_custom');
-        register_setting('asa_settings_group', 'asa_icon_choice');
-        register_setting('asa_settings_group', 'asa_icon_custom');
+        register_setting('asa_settings_group', 'asa_avatar_icon');
+        register_setting('asa_settings_group', 'asa_avatar_image_url');
         register_setting('asa_settings_group', 'asa_position');
         register_setting('asa_settings_group', 'asa_show_credit');
     }
@@ -130,31 +128,20 @@ class ASAAISalesAgent {
                         <tr valign="top">
                             <th scope="row">Avatar</th>
                             <td>
-                                <fieldset>
-                                    <?php $choice = get_option('asa_avatar_choice', 'avatar1'); ?>
-                                    <label><input type="radio" name="asa_avatar_choice" value="avatar1" <?php checked($choice, 'avatar1'); ?> /> <img src="<?php echo plugins_url('img/avatar1.svg', __FILE__); ?>" class="avatar-thumb" /></label>
-                                    <label><input type="radio" name="asa_avatar_choice" value="avatar2" <?php checked($choice, 'avatar2'); ?> /> <img src="<?php echo plugins_url('img/avatar2.svg', __FILE__); ?>" class="avatar-thumb" /></label>
-                                    <label><input type="radio" name="asa_avatar_choice" value="avatar3" <?php checked($choice, 'avatar3'); ?> /> <img src="<?php echo plugins_url('img/avatar3.svg', __FILE__); ?>" class="avatar-thumb" /></label>
-                                    <label><input type="radio" name="asa_avatar_choice" value="custom" <?php checked($choice, 'custom'); ?> /> Custom</label>
-                                    <br />
-                                    <input type="text" id="asa_avatar_custom" name="asa_avatar_custom" value="<?php echo esc_attr(get_option('asa_avatar_custom')); ?>" class="regular-text" />
-                                    <button class="button" id="asa_avatar_upload">Upload</button><br/>
-                                    <img id="asa_avatar_preview" src="<?php echo esc_attr(get_option('asa_avatar_custom')); ?>" />
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <th scope="row">Icon Avatar</th>
-                            <td>
-                                <fieldset>
-                                    <?php $icon = get_option('asa_icon_choice', 'fa-solid fa-robot'); ?>
-                                    <label><input type="radio" name="asa_icon_choice" value="fa-solid fa-robot" <?php checked($icon, 'fa-solid fa-robot'); ?> /> <i class="fa-solid fa-robot icon-thumb"></i></label>
-                                    <label><input type="radio" name="asa_icon_choice" value="fa-solid fa-user-astronaut" <?php checked($icon, 'fa-solid fa-user-astronaut'); ?> /> <i class="fa-solid fa-user-astronaut icon-thumb"></i></label>
-                                    <label><input type="radio" name="asa_icon_choice" value="fa-solid fa-comments" <?php checked($icon, 'fa-solid fa-comments'); ?> /> <i class="fa-solid fa-comments icon-thumb"></i></label>
-                                    <label><input type="radio" name="asa_icon_choice" value="custom" <?php checked($icon, 'custom'); ?> /> Custom</label>
-                                    <br />
-                                    <input type="text" id="asa_icon_custom" name="asa_icon_custom" value="<?php echo esc_attr(get_option('asa_icon_custom')); ?>" class="regular-text" />
-                                </fieldset>
+                                <div class="asa-icon-picker-wrapper">
+                                    <label><strong>Choose an Icon:</strong></label><br>
+                                    <input type="text" name="asa_avatar_icon" id="asa_avatar_icon" value="<?php echo esc_attr(get_option('asa_avatar_icon', 'fas fa-robot')); ?>" class="regular-text" readonly />
+                                    <button type="button" class="button" id="asa-open-icon-picker">Choose Icon</button>
+                                    <div class="asa-icon-preview">
+                                        <i class="<?php echo esc_attr(get_option('asa_avatar_icon', 'fas fa-robot')); ?>"></i>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="asa-image-url-wrapper">
+                                    <label><strong>Or use Image URL:</strong></label><br>
+                                    <input type="text" name="asa_avatar_image_url" id="asa_avatar_image_url" value="<?php echo esc_attr(get_option('asa_avatar_image_url')); ?>" class="regular-text" placeholder="https://example.com/avatar.png" />
+                                    <p class="description">Paste an image URL. If this is filled, it will be used instead of the icon.</p>
+                                </div>
                             </td>
                         </tr>
                         <tr valign="top">
@@ -176,7 +163,7 @@ class ASAAISalesAgent {
                 <div id="asa-tab-behavior" class="asa-tab-content">
                     <table class="form-table">
                         <tr valign="top">
-                            <th scope="row">System Prompt</th>
+                            <th scope="row">System Prompt <span class="asa-tooltip-icon" data-tooltip="Define the chatbot's personality, role, and response style. This guides how the AI interacts with users.">?</span></th>
                             <td><textarea name="asa_system_prompt" class="large-text" rows="5" placeholder="You are a helpful sales agent."><?php echo esc_textarea(get_option('asa_system_prompt')); ?></textarea></td>
                         </tr>
                     </table>
@@ -187,38 +174,46 @@ class ASAAISalesAgent {
             <h2>Canlı Önizleme</h2>
             <?php echo do_shortcode('[asa_chatbot]'); ?>
         </div>
+        <div id="asa-icon-picker-modal">
+            <div class="asa-icon-picker-modal-content">
+                <div class="asa-icon-picker-header">
+                    <h2>Choose an Icon</h2>
+                    <span class="asa-icon-picker-close">&times;</span>
+                </div>
+                <input type="text" id="asa-icon-search" placeholder="Search for icons...">
+                <div class="asa-icon-list"></div>
+            </div>
+        </div>
         <?php
     }
 
     public function render_chatbot() {
         ob_start();
+        $avatar_image_url = get_option('asa_avatar_image_url');
+        $avatar_icon = get_option('asa_avatar_icon', 'fas fa-robot');
+        $avatar_html = $avatar_image_url 
+            ? '<img src="' . esc_url($avatar_image_url) . '" class="asa-avatar" />' 
+            : '<i class="' . esc_attr($avatar_icon) . ' asa-avatar"></i>';
         ?>
         <div id="asa-chatbot" class="asa-position-<?php echo esc_attr(get_option('asa_position', 'right')); ?>" style="--asa-color: <?php echo esc_attr(get_option('asa_primary_color', '#0083ff')); ?>">
             <div class="asa-launcher">
-                <?php if($this->get_icon_class()): ?>
-                    <i class="<?php echo esc_attr($this->get_icon_class()); ?> asa-avatar"></i>
-                <?php else: ?>
-                    <img src="<?php echo esc_attr($this->get_avatar_url()); ?>" class="asa-avatar" />
-                <?php endif; ?>
+                <?php echo $avatar_html; ?>
                 <span class="asa-welcome"></span>
             </div>
             <div class="asa-window" style="display:none;">
                 <div class="asa-header">
-                    <?php if($this->get_icon_class()): ?>
-                        <i class="<?php echo esc_attr($this->get_icon_class()); ?> asa-avatar"></i>
-                    <?php else: ?>
-                        <img src="<?php echo esc_attr($this->get_avatar_url()); ?>" class="asa-avatar" />
-                    <?php endif; ?>
-                    <span class="asa-title"><?php echo esc_html(get_option('asa_title', 'Sales Agent')); ?></span>
-                    <span class="asa-subtitle"><?php echo esc_html(get_option('asa_subtitle')); ?></span>
-                    <span class="asa-online"></span>
+                    <?php echo $avatar_html; ?>
+                    <div class="asa-header-text">
+                        <span class="asa-title"><?php echo esc_html(get_option('asa_title', 'Sales Agent')); ?></span>
+                        <span class="asa-subtitle"><?php echo esc_html(get_option('asa_subtitle')); ?></span>
+                    </div>
                     <button class="asa-close">&times;</button>
                 </div>
                 <div class="asa-messages"></div>
                 <div class="asa-typing" style="display:none;"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
                 <div class="asa-input">
                     <input type="text" class="asa-text" placeholder="Type your message" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> />
-                    <button class="asa-send" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?>>Send</button>
+                    <button class="asa-send" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?>><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <?php if (get_option('asa_show_credit', 'yes') === 'yes'): ?>
                     <div class="asa-credit">Developed by: <a href="https://ademisler.com" target="_blank">Adem İşler</a></div>
@@ -232,18 +227,18 @@ class ASAAISalesAgent {
     public function handle_chat_request() {
         $api_key = get_option('asa_api_key');
         $message = sanitize_text_field($_POST['message'] ?? '');
+        $history = json_decode(stripslashes($_POST['history'] ?? '[]'), true);
+
         if (!$api_key || empty($message)) {
             wp_send_json_error('Invalid request');
         }
 
         $system_prompt = get_option('asa_system_prompt', 'You are a helpful sales agent.');
+        $contents = $history;
+        $contents[] = ['role' => 'user', 'parts' => [['text' => $message]]];
+
         $payload = json_encode([
-            'contents' => [
-                [
-                    'role' => 'user',
-                    'parts' => [ ['text' => $message] ]
-                ]
-            ],
+            'contents' => $contents,
             'system_instruction' => [
                 'parts' => [ ['text' => $system_prompt] ]
             ]
@@ -256,23 +251,36 @@ class ASAAISalesAgent {
         ]);
 
         if (is_wp_error($response)) {
-            wp_send_json_error('Request failed');
+            wp_send_json_error('API request failed: ' . $response->get_error_message());
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
+
+        if (isset($data['error'])) {
+            wp_send_json_error('API Error: ' . $data['error']['message']);
+        }
+
         $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
         wp_send_json_success($text);
     }
 
     private function generate_proactive_message() {
         $api_key = get_option('asa_api_key');
+        
+        // Debug Log: API Key
+        error_log('ASA Proactive Message Debug: API Key - ' . ($api_key ? 'Set' : 'Not Set'));
+
         if (!$api_key) {
             return __('Hello! How can I help you today?', 'asa');
         }
 
         $system_prompt = get_option('asa_system_prompt', 'You are a helpful sales agent.');
         $page_content = substr(strip_tags(get_the_content()), 0, 2000);
+
+        // Debug Log: System Prompt and Page Content
+        error_log('ASA Proactive Message Debug: System Prompt - ' . $system_prompt);
+        error_log('ASA Proactive Message Debug: Page Content (first 500 chars) - ' . substr($page_content, 0, 500));
 
         $payload = json_encode([
             'contents' => [
@@ -286,22 +294,39 @@ class ASAAISalesAgent {
             ]
         ]);
 
+        // Debug Log: Payload sent to Gemini
+        error_log('ASA Proactive Message Debug: Payload - ' . $payload);
+
         $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $api_key, [
             'headers' => ['Content-Type' => 'application/json'],
             'body' => $payload,
             'timeout' => 15,
         ]);
 
+        // Debug Log: Raw API Response
+        error_log('ASA Proactive Message Debug: Raw API Response - ' . print_r($response, true));
+
         if (is_wp_error($response)) {
+            // Debug Log: WP Error
+            error_log('ASA Proactive Message Debug: WP Error - ' . $response->get_error_message());
             return __('Hello! How can I help you today?', 'asa');
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
+        
+        // Debug Log: Decoded API Data
+        error_log('ASA Proactive Message Debug: Decoded API Data - ' . print_r($data, true));
+
         if (!empty($data['candidates'][0]['content']['parts'][0]['text'])) {
-            return $data['candidates'][0]['content']['parts'][0]['text'];
+            $proactive_message = $data['candidates'][0]['content']['parts'][0]['text'];
+            // Debug Log: Generated Proactive Message
+            error_log('ASA Proactive Message Debug: Generated Message - ' . $proactive_message);
+            return $proactive_message;
         }
 
+        // Debug Log: Fallback Message
+        error_log('ASA Proactive Message Debug: Fallback to default message.');
         return __('Hello! How can I help you today?', 'asa');
     }
 
