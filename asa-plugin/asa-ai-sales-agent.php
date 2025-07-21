@@ -53,6 +53,7 @@ class ASAAISalesAgent {
             'nonce' => wp_create_nonce('asa_chat_nonce'),
             'currentPageUrl' => get_permalink(),
             'currentPageTitle' => get_the_title(),
+            'proactiveMessageAjaxUrl' => admin_url('admin-ajax.php?action=asa_generate_proactive_message'),
         ]);
     }
 
@@ -315,7 +316,10 @@ class ASAAISalesAgent {
         wp_send_json_success($text);
     }
 
-    private function generate_proactive_message() {
+    public function handle_proactive_message_request() {
+        // No nonce check here as it's a public facing request for proactive message
+        // You might add a nonce if you want to restrict this, but for a proactive message, it's usually open.
+
         $api_key = get_option('asa_api_key');
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -323,7 +327,7 @@ class ASAAISalesAgent {
         }
 
         if (!$api_key) {
-            return __('Hello! How can I help you today?', 'asa');
+            wp_send_json_success(__('Hello! How can I help you today?', 'asa'));
         }
 
         // Try to get from cache
@@ -334,7 +338,7 @@ class ASAAISalesAgent {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 error_log('ASA Proactive Message Debug: Message from cache.');
             }
-            return $cached_message;
+            wp_send_json_success($cached_message);
         }
 
         $system_prompt = get_option('asa_system_prompt', 'You are a helpful sales agent.');
@@ -345,8 +349,8 @@ class ASAAISalesAgent {
             error_log('ASA Proactive Message Debug: Page Content (first 500 chars) - ' . substr($page_content, 0, 500));
         }
 
-        // Add instruction for conciseness
-        $prompt_instruction = "Generate a very concise and short proactive message (max 2-3 sentences) based on the following page content and your role. Do not ask questions unless explicitly part of your system prompt.";
+        // Add instruction for conciseness and strict length control
+        $prompt_instruction = "Generate a very concise and short proactive message (max 2-3 sentences, around 100 characters) based on the following page content and your role. Do not ask questions unless explicitly part of your system prompt. Ensure the message is direct and inviting.";
 
         $payload = json_encode([
             'contents' => [
@@ -378,7 +382,7 @@ class ASAAISalesAgent {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 error_log('ASA Proactive Message Debug: WP Error - ' . $response->get_error_message());
             }
-            return __('Hello! How can I help you today?', 'asa');
+            wp_send_json_success(__('Hello! How can I help you today?', 'asa'));
         }
 
         $body = wp_remote_retrieve_body($response);
@@ -388,24 +392,27 @@ class ASAAISalesAgent {
             error_log('ASA Proactive Message Debug: Decoded API Data - ' . print_r($data, true));
         }
 
+        $proactive_message = __('Hello! How can I help you today?', 'asa'); // Default fallback
+
         if (!empty($data['candidates'][0]['content']['parts'][0]['text'])) {
-            $proactive_message = $data['candidates'][0]['content']['parts'][0]['text'];
+            $generated_message = $data['candidates'][0]['content']['parts'][0]['text'];
             // Ensure the text is properly UTF-8 encoded
-            if (!mb_check_encoding($proactive_message, 'UTF-8')) {
-                $proactive_message = mb_convert_encoding($proactive_message, 'UTF-8', mb_detect_encoding($proactive_message, 'UTF-8, ISO-8859-1', true));
+            if (!mb_check_encoding($generated_message, 'UTF-8')) {
+                $generated_message = mb_convert_encoding($generated_message, 'UTF-8', mb_detect_encoding($generated_message, 'UTF-8, ISO-8859-1', true));
             }
+            // Strict server-side truncation to ensure message is short
+            $proactive_message = substr($generated_message, 0, 150); // Truncate to max 150 characters
+            $proactive_message = rtrim($proactive_message, ".,; "); // Remove trailing punctuation if truncated
+            $proactive_message .= (strlen($generated_message) > 150) ? '...' : ''; // Add ellipsis if truncated
+
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 error_log('ASA Proactive Message Debug: Generated Message - ' . $proactive_message);
             }
             // Cache the generated message for 1 hour (3600 seconds)
             set_transient($cache_key, $proactive_message, HOUR_IN_SECONDS);
-            return $proactive_message;
         }
 
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('ASA Proactive Message Debug: Fallback to default message.');
-        }
-        return __('Hello! How can I help you today?', 'asa');
+        wp_send_json_success($proactive_message);
     }
 
     private function get_avatar_url() {

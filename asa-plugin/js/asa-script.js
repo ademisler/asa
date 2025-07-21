@@ -19,7 +19,22 @@
             addMessage(msg.role, msg.parts[0].text);
         });
 
-        welcomeEl.text(asaSettings.proactiveMessage);
+        // Fetch proactive message asynchronously
+        $.ajax({
+            url: asaSettings.proactiveMessageAjaxUrl,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    welcomeEl.text(response.data);
+                } else {
+                    welcomeEl.text('Hello! How can I help you today?');
+                }
+            },
+            error: function() {
+                welcomeEl.text('Hello! How can I help you today?');
+            }
+        });
 
         // Auto-hide proactive message after 10 seconds
         setTimeout(function(){
