@@ -29,21 +29,30 @@ jQuery(document).ready(function($){
         // Using AJAX for better feedback
         e.preventDefault(); // Prevent default form submission
         const formData = new FormData(this);
+        formData.append('action', 'asa_save_settings');
+        formData.append('security', asaAdminSettings.nonce);
+
         $.ajax({
-            url: $(this).attr('action'),
-            type: $(this).attr('method'),
+            url: asaAdminSettings.ajaxUrl,
+            type: 'POST',
             data: formData,
             processData: false,
             contentType: false,
             success: function(response) {
-                submitButton.val('Kaydedildi!');
+                if(response.success) {
+                    submitButton.val('Kaydedildi!');
+                } else {
+                    submitButton.val('Hata!');
+                    console.error('Error saving settings:', response.data);
+                }
                 setTimeout(function(){
                     submitButton.val(originalText);
                     submitButton.prop('disabled', false);
                 }, 2000); // Show "Kaydedildi!" for 2 seconds
             },
-            error: function() {
+            error: function(jqXHR, textStatus, errorThrown) {
                 submitButton.val('Hata!');
+                console.error('AJAX Error:', textStatus, errorThrown, jqXHR.responseText);
                 setTimeout(function(){
                     submitButton.val(originalText);
                     submitButton.prop('disabled', false);
@@ -73,6 +82,12 @@ jQuery(document).ready(function($){
         if ($(e.target).is(modal)) {
             modal.hide();
         }
+    });
+
+    searchInput.on('keyup', function(){
+        const searchTerm = $(this).val().toLowerCase();
+        const filteredIcons = allIcons.filter(icon => icon.toLowerCase().includes(searchTerm));
+        renderIcons(filteredIcons);
     });
 
     function fetchIcons() {

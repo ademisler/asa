@@ -30,6 +30,7 @@ class ASAAISalesAgent {
         add_shortcode('asa_chatbot', array($this, 'render_chatbot'));
         add_action('wp_ajax_asa_chat', array($this, 'handle_chat_request'));
         add_action('wp_ajax_nopriv_asa_chat', array($this, 'handle_chat_request'));
+        add_action('wp_ajax_asa_save_settings', array($this, 'asa_save_settings'));
         add_action('wp_footer', array($this, 'print_chatbot'));
     }
 
@@ -49,6 +50,7 @@ class ASAAISalesAgent {
             'showCredit' => get_option('asa_show_credit', 'yes'),
             'proactiveMessage' => $this->generate_proactive_message(),
             'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('asa_chat_nonce'),
         ]);
     }
 
@@ -60,6 +62,10 @@ class ASAAISalesAgent {
         wp_enqueue_style('asa-admin-style', plugins_url('css/asa-admin.css', __FILE__));
         wp_enqueue_style('asa-fa', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
         wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), false, true);
+        wp_localize_script('asa-admin-script', 'asaAdminSettings', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('asa_settings_nonce'),
+        ]);
         wp_enqueue_style('thickbox');
     }
 
@@ -83,6 +89,27 @@ class ASAAISalesAgent {
         register_setting('asa_settings_group', 'asa_avatar_image_url');
         register_setting('asa_settings_group', 'asa_position');
         register_setting('asa_settings_group', 'asa_show_credit');
+    }
+
+    public function asa_save_settings() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('You do not have sufficient permissions to access this page.');
+        }
+
+        check_ajax_referer('asa_settings_nonce', 'security');
+
+        // Save settings (example, you might want to loop through $_POST)
+        update_option('asa_api_key', sanitize_text_field($_POST['asa_api_key']));
+        update_option('asa_system_prompt', sanitize_textarea_field($_POST['asa_system_prompt']));
+        update_option('asa_title', sanitize_text_field($_POST['asa_title']));
+        update_option('asa_subtitle', sanitize_text_field($_POST['asa_subtitle']));
+        update_option('asa_primary_color', sanitize_hex_color($_POST['asa_primary_color']));
+        update_option('asa_avatar_icon', sanitize_text_field($_POST['asa_avatar_icon']));
+        update_option('asa_avatar_image_url', esc_url_raw($_POST['asa_avatar_image_url']));
+        update_option('asa_position', sanitize_text_field($_POST['asa_position']));
+        update_option('asa_show_credit', sanitize_text_field($_POST['asa_show_credit']));
+
+        wp_send_json_success('Settings saved.');
     }
 
     public function render_settings_page() {
@@ -198,8 +225,8 @@ class ASAAISalesAgent {
         <div id="asa-chatbot" class="asa-position-<?php echo esc_attr(get_option('asa_position', 'right')); ?>" style="--asa-color: <?php echo esc_attr(get_option('asa_primary_color', '#0083ff')); ?>">
             <div class="asa-launcher">
                 <?php echo $avatar_html; ?>
-                <span class="asa-welcome"></span>
             </div>
+            <div class="asa-welcome-wrapper"><span class="asa-welcome asa-proactive-message active"></span><button class="asa-proactive-close">&times;</button></div>
             <div class="asa-window" style="display:none;">
                 <div class="asa-header">
                     <?php echo $avatar_html; ?>
@@ -225,6 +252,8 @@ class ASAAISalesAgent {
     }
 
     public function handle_chat_request() {
+        check_ajax_referer('asa_chat_nonce', 'security');
+
         $api_key = get_option('asa_api_key');
         $message = sanitize_text_field($_POST['message'] ?? '');
         $history = json_decode(stripslashes($_POST['history'] ?? '[]'), true);
@@ -268,8 +297,9 @@ class ASAAISalesAgent {
     private function generate_proactive_message() {
         $api_key = get_option('asa_api_key');
         
-        // Debug Log: API Key
-        error_log('ASA Proactive Message Debug: API Key - ' . ($api_key ? 'Set' : 'Not Set'));
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('ASA Proactive Message Debug: API Key - ' . ($api_key ? 'Set' : 'Not Set'));
+        }
 
         if (!$api_key) {
             return __('Hello! How can I help you today?', 'asa');
@@ -278,9 +308,10 @@ class ASAAISalesAgent {
         $system_prompt = get_option('asa_system_prompt', 'You are a helpful sales agent.');
         $page_content = substr(strip_tags(get_the_content()), 0, 2000);
 
-        // Debug Log: System Prompt and Page Content
-        error_log('ASA Proactive Message Debug: System Prompt - ' . $system_prompt);
-        error_log('ASA Proactive Message Debug: Page Content (first 500 chars) - ' . substr($page_content, 0, 500));
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('ASA Proactive Message Debug: System Prompt - ' . $system_prompt);
+            error_log('ASA Proactive Message Debug: Page Content (first 500 chars) - ' . substr($page_content, 0, 500));
+        }
 
         $payload = json_encode([
             'contents' => [
@@ -294,8 +325,9 @@ class ASAAISalesAgent {
             ]
         ]);
 
-        // Debug Log: Payload sent to Gemini
-        error_log('ASA Proactive Message Debug: Payload - ' . $payload);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('ASA Proactive Message Debug: Payload - ' . $payload);
+        }
 
         $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $api_key, [
             'headers' => ['Content-Type' => 'application/json'],
@@ -303,30 +335,35 @@ class ASAAISalesAgent {
             'timeout' => 15,
         ]);
 
-        // Debug Log: Raw API Response
-        error_log('ASA Proactive Message Debug: Raw API Response - ' . print_r($response, true));
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('ASA Proactive Message Debug: Raw API Response - ' . print_r($response, true));
+        }
 
         if (is_wp_error($response)) {
-            // Debug Log: WP Error
-            error_log('ASA Proactive Message Debug: WP Error - ' . $response->get_error_message());
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('ASA Proactive Message Debug: WP Error - ' . $response->get_error_message());
+            }
             return __('Hello! How can I help you today?', 'asa');
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
         
-        // Debug Log: Decoded API Data
-        error_log('ASA Proactive Message Debug: Decoded API Data - ' . print_r($data, true));
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('ASA Proactive Message Debug: Decoded API Data - ' . print_r($data, true));
+        }
 
         if (!empty($data['candidates'][0]['content']['parts'][0]['text'])) {
             $proactive_message = $data['candidates'][0]['content']['parts'][0]['text'];
-            // Debug Log: Generated Proactive Message
-            error_log('ASA Proactive Message Debug: Generated Message - ' . $proactive_message);
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('ASA Proactive Message Debug: Generated Message - ' . $proactive_message);
+            }
             return $proactive_message;
         }
 
-        // Debug Log: Fallback Message
-        error_log('ASA Proactive Message Debug: Fallback to default message.');
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('ASA Proactive Message Debug: Fallback to default message.');
+        }
         return __('Hello! How can I help you today?', 'asa');
     }
 
