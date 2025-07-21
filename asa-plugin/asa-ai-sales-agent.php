@@ -2,10 +2,14 @@
 /*
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
-Version: 0.4.1
+
+Version: 1.0.0
 Author: Adem İşler
 Text Domain: asa
 Domain Path: /languages
+
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
 if (!defined('ABSPATH')) {
@@ -24,6 +28,7 @@ class ASAAISalesAgent {
     }
 
     private function __construct() {
+        load_plugin_textdomain( 'asa', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
         $this->default_avatar = plugins_url('img/avatar1.svg', __FILE__);
         add_action('admin_menu', array($this, 'register_settings_page'));
         add_action('admin_init', array($this, 'register_settings'));
@@ -35,6 +40,8 @@ class ASAAISalesAgent {
         add_action('wp_ajax_asa_generate_proactive_message', array($this, 'handle_proactive_message_request'));
         add_action('wp_ajax_nopriv_asa_generate_proactive_message', array($this, 'handle_proactive_message_request'));
         add_action('wp_ajax_asa_save_settings', array($this, 'asa_save_settings'));
+        
+        
         add_action('wp_footer', array($this, 'print_chatbot'));
     }
 
@@ -59,12 +66,17 @@ class ASAAISalesAgent {
             'currentPageUrl' => get_permalink(),
             'currentPageTitle' => get_the_title(),
             'proactiveMessageAjaxUrl' => admin_url('admin-ajax.php?action=asa_generate_proactive_message'),
+            'apiKeyPlaceholder' => esc_attr__('Configure API key in settings', 'asa'),
+            'errorMessage' => esc_html__('Sorry, an error occurred: ', 'asa'),
+            'noResponseText' => esc_html__('No response received.', 'asa'),
+            'serverErrorText' => esc_html__('Sorry, could not communicate with the server. Please try again later.', 'asa'),
+            'clearHistoryConfirm' => esc_html__('Are you sure you want to clear the chat history?', 'asa'),
         ]);
     }
 
     public function generate_proactive_message() {
         // This is a placeholder. The actual proactive message is fetched via AJAX.
-        return __('Hello! How can I help you today?', 'asa');
+        return esc_html__('Hello! How can I help you today?', 'asa');
     }
 
     public function enqueue_admin_assets($hook) {
@@ -78,6 +90,10 @@ class ASAAISalesAgent {
         wp_localize_script('asa-admin-script', 'asaAdminSettings', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('asa_settings_nonce'),
+            'savingText' => esc_html__('Saving...', 'asa'),
+            'savedText' => esc_html__('Saved!', 'asa'),
+            'errorText' => esc_html__('Error!', 'asa'),
+            
         ]);
         wp_enqueue_style('thickbox');
     }
@@ -85,7 +101,7 @@ class ASAAISalesAgent {
     public function register_settings_page() {
         add_options_page(
             'ASA AI Sales Agent',
-            'ASA AI Sales Agent',
+            esc_html__('ASA AI Sales Agent', 'asa'),
             'manage_options',
             'asa-ai-sales-agent',
             array($this, 'render_settings_page')
@@ -106,7 +122,7 @@ class ASAAISalesAgent {
 
     public function asa_save_settings() {
         if (!current_user_can('manage_options')) {
-            wp_send_json_error('You do not have sufficient permissions to access this page.');
+            wp_send_json_error(esc_html__('You do not have sufficient permissions to access this page.', 'asa'));
         }
 
         check_ajax_referer('asa_settings_nonce', 'security');
@@ -121,14 +137,14 @@ class ASAAISalesAgent {
         update_option('asa_position', sanitize_text_field($_POST['asa_position']));
         update_option('asa_show_credit', sanitize_text_field($_POST['asa_show_credit']));
 
-        wp_send_json_success('Settings saved.');
+        wp_send_json_success(esc_html__('Settings saved.', 'asa'));
     }
 
     public function render_settings_page() {
         ?>
         <div class="wrap">
             <div class="asa-page-header">
-                <h1><?php esc_html_e('ASA AI Sales Agent', 'asa'); ?></h1>
+                <h1><img src="<?php echo plugins_url('icon-256x256.png', __FILE__); ?>" class="asa-admin-logo" alt="ASA Logo"><?php esc_html_e('ASA AI Sales Agent', 'asa'); ?></h1>
                 <div class="asa-header-links">
                     <div class="asa-support-wrapper">
                         <a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-bmac-button">
@@ -143,7 +159,7 @@ class ASAAISalesAgent {
                 <a href="#asa-tab-appearance" class="nav-tab"><?php esc_html_e('Appearance', 'asa'); ?></a>
                 <a href="#asa-tab-behavior" class="nav-tab"><?php esc_html_e('Behavior', 'asa'); ?></a>
             </h2>
-            <form method="post" action="options.php">
+            <form id="asa-settings-form" method="post" action="options.php">
                 <?php settings_errors(); ?>
                 <?php settings_fields('asa_settings_group'); ?>
                 <?php do_settings_sections('asa_settings_group'); ?>
@@ -153,8 +169,11 @@ class ASAAISalesAgent {
                         <div class="asa-card-section">
                             <label class="asa-section-label"><?php esc_html_e('Gemini API Key', 'asa'); ?></label>
                             <div class="asa-section-content">
-                                <input type="text" name="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text" />
-                                <p class="description"><a href="https://aistudio.google.com/app/apikey" target="_blank"><?php esc_html_e('Get your API key from AI Studio', 'asa'); ?></a></p>
+                                <div class="asa-api-key-input-group">
+                                    <input type="text" name="asa_api_key" id="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text asa-api-key-input" />
+                                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="button asa-api-key-link-button"><?php esc_html_e('Get API Key', 'asa'); ?></a>
+                                </div>
+                                <p class="description"><?php esc_html_e('Enter your Google Gemini API Key here.', 'asa'); ?></p>
                             </div>
                         </div>
                     </div>
@@ -274,7 +293,7 @@ class ASAAISalesAgent {
                 <div class="asa-header">
                     <?php echo $avatar_html; ?>
                     <div class="asa-header-text">
-                        <span class="asa-title"><?php echo esc_html(get_option('asa_title', 'Sales Agent')); ?></span>
+                        <span class="asa-title"><?php echo esc_html(get_option('asa_title', esc_html__('Sales Agent', 'asa'))); ?></span>
                         <span class="asa-subtitle"><?php echo esc_html(get_option('asa_subtitle')); ?></span>
                     </div>
                     <button class="asa-clear-history" title="<?php esc_attr_e('Clear History', 'asa'); ?>" aria-label="<?php esc_attr_e('Clear History', 'asa'); ?>"><i class="fas fa-trash-alt"></i></button>
@@ -290,7 +309,7 @@ class ASAAISalesAgent {
                     </div>
                 </div>
                 <?php if (get_option('asa_show_credit', 'yes') === 'yes'): ?>
-                    <div class="asa-credit">Developed by: <a href="https://ademisler.com" target="_blank" class="ai-name-reveal"><span class="short-name">AI</span><span class="full-name">Adem Isler</span></a></div>
+                    <div class="asa-credit"><?php esc_html_e('Developed by:', 'asa'); ?> <a href="https://ademisler.com" target="_blank" class="ai-name-reveal"><span class="short-name">AI</span><span class="full-name">Adem Isler</span></a></div>
                 <?php endif; ?>
             </div>
         </div>
@@ -309,10 +328,10 @@ class ASAAISalesAgent {
         $currentPageContent = sanitize_textarea_field($_POST['currentPageContent'] ?? '');
 
         if (!$api_key || empty($message)) {
-            wp_send_json_error('Invalid request');
+            wp_send_json_error(esc_html__('Invalid request', 'asa'));
         }
 
-        $system_prompt = get_option('asa_system_prompt', 'You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.');
+        $system_prompt = get_option('asa_system_prompt', esc_html__('You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa'));
         
         if (!empty($currentPageUrl)) {
             $system_prompt .= "\n\nCurrent Page URL: " . $currentPageUrl;
@@ -342,17 +361,21 @@ class ASAAISalesAgent {
         ]);
 
         if (is_wp_error($response)) {
-            wp_send_json_error('API request failed: ' . $response->get_error_message());
+            wp_send_json_error(esc_html__('API request failed: ', 'asa') . $response->get_error_message());
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if (isset($data['error'])) {
-            wp_send_json_error('API Error: ' . $data['error']['message']);
+            wp_send_json_error(esc_html__('API Error: ', 'asa') . $data['error']['message']);
         }
 
-        $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+            wp_send_json_error(esc_html__('AI did not return a valid response.', 'asa'));
+        }
+
+        $text = $data['candidates'][0]['content']['parts'][0]['text'];
         wp_send_json_success($text);
     }
 
@@ -361,7 +384,7 @@ class ASAAISalesAgent {
 
         $api_key = get_option('asa_api_key');
         if (!$api_key) {
-            wp_send_json_error(['message' => 'API key is not set.']);
+            wp_send_json_error(['message' => esc_html__('API key is not set.', 'asa')]);
         }
 
         $currentPageUrl = esc_url_raw($_POST['currentPageUrl'] ?? '');
@@ -374,7 +397,7 @@ class ASAAISalesAgent {
             return;
         }
 
-        $system_prompt = get_option('asa_system_prompt', 'You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.');
+        $system_prompt = get_option('asa_system_prompt', esc_html__('You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa'));
         $page_content_for_prompt = substr($currentPageContent, 0, 4000);
         $currentPageTitle = sanitize_text_field($_POST['currentPageTitle'] ?? '');
         $prompt_instruction = "Generate an extremely short proactive message. It MUST be a single, insightful question of MAXIMUM 5-6 words. Do not use any greetings. Base the question directly on the provided page content. Page Title: {$currentPageTitle}.";
@@ -386,22 +409,22 @@ class ASAAISalesAgent {
 
         $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $api_key, [
             'headers' => ['Content-Type' => 'application/json'],
-            'body' => $payload,
+            'body'    => $payload,
             'timeout' => 15,
         ]);
 
         if (is_wp_error($response)) {
-            wp_send_json_error(['message' => 'API request failed: ' . $response->get_error_message()]);
+            wp_send_json_error(['message' => esc_html__('API request failed: ', 'asa') . $response->get_error_message()]);
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if (isset($data['error'])) {
-            wp_send_json_error(['message' => 'API Error: ' . $data['error']['message']]);
+            wp_send_json_error(['message' => esc_html__('API Error: ', 'asa') . $data['error']['message']]);
         }
 
-        if (!empty($data['candidates'][0]['content']['parts'][0]['text'])) {
+        if ( ! empty( $data['candidates'][0]['content']['parts'][0]['text'] ) ) {
             $generated_message = $data['candidates'][0]['content']['parts'][0]['text'];
             
             $words = explode(' ', $generated_message);
@@ -412,29 +435,12 @@ class ASAAISalesAgent {
             set_transient($cache_key, $generated_message, HOUR_IN_SECONDS);
             wp_send_json_success($generated_message);
         } else {
-            wp_send_json_error(['message' => 'AI did not return a message.']);
+            // Yanıt boş veya hatalıysa burası çalışacak
+            wp_send_json_error(['message' => esc_html__('AI did not return a valid response.', 'asa')]);
         }
     }
 
-    public function get_avatar_url() {
-        $choice = get_option('asa_avatar_choice', 'avatar1');
-        if ($choice === 'custom') {
-            $custom = get_option('asa_avatar_custom');
-            return $custom ? $custom : $this->default_avatar;
-        }
-        return plugins_url('img/' . $choice . '.svg', __FILE__);
-    }
-
-    public function get_icon_class() {
-        $choice = get_option('asa_icon_choice');
-        if (!$choice) {
-            return '';
-        }
-        if ($choice === 'custom') {
-            return get_option('asa_icon_custom', '');
-        }
-        return $choice;
-    }
+    
 
     public function print_chatbot() {
         echo do_shortcode('[asa_chatbot]');
@@ -442,7 +448,7 @@ class ASAAISalesAgent {
 }
 
 function asa_activate_plugin() {
-    $default_prompt = 'You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.';
+    $default_prompt = esc_html__('You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa');
     add_option('asa_system_prompt', $default_prompt);
 }
 register_activation_hook(__FILE__, 'asa_activate_plugin');

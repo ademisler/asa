@@ -35,13 +35,29 @@ body { background-color: var(--asa-bg-main); }
     box-shadow: var(--asa-shadow);
     margin-bottom: 30px;
 }
-.asa-page-header h1 { margin: 0; font-size: 1.8em; color: var(--asa-text-dark); }
+.asa-page-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--asa-text-dark);
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Vertically align items */
+    gap: 10px; /* Space between logo and text */
+}
+
+.asa-admin-logo {
+    height: 40px; /* Adjust size as needed */
+    width: auto;
+    vertical-align: middle;
+    border-radius: 4px; /* Slightly rounded corners for the logo */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
 .asa-header-links { display: flex; align-items: center; gap: 15px; }
 .asa-support-wrapper {
     display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-end; /* Align items to the right */
-    gap: 10px; /* Reduced gap */
+    flex-direction: row-reverse; /* Place button on right */
+    align-items: center; /* Vertically align items */
+    justify-content: space-between; /* Space out text and button */
+    gap: 15px; /* Increased gap for better spacing */
     background-color: #f9f9f9;
     padding: 10px 15px; /* Adjusted padding */
     border-radius: var(--asa-radius);
@@ -67,13 +83,14 @@ body { background-color: var(--asa-bg-main); }
     font-size: 0.85em; /* Slightly smaller font */
     color: var(--asa-text-light);
     line-height: 1.3; /* Adjusted line height */
-    max-width: 200px; /* Reduced max-width to encourage 2 lines */
-    text-align: right; /* Align text to the right */
+    max-width: 250px; /* Increased max-width for more text */
+    text-align: left; /* Align text to the left */
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2; /* Limit to 2 lines */
     -webkit-box-orient: vertical;
+    flex-grow: 1; /* Allow text to grow and take space */
 }
 .asa-contact-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--asa-text-light); font-weight: 500; transition: color 0.2s ease; padding: 10px; border-left: 1px solid var(--asa-border); margin-left: 5px; }
 .asa-contact-link:hover { color: var(--asa-primary); }
@@ -97,6 +114,39 @@ body { background-color: var(--asa-bg-main); }
 /* 6. Form Elements & Inputs
 -------------------------------------------------- */
 .regular-text, textarea { width: 100%; max-width: 100%; padding: 12px; border: 1px solid var(--asa-border); border-radius: var(--asa-radius); transition: all 0.2s ease; }
+
+.asa-api-key-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.asa-api-key-input {
+    width: 300px; /* Adjust width as needed */
+    max-width: 100%;
+}
+
+.asa-api-key-link-button {
+    background: var(--asa-primary);
+    color: var(--asa-text-white) !important;
+    padding: 8px 12px;
+    border-radius: var(--asa-radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    height: 45px; /* Match height of other buttons/inputs */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.asa-api-key-link-button:hover {
+    background: var(--asa-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
 .regular-text:focus, textarea:focus { border-color: var(--asa-primary); box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1); outline: none; }
 .description { color: var(--asa-text-light); font-style: italic; margin-top: 8px; display: block;}
 .wp-picker-container .wp-color-result.button { height: 45px; width: 100px; border-radius: var(--asa-radius); border: 1px solid var(--asa-border); }
@@ -202,4 +252,15 @@ body { background-color: var(--asa-bg-main); }
 /* Ensure only active tab content is visible */
 .asa-tab-content:not(.active) {
     display: none;
+}
+
+/* API Key Test Status */
+#asa-api-key-test-status {
+    font-weight: 600;
+}
+#asa-api-key-test-status.success {
+    color: var(--asa-success);
+}
+#asa-api-key-test-status.error {
+    color: var(--asa-error);
 }
