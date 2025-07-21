@@ -4,6 +4,8 @@ Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
 Version: 0.4.1
 Author: Adem İşler
+Text Domain: asa
+Domain Path: /languages
 */
 
 if (!defined('ABSPATH')) {
@@ -118,11 +120,11 @@ class ASAAISalesAgent {
     public function render_settings_page() {
         ?>
         <div class="wrap">
-            <h1>ASA AI Sales Agent</h1>
+            <h1><?php esc_html_e('ASA AI Sales Agent', 'asa'); ?></h1>
             <h2 class="nav-tab-wrapper asa-tabs">
-                <a href="#asa-tab-general" class="nav-tab nav-tab-active">Genel</a>
-                <a href="#asa-tab-appearance" class="nav-tab">Görünüm</a>
-                <a href="#asa-tab-behavior" class="nav-tab">Davranış</a>
+                <a href="#asa-tab-general" class="nav-tab nav-tab-active"><?php esc_html_e('General', 'asa'); ?></a>
+                <a href="#asa-tab-appearance" class="nav-tab"><?php esc_html_e('Appearance', 'asa'); ?></a>
+                <a href="#asa-tab-behavior" class="nav-tab"><?php esc_html_e('Behavior', 'asa'); ?></a>
             </h2>
             <form method="post" action="options.php">
                 <?php settings_fields('asa_settings_group'); ?>
@@ -131,10 +133,10 @@ class ASAAISalesAgent {
                 <div id="asa-tab-general" class="asa-tab-content active">
                     <table class="form-table">
                         <tr valign="top">
-                            <th scope="row">Gemini API Key</th>
+                            <th scope="row"><?php esc_html_e('Gemini API Key', 'asa'); ?></th>
                             <td>
                                 <input type="text" name="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text" />
-                                <p class="description"><a href="https://aistudio.google.com/app/apikey" target="_blank">AI Studio'dan anahtar alın</a></p>
+                                <p class="description"><a href="https://aistudio.google.com/app/apikey" target="_blank"><?php esc_html_e('Get your API key from AI Studio', 'asa'); ?></a></p>
                             </td>
                         </tr>
                     </table>
@@ -143,47 +145,47 @@ class ASAAISalesAgent {
                 <div id="asa-tab-appearance" class="asa-tab-content">
                     <table class="form-table">
                         <tr valign="top">
-                            <th scope="row">Title</th>
+                            <th scope="row"><?php esc_html_e('Title', 'asa'); ?></th>
                             <td><input type="text" name="asa_title" value="<?php echo esc_attr(get_option('asa_title')); ?>" class="regular-text" /></td>
                         </tr>
                         <tr valign="top">
-                            <th scope="row">Subtitle</th>
+                            <th scope="row"><?php esc_html_e('Subtitle', 'asa'); ?></th>
                             <td><input type="text" name="asa_subtitle" value="<?php echo esc_attr(get_option('asa_subtitle')); ?>" class="regular-text" /></td>
                         </tr>
                         <tr valign="top">
-                            <th scope="row">Primary Color</th>
+                            <th scope="row"><?php esc_html_e('Primary Color', 'asa'); ?></th>
                             <td><input type="text" name="asa_primary_color" id="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#0083ff')); ?>" class="asa-color-field" /></td>
                         </tr>
                         <tr valign="top">
-                            <th scope="row">Avatar</th>
+                            <th scope="row"><?php esc_html_e('Avatar', 'asa'); ?></th>
                             <td>
                                 <div class="asa-icon-picker-wrapper">
-                                    <label><strong>Choose an Icon:</strong></label><br>
+                                    <label><strong><?php esc_html_e('Choose an Icon:', 'asa'); ?></strong></label><br>
                                     <input type="text" name="asa_avatar_icon" id="asa_avatar_icon" value="<?php echo esc_attr(get_option('asa_avatar_icon', 'fas fa-robot')); ?>" class="regular-text" readonly />
-                                    <button type="button" class="button" id="asa-open-icon-picker">Choose Icon</button>
+                                    <button type="button" class="button" id="asa-open-icon-picker"><?php esc_html_e('Choose Icon', 'asa'); ?></button>
                                     <div class="asa-icon-preview">
                                         <i class="<?php echo esc_attr(get_option('asa_avatar_icon', 'fas fa-robot')); ?>"></i>
                                     </div>
                                 </div>
                                 <hr>
                                 <div class="asa-image-url-wrapper">
-                                    <label><strong>Or use Image URL:</strong></label><br>
+                                    <label><strong><?php esc_html_e('Or use Image URL:', 'asa'); ?></strong></label><br>
                                     <input type="text" name="asa_avatar_image_url" id="asa_avatar_image_url" value="<?php echo esc_attr(get_option('asa_avatar_image_url')); ?>" class="regular-text" placeholder="https://example.com/avatar.png" />
-                                    <p class="description">Paste an image URL. If this is filled, it will be used instead of the icon.</p>
+                                    <p class="description"><?php esc_html_e('Paste an image URL. If this is filled, it will be used instead of the icon.', 'asa'); ?></p>
                                 </div>
                             </td>
                         </tr>
                         <tr valign="top">
-                            <th scope="row">Position</th>
+                            <th scope="row"><?php esc_html_e('Position', 'asa'); ?></th>
                             <td>
                                 <fieldset>
-                                    <label><input type="radio" name="asa_position" value="left" <?php checked(get_option('asa_position'), 'left'); ?> /> Left</label><br/>
-                                    <label><input type="radio" name="asa_position" value="right" <?php checked(get_option('asa_position', 'right'), 'right'); ?> /> Right</label>
+                                    <label><input type="radio" name="asa_position" value="left" <?php checked(get_option('asa_position'), 'left'); ?> /> <?php esc_html_e('Left', 'asa'); ?></label><br/>
+                                    <label><input type="radio" name="asa_position" value="right" <?php checked(get_option('asa_position', 'right'), 'right'); ?> /> <?php esc_html_e('Right', 'asa'); ?></label>
                                 </fieldset>
                             </td>
                         </tr>
                         <tr valign="top">
-                            <th scope="row">Show Developer Credit</th>
+                            <th scope="row"><?php esc_html_e('Show Developer Credit', 'asa'); ?></th>
                             <td><input type="checkbox" name="asa_show_credit" value="yes" <?php checked(get_option('asa_show_credit', 'yes'), 'yes'); ?> /></td>
                         </tr>
                     </table>
@@ -192,25 +194,25 @@ class ASAAISalesAgent {
                 <div id="asa-tab-behavior" class="asa-tab-content">
                     <table class="form-table">
                         <tr valign="top">
-                            <th scope="row">System Prompt <span class="asa-tooltip-icon" data-tooltip="Define the chatbot's personality, role, and response style. This guides how the AI interacts with users.">?</span></th>
-                            <td><textarea name="asa_system_prompt" class="large-text" rows="5" placeholder="You are a helpful sales agent."><?php echo esc_textarea(get_option('asa_system_prompt')); ?></textarea></td>
+                            <th scope="row"><?php esc_html_e('System Prompt', 'asa'); ?> <span class="asa-tooltip-icon" data-tooltip="<?php esc_attr_e('Define the chatbot\'s personality, role, and response style. This guides how the AI interacts with users.', 'asa'); ?>">?</span></th>
+                            <td><textarea name="asa_system_prompt" class="large-text" rows="5" placeholder="<?php esc_attr_e('You are a helpful sales agent.', 'asa'); ?>"><?php echo esc_textarea(get_option('asa_system_prompt')); ?></textarea></td>
                         </tr>
                     </table>
                 </div>
 
-                <?php submit_button(); ?>
+                <?php submit_button(esc_html__('Save Changes', 'asa')); ?>
             </form>
             <div class="asa-footer-links">
-                <p><a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-buy-me-a-coffee"><i class="fas fa-coffee"></i> Buy Me a Coffee</a> | <a href="https://ademisler.com/iletisim" target="_blank">Contact Us</a></p>
+                <p><a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-buy-me-a-coffee"><i class="fas fa-coffee"></i> <?php esc_html_e('Support the Developer', 'asa'); ?></a> | <a href="https://ademisler.com/iletisim" target="_blank"><?php esc_html_e('Contact Us', 'asa'); ?></a></p>
             </div>
         </div>
         <div id="asa-icon-picker-modal">
             <div class="asa-icon-picker-modal-content">
                 <div class="asa-icon-picker-header">
-                    <h2>Choose an Icon</h2>
+                    <h2><?php esc_html_e('Choose an Icon', 'asa'); ?></h2>
                     <span class="asa-icon-picker-close">&times;</span>
                 </div>
-                <input type="text" id="asa-icon-search" placeholder="Search for icons...">
+                <input type="text" id="asa-icon-search" placeholder="<?php esc_attr_e('Search for icons...', 'asa'); ?>">
                 <div class="asa-icon-list"></div>
             </div>
         </div>

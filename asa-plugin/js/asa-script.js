@@ -120,7 +120,7 @@
                 if(res.success){
                     addMessage('model', res.data);
                 } else {
-                    addMessage('bot', 'Üzgünüm, bir hata oluştu: ' + (res.data.message || 'Yanıt alınamadı.'));
+                    addMessage('bot', 'Sorry, an error occurred: ' + (res.data.message || 'No response received.'));
                 }
                 inputEl.prop('disabled', false);
                 sendBtn.prop('disabled', false);
@@ -128,7 +128,7 @@
                 if (inputEl.val().length > 0) clearBtn.show(); // Show clear button if input has text
             }).fail(function(jqXHR, textStatus, errorThrown){
                 typingEl.hide();
-                addMessage('bot','Üzgünüm, sunucuyla iletişim kurulamadı. Lütfen daha sonra tekrar deneyin.');
+                addMessage('bot','Sorry, could not communicate with the server. Please try again later.');
                 inputEl.prop('disabled', false);
                 sendBtn.prop('disabled', false);
                 inputEl.focus();
@@ -145,4 +145,4 @@
             messagesEl.scrollTop(messagesEl.prop('scrollHeight'));
         }
     });
-})(jQuery);
+})(jQuery));
