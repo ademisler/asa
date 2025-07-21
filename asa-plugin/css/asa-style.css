@@ -1,5 +1,6 @@
 :root {
     --asa-primary-color: #0083ff;
+    --asa-primary-color-rgb: 0, 131, 255; /* Added RGB equivalent */
     --asa-text-light: #ffffff;
     --asa-text-dark: #212529;
     --asa-bg-light: #ffffff;
@@ -41,12 +42,101 @@
     justify-content: center;
     cursor: pointer;
     box-shadow: var(--asa-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; /* Added opacity transition */
+    position: relative; /* Added for positioning the proactive message */
+    animation: asa-pulse 2s infinite; /* Added pulse animation */
+}
+
+@keyframes asa-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(var(--asa-primary-color-rgb), 0.7); /* Used new RGB variable */
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(var(--asa-primary-color-rgb), 0); /* Used new RGB variable */
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(var(--asa-primary-color-rgb), 0); /* Used new RGB variable */
+    }
 }
 
 #asa-chatbot .asa-launcher:hover {
     transform: scale(1.05);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Proactive Message Wrapper */
+#asa-chatbot .asa-welcome-wrapper {
+    position: absolute;
+    bottom: calc(100% + 15px); /* Position above the launcher */
+    right: 50%;
+    transform: translateX(50%);
+    background-color: var(--asa-bg-light);
+    color: var(--asa-text-dark);
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: var(--asa-shadow);
+    white-space: nowrap;
+    font-size: 0.9em;
+    pointer-events: auto; /* Allow clicks on the wrapper */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+#asa-chatbot .asa-welcome-wrapper.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(50%) translateY(-5px); /* Slight lift on appearance */
+}
+
+#asa-chatbot.asa-position-left .asa-welcome-wrapper {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+}
+
+#asa-chatbot.asa-position-left .asa-welcome-wrapper.active {
+    transform: translateX(-50%) translateY(-5px);
+}
+
+/* Proactive Message Close Button */
+#asa-chatbot .asa-proactive-close {
+    background: none;
+    border: none;
+    color: var(--asa-text-dark);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+#asa-chatbot .asa-proactive-close:hover {
+    opacity: 1;
+}
+
+/* Arrow for the proactive message bubble */
+#asa-chatbot .asa-welcome-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 8px;
+    border-style: solid;
+    border-color: var(--asa-bg-light) transparent transparent transparent;
+}
+
+#asa-chatbot.asa-position-left .asa-welcome-wrapper::after {
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #asa-chatbot .asa-avatar {
@@ -182,7 +272,7 @@
     background: var(--asa-color, var(--asa-primary-color));
     color: var(--asa-text-light);
     border-bottom-right-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 #asa-chatbot .asa-messages .bot .bubble {
@@ -190,7 +280,7 @@
     color: var(--asa-text-dark);
     border: 1px solid var(--asa-border-color);
     border-bottom-left-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 #asa-chatbot .asa-typing {
@@ -239,7 +329,7 @@
 #asa-chatbot .asa-input input:focus {
     outline: none;
     border-color: var(--asa-color, var(--asa-primary-color));
-    box-shadow: 0 0 0 3px rgba(var(--asa-color-rgb, 0, 131, 255), 0.2);
+    box-shadow: 0 0 0 3px rgba(var(--asa-primary-color-rgb), 0.2);
 }
 
 #asa-chatbot .asa-input button {
