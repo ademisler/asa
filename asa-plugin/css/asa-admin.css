@@ -1,9 +1,318 @@
-.asa-tab-content{display:none;padding:15px 0;}
-.asa-tab-content.active{display:block;}
-.asa-tabs .nav-tab{margin-right:5px;}
-#asa_avatar_preview{max-width:60px;display:none;margin-top:5px;}
-.avatar-thumb{width:40px;height:40px;border-radius:50%;margin-right:5px;vertical-align:middle;}
-#asa_avatar_custom,#asa_avatar_upload{display:none;}
-#asa_icon_custom{display:none;}
-.icon-thumb{font-size:40px;margin-right:5px;vertical-align:middle;}
-.form-table th{width:220px;}
+/* ASA Admin Styles */
+:root {
+    --asa-admin-primary-color: #0073aa;
+    --asa-admin-secondary-color: #00a0d2;
+    --asa-admin-text-color: #32373c;
+    --asa-admin-border-color: #c3c4c7;
+    --asa-admin-bg-color: #f0f0f1;
+    --asa-admin-light-bg: #ffffff;
+    --asa-admin-shadow: 0 1px 1px rgba(0,0,0,.04);
+    --asa-admin-border-radius: 4px;
+    --asa-admin-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.wrap h1 {
+    color: var(--asa-admin-text-color);
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.asa-tabs {
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--asa-admin-border-color);
+    padding-left: 0;
+}
+
+.asa-tabs .nav-tab {
+    background: var(--asa-admin-bg-color);
+    border: 1px solid var(--asa-admin-border-color);
+    border-bottom: none;
+    border-radius: var(--asa-admin-border-radius) var(--asa-admin-border-radius) 0 0;
+    margin-right: 5px;
+    padding: 10px 15px;
+    font-weight: 600;
+    color: var(--asa-admin-text-color);
+    transition: all 0.2s ease-in-out;
+}
+
+.asa-tabs .nav-tab-active {
+    background: var(--asa-admin-light-bg);
+    border-bottom: 1px solid var(--asa-admin-light-bg);
+    color: var(--asa-admin-primary-color);
+}
+
+.asa-tabs .nav-tab:hover {
+    background: var(--asa-admin-light-bg);
+    color: var(--asa-admin-primary-color);
+}
+
+.asa-tab-content {
+    background: var(--asa-admin-light-bg);
+    border: 1px solid var(--asa-admin-border-color);
+    padding: 25px;
+    border-radius: 0 var(--asa-admin-border-radius) var(--asa-admin-border-radius) var(--asa-admin-border-radius);
+    box-shadow: var(--asa-admin-shadow);
+}
+
+.form-table th {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    width: 200px;
+    vertical-align: top;
+    position: relative; /* For tooltip positioning */
+}
+
+.form-table td {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.regular-text,
+textarea {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 10px;
+    border: 1px solid var(--asa-admin-border-color);
+    border-radius: var(--asa-admin-border-radius);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+    background-color: #fff;
+    color: var(--asa-admin-text-color);
+    transition: all 0.1s linear;
+}
+
+.regular-text:focus,
+textarea:focus {
+    border-color: var(--asa-admin-primary-color);
+    box-shadow: 0 0 0 1px var(--asa-admin-primary-color);
+    outline: none;
+}
+
+.description {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 5px;
+}
+
+.button {
+    background: var(--asa-admin-primary-color);
+    color: #fff;
+    border: none;
+    border-radius: var(--asa-admin-border-radius);
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.button:hover {
+    background: var(--asa-admin-secondary-color);
+}
+
+/* Color Picker */
+.wp-picker-container .wp-color-result {
+    height: 30px;
+    border-radius: var(--asa-admin-border-radius);
+    box-shadow: var(--asa-admin-shadow);
+}
+
+/* Avatar/Icon Section */
+.asa-icon-picker-wrapper,
+.asa-image-url-wrapper {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: var(--asa-admin-border-radius);
+    background: #fdfdfd;
+}
+
+.asa-icon-picker-wrapper label,
+.asa-image-url-wrapper label {
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.asa-icon-picker-wrapper input[type="text"] {
+    max-width: 250px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.asa-icon-preview {
+    font-size: 32px;
+    padding: 5px;
+    border: 1px solid var(--asa-admin-border-color);
+    border-radius: var(--asa-admin-border-radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    vertical-align: middle;
+    background: #fff;
+}
+
+.asa-image-url-wrapper input[type="text"] {
+    max-width: 350px;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+
+/* Tooltip Styles */
+.asa-tooltip-icon {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #0073aa;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: help;
+    margin-left: 5px;
+    position: relative;
+}
+
+.asa-tooltip-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    width: 250px;
+    z-index: 100;
+    bottom: 100%; /* Position above the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 10px; /* Space between icon and tooltip */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.asa-tooltip-content::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.asa-tooltip-icon:hover .asa-tooltip-content {
+    display: block;
+}
+
+/* Icon Picker Modal */
+#asa-icon-picker-modal {
+    display: none;
+    position: fixed;
+    z-index: 100000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.asa-icon-picker-modal-content {
+    background-color: var(--asa-admin-light-bg);
+    margin: 5% auto;
+    padding: 30px;
+    border: 1px solid var(--asa-admin-border-color);
+    width: 90%;
+    max-width: 900px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.asa-icon-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--asa-admin-border-color);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.asa-icon-picker-header h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: var(--asa-admin-text-color);
+}
+
+.asa-icon-picker-close {
+    font-size: 32px;
+    font-weight: normal;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.asa-icon-picker-close:hover {
+    color: #333;
+}
+
+#asa-icon-search {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid var(--asa-admin-border-color);
+    border-radius: var(--asa-admin-border-radius);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+    background-color: #fff;
+    color: var(--asa-admin-text-color);
+}
+
+.asa-icon-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding-right: 10px; /* For scrollbar */
+}
+
+.asa-icon-list i {
+    font-size: 28px;
+    padding: 18px;
+    text-align: center;
+    border: 1px solid #eee;
+    border-radius: var(--asa-admin-border-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #fdfdfd;
+    color: #555;
+}
+
+.asa-icon-list i:hover {
+    background-color: var(--asa-admin-primary-color);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Live Preview */
+.wrap h2:last-of-type {
+    margin-top: 40px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: var(--asa-admin-text-color);
+}

@@ -8,6 +8,7 @@
         let inputEl = chatbot.find('.asa-text');
         let sendBtn = chatbot.find('.asa-send');
         let welcomeEl = chatbot.find('.asa-welcome');
+        let history = [];
 
         welcomeEl.text(asaSettings.proactiveMessage);
 
@@ -47,7 +48,11 @@
             $.ajax({
                 type: 'POST',
                 url: asaSettings.ajaxUrl,
-                data: { action: 'asa_chat', message: text },
+                data: { 
+                    action: 'asa_chat', 
+                    message: text,
+                    history: JSON.stringify(history)
+                },
                 dataType: 'json'
             }).done(function(res){
                 typingEl.hide();
@@ -63,6 +68,7 @@
         }
 
         function addMessage(sender, text){
+            history.push({role: sender, parts: [{text: text}]});
             let wrapper = $('<div>').addClass(sender);
             $('<div>').addClass('bubble').text(text).appendTo(wrapper);
             messagesEl.append(wrapper);
