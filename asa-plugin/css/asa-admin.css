@@ -1,487 +1,106 @@
-/* ASA Admin Styles */
+/* ASA Admin Styles - Structural & Monochrome Overhaul */
+
+/* 1. Root Variables & Monochrome Color Palette
+-------------------------------------------------- */
 :root {
-    --asa-admin-primary-color: #0073aa;
-    --asa-admin-secondary-color: #00a0d2;
-    --asa-admin-text-color: #32373c;
-    --asa-admin-border-color: #c3c4c7;
-    --asa-admin-bg-color: #f0f0f1;
-    --asa-admin-light-bg: #ffffff;
-    --asa-admin-shadow: 0 1px 1px rgba(0,0,0,.04);
-    --asa-admin-border-radius: 4px;
-    --asa-admin-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    --asa-admin-success-color: #4CAF50;
-    --asa-admin-error-color: #f44336;
+    --asa-primary: #333;
+    --asa-primary-dark: #000;
+    --asa-text-dark: #222;
+    --asa-text-light: #666;
+    --asa-text-white: #fff;
+    --asa-border: #e0e0e0;
+    --asa-bg-main: #f5f5f5;
+    --asa-bg-card: #fff;
+    --asa-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --asa-radius: 6px;
+    --asa-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --asa-success: #28a745;
+    --asa-error: #dc3545;
 }
 
-body {
-    font-family: var(--asa-admin-font-family);
-    background-color: var(--asa-admin-bg-color);
-}
+/* 2. General Body & Wrapper Styles
+-------------------------------------------------- */
+body { background-color: var(--asa-bg-main); }
+.wrap { background: transparent; box-shadow: none; margin-top: 20px; }
 
-.wrap {
-    background-color: var(--asa-admin-light-bg);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-top: 20px;
-}
-
-.wrap h1 {
-    color: var(--asa-admin-text-color);
-    font-size: 2.2em;
-    margin-bottom: 25px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-    font-weight: 600;
-}
-
-.asa-tabs {
-    margin-bottom: 0;
-    border-bottom: 1px solid var(--asa-admin-border-color);
-    padding-left: 0;
-    display: flex;
-    gap: 2px; /* Reduced gap between tabs */
-    margin-top: 20px;
-}
-
-.asa-tabs .nav-tab {
-    background: var(--asa-admin-bg-color);
-    border: 1px solid var(--asa-admin-border-color);
-    border-bottom: none;
-    border-radius: var(--asa-admin-border-radius) var(--asa-admin-border-radius) 0 0;
-    padding: 12px 20px; /* Increased padding */
-    font-weight: 600;
-    color: var(--asa-admin-text-color);
-    transition: all 0.2s ease-in-out;
-    text-decoration: none;
-    position: relative;
-    top: 1px; /* Align tabs better with content box */
-}
-
-.asa-tabs .nav-tab-active {
-    background: var(--asa-admin-light-bg);
-    border-bottom: 1px solid var(--asa-admin-light-bg);
-    color: var(--asa-admin-primary-color);
-    z-index: 1;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.05); /* Subtle shadow for active tab */
-}
-
-.asa-tabs .nav-tab:hover {
-    background: var(--asa-admin-light-bg);
-    color: var(--asa-admin-primary-color);
-    border-color: var(--asa-admin-primary-color);
-}
-
-.asa-tab-content {
-    background: var(--asa-admin-light-bg);
-    border: 1px solid var(--asa-admin-border-color);
-    padding: 30px; /* Increased padding */
-    border-radius: 0 var(--asa-admin-border-radius) var(--asa-admin-border-radius) var(--asa-admin-border-radius);
-    box-shadow: var(--asa-admin-shadow);
-    margin-top: -1px; /* Overlap with border */
-}
-
-.form-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.form-table th {
-    padding-top: 20px;
-    padding-bottom: 20px;
-    width: 200px;
-    vertical-align: top;
-    position: relative; /* For tooltip positioning */
-    text-align: left;
-    font-weight: 600;
-    color: var(--asa-admin-text-color);
-}
-
-.form-table td {
-    padding-top: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
-}
-
-.form-table tr:last-child td {
-    border-bottom: none;
-}
-
-.regular-text,
-textarea,
-.wp-picker-container .wp-color-result {
-    width: 100%;
-    max-width: 500px; /* Increased max-width for better input field size */
-    padding: 12px 15px; /* Increased padding */
-    border: 1px solid var(--asa-admin-border-color);
-    border-radius: var(--asa-admin-border-radius);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
-    background-color: #fff;
-    color: var(--asa-admin-text-color);
-    transition: all 0.1s linear;
-    font-size: 1em; /* Ensure consistent font size */
-}
-
-.regular-text:focus,
-textarea:focus {
-    border-color: var(--asa-admin-primary-color);
-    box-shadow: 0 0 0 1px var(--asa-admin-primary-color), 0 0 0 4px rgba(0, 115, 170, 0.2); /* Added focus ring */
-    outline: none;
-}
-
-.description {
-    font-size: 0.9em; /* Slightly larger and more readable */
-    color: #666;
-    margin-top: 10px; /* Increased margin */
-    line-height: 1.6;
-}
-
-.button.button-primary {
-    background: var(--asa-admin-primary-color);
-    color: #fff;
-    border: none;
-    border-radius: var(--asa-admin-border-radius);
-    padding: 12px 25px; /* Increased padding */
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-    font-size: 1.05em;
-    font-weight: 600;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* More prominent shadow */
-}
-
-.button.button-primary:hover {
-    background: var(--asa-admin-secondary-color);
-    transform: translateY(-2px); /* More pronounced lift on hover */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-.button.button-primary:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-/* Color Picker */
-.wp-picker-container .wp-color-result {
-    height: 40px; /* Increased height */
-    border-radius: var(--asa-admin-border-radius); /* Use defined border-radius */
-    box-shadow: var(--asa-admin-shadow);
-    border: 1px solid var(--asa-admin-border-color);
-    background-color: #fff; /* Ensure white background */
-    transition: all 0.2s ease; /* Smooth transitions */
-}
-
-.wp-picker-container .wp-color-result:focus {
-    border-color: var(--asa-admin-primary-color);
-    box-shadow: 0 0 0 1px var(--asa-admin-primary-color), 0 0 0 4px rgba(0, 115, 170, 0.2); /* Added focus ring */
-}
-
-.wp-picker-container .wp-picker-open.wp-color-result {
-    box-shadow: 0 0 0 1px var(--asa-admin-primary-color), 0 0 0 4px rgba(0, 115, 170, 0.2); /* Add focus style when open */
-}
-
-/* Avatar/Icon Section */
-.asa-icon-picker-wrapper,
-.asa-image-url-wrapper {
-    margin-bottom: 20px; /* Slightly reduced margin */
-    padding: 20px; /* Slightly reduced padding */
-    border: 1px solid #eee;
-    border-radius: var(--asa-admin-border-radius);
-    background: #fdfdfd;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Lighter shadow */
-}
-
-.asa-icon-picker-wrapper label,
-.asa-image-url-wrapper label {
-    font-weight: 600;
-    margin-bottom: 10px; /* Slightly reduced margin */
-    display: block;
-    font-size: 1em; /* Slightly smaller font */
-    color: var(--asa-admin-text-color);
-}
-
-.asa-icon-picker-wrapper input[type="text"] {
-    max-width: 250px; /* Adjusted max-width */
-    display: inline-block;
-    margin-right: 15px; /* Adjusted margin */
-}
-
-.asa-icon-preview {
-    font-size: 36px; /* Adjusted size */
-    padding: 8px;
-    border: 1px solid var(--asa-admin-border-color);
-    border-radius: var(--asa-admin-border-radius);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 55px; /* Adjusted size */
-    height: 55px; /* Adjusted size */
-    vertical-align: middle;
-    background: #fff;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
-}
-
-.asa-image-url-wrapper input[type="text"] {
-    max-width: 400px; /* Adjusted max-width */
-}
-
-hr {
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 25px 0; /* Adjusted margin */
-}
-
-/* Tooltip Styles */
-.asa-tooltip-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px; /* Slightly larger */
-    height: 20px; /* Slightly larger */
-    line-height: 1;
-    text-align: center;
-    border-radius: 50%;
-    background-color: var(--asa-admin-primary-color);
-    color: #fff;
-    font-size: 14px; /* Slightly larger */
-    font-weight: bold;
-    cursor: help;
-    margin-left: 10px; /* Increased margin */
-    position: relative;
-    vertical-align: middle;
-    transition: background-color 0.2s ease;
-}
-
-.asa-tooltip-icon:hover {
-    background-color: var(--asa-admin-secondary-color);
-}
-
-.asa-tooltip-content {
-    display: none;
-    position: absolute;
-    background-color: #333;
-    color: #fff;
-    padding: 12px 18px; /* Increased padding */
-    border-radius: 8px; /* Slightly larger radius */
-    font-size: 0.95em;
-    width: 300px; /* Slightly wider */
-    z-index: 100;
-    bottom: 100%; /* Position above the icon */
-    left: 50%;
-    transform: translateX(-50%);
-    margin-bottom: 15px; /* Increased space */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35); /* Stronger shadow */
-    text-align: left;
-}
-
-.asa-tooltip-content::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -8px; /* Adjusted for larger arrow */
-    border-width: 8px; /* Larger arrow */
-    border-style: solid;
-    border-color: #333 transparent transparent transparent;
-}
-
-.asa-tooltip-icon:hover .asa-tooltip-content {
-    display: block;
-}
-
-/* Icon Picker Modal */
-#asa-icon-picker-modal {
-    display: none;
-    position: fixed;
-    z-index: 100000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.7); /* Darker overlay */
-    backdrop-filter: blur(8px); /* Stronger blur */
-    -webkit-backdrop-filter: blur(8px);
-}
-
-.asa-icon-picker-modal-content {
-    background-color: var(--asa-admin-light-bg);
-    margin: 3% auto; /* Adjusted margin for better vertical centering */
-    padding: 35px; /* Increased padding */
-    border: 1px solid var(--asa-admin-border-color);
-    width: 95%; /* Wider modal */
-    max-width: 1000px; /* Increased max-width */
-    border-radius: 10px; /* Slightly larger border-radius */
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Stronger shadow */
-    animation: fadeInScale 0.3s ease-out;
-}
-
-@keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.asa-icon-picker-header {
+/* 3. Page Header & Support Links
+-------------------------------------------------- */
+.asa-page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid var(--asa-admin-border-color);
-    padding-bottom: 20px;
-    margin-bottom: 30px; /* Increased margin */
+    background: var(--asa-bg-card);
+    padding: 20px 25px;
+    border-radius: var(--asa-radius);
+    box-shadow: var(--asa-shadow);
+    margin-bottom: 30px;
 }
+.asa-page-header h1 { margin: 0; font-size: 1.8em; color: var(--asa-text-dark); }
+.asa-header-links { display: flex; align-items: center; gap: 15px; }
+.asa-support-wrapper { display: flex; align-items: center; gap: 15px; background-color: #f9f9f9; padding: 8px 15px; border-radius: var(--asa-radius); border: 1px solid var(--asa-border); }
+.asa-bmac-button { display: inline-flex; align-items: center; gap: 10px; background: var(--asa-primary); color: var(--asa-text-white) !important; padding: 8px 15px; border-radius: var(--asa-radius); font-weight: 600; text-decoration: none; transition: all 0.25s ease; flex-shrink: 0; }
+.asa-bmac-button:hover { background: var(--asa-primary-dark); transform: translateY(-1px); }
+.asa-bmac-button .fa-heart { color: #e91e63; }
+.asa-support-text { font-size: 0.9em; color: var(--asa-text-light); line-height: 1.4; max-width: 250px; }
+.asa-contact-link { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--asa-text-light); font-weight: 500; transition: color 0.2s ease; padding: 10px; border-left: 1px solid var(--asa-border); margin-left: 5px; }
+.asa-contact-link:hover { color: var(--asa-primary); }
 
-.asa-icon-picker-header h2 {
-    margin: 0;
-    font-size: 2.4em; /* Larger title */
-    color: var(--asa-admin-text-color);
-}
+/* 4. Tabs & Content Cards
+-------------------------------------------------- */
+.asa-tabs { border-bottom: 2px solid var(--asa-border); }
+.asa-tabs .nav-tab { background: transparent; border: none; border-bottom: 3px solid transparent; padding: 15px 5px; margin-right: 25px; font-weight: 600; color: var(--asa-text-light); transition: all 0.25s ease; position: relative; top: 2px; }
+.asa-tabs .nav-tab-active, .asa-tabs .nav-tab:hover { color: var(--asa-text-dark); border-bottom-color: var(--asa-primary); background: transparent; box-shadow: none; }
+.asa-tab-content { background: var(--asa-bg-card); border: none; padding: 30px; border-radius: var(--asa-radius); box-shadow: var(--asa-shadow); margin-top: -2px; }
+.asa-card { border: 1px solid #f0f0f0; border-radius: var(--asa-radius); padding: 25px; margin-bottom: 20px; background: var(--asa-bg-card); box-shadow: var(--asa-shadow); }
+.asa-card:last-child { margin-bottom: 0; }
 
-.asa-icon-picker-close {
-    font-size: 40px; /* Larger close button */
-    font-weight: normal;
-    color: #888;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
+/* 5. DIV-based Form Structure (Replaces form-table)
+-------------------------------------------------- */
+.asa-card-section { display: flex; padding: 20px 0; border-bottom: 1px solid #f0f0f0; }
+.asa-card-section:last-child { border-bottom: none; }
+.asa-section-label { width: 220px; font-weight: 600; color: var(--asa-text-dark); padding-right: 30px; flex-shrink: 0; line-height: 1.5; }
+.asa-section-content { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
 
-.asa-icon-picker-close:hover {
-    color: #333;
-}
+/* 6. Form Elements & Inputs
+-------------------------------------------------- */
+.regular-text, textarea { width: 100%; max-width: 100%; padding: 12px; border: 1px solid var(--asa-border); border-radius: var(--asa-radius); transition: all 0.2s ease; }
+.regular-text:focus, textarea:focus { border-color: var(--asa-primary); box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1); outline: none; }
+.description { color: var(--asa-text-light); font-style: italic; margin-top: 8px; display: block;}
+.wp-picker-container .wp-color-result.button { height: 45px; width: 100px; border-radius: var(--asa-radius); border: 1px solid var(--asa-border); }
+.wp-picker-container .wp-color-result.button::after { font-size: 1.2em; line-height: 45px; }
 
-#asa-icon-search {
-    width: 100%;
-    padding: 14px; /* Consistent padding */
-    margin-bottom: 30px; /* Increased margin */
-    border: 1px solid var(--asa-admin-border-color);
-    border-radius: var(--asa-admin-border-radius);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
-    background-color: #fff;
-    color: var(--asa-admin-text-color);
-    font-size: 1.1em;
-}
+/* 7. Specific Component Redesigns
+-------------------------------------------------- */
+.asa-icon-picker-wrapper, .asa-image-url-wrapper { width: 100%; }
+.asa-icon-picker-wrapper label, .asa-image-url-wrapper label { margin-bottom: 10px; display: block; font-weight: 500; }
+.asa-separator { margin: 20px 0; border: 0; border-top: 1px solid #f0f0f0; }
+.asa-icon-input-group { display: flex; align-items: center; gap: 10px; }
+.asa-icon-input-group .regular-text { flex-grow: 1; }
+.asa-icon-input-group .button { height: 45px; flex-shrink: 0; }
+.asa-icon-preview { width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--asa-border); border-radius: var(--asa-radius); font-size: 24px; background: #f9f9f9; flex-shrink: 0; }
 
-.asa-icon-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); /* Larger grid items */
-    gap: 20px; /* Increased gap */
-    max-height: 70vh; /* Taller */
-    overflow-y: auto;
-    padding-right: 15px; /* For scrollbar */
-}
+.asa-position-selector { display: flex; gap: 20px; }
+.asa-position-selector input[type="radio"] { display: none; }
+.asa-position-card { border: 2px solid var(--asa-border); border-radius: var(--asa-radius); padding: 20px; cursor: pointer; text-align: center; transition: all 0.2s ease; }
+.asa-position-card:hover { border-color: var(--asa-text-light); transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.08); }
+.asa-position-selector input[type="radio"]:checked + .asa-position-card { border-color: var(--asa-primary); background-color: #f9f9f9; box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1); }
+.asa-position-preview { width: 100px; height: 60px; background-color: #e9ecef; border-radius: 5px; margin-bottom: 15px; position: relative; }
+.asa-position-preview::after { content: ''; position: absolute; bottom: 8px; width: 18px; height: 18px; background-color: var(--asa-primary); border-radius: 50%; }
+.asa-position-preview.left::after { left: 8px; }
+.asa-position-preview.right::after { right: 8px; }
+.asa-position-card span { font-weight: 600; color: var(--asa-text-dark); }
 
-.asa-icon-list i {
-    font-size: 36px; /* Larger icons */
-    padding: 25px; /* Increased padding */
-    text-align: center;
-    border: 1px solid #eee;
-    border-radius: var(--asa-admin-border-radius);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: #fdfdfd;
-    color: #555;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* Added subtle shadow */
-}
+/* 8. Submit Button & Feedback
+-------------------------------------------------- */
+#submit.button-primary { background: var(--asa-primary); border: none; padding: 12px 30px; height: auto; font-size: 1.1em; font-weight: 600; border-radius: var(--asa-radius); transition: all 0.25s ease; }
+#submit.button-primary:hover { background: var(--asa-primary-dark); transform: translateY(-2px); }
+#submit.button-primary.asa-saving, #submit.button-primary.asa-success, #submit.button-primary.asa-error { color: var(--asa-text-white); transform: translateY(0); }
+#submit.button-primary.asa-saving { background-color: #ffc107; }
+#submit.button-primary.asa-success { background-color: var(--asa-success); }
+#submit.button-primary.asa-error { background-color: var(--asa-error); }
 
-.asa-icon-list i:hover {
-    background-color: var(--asa-admin-primary-color);
-    color: #fff;
-    transform: translateY(-5px); /* More pronounced lift */
-    box-shadow: 0 6px 15px rgba(0,0,0,0.25); /* Stronger shadow on hover */
-}
-
-/* Position Radios */
-.form-table td fieldset label {
-    display: inline-flex; /* Use flexbox for alignment */
-    align-items: center;
-    margin-right: 20px; /* Space between options */
-    cursor: pointer;
-    padding: 8px 12px;
-    border: 1px solid var(--asa-admin-border-color);
-    border-radius: var(--asa-admin-border-radius);
-    transition: all 0.2s ease;
-    background-color: #f9f9f9;
-}
-
-.form-table td fieldset label:hover {
-    background-color: #f0f0f0;
-    border-color: var(--asa-admin-primary-color);
-}
-
-.form-table td fieldset label input[type="radio"] {
-    margin-right: 8px;
-    /* Hide default radio button */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    transition: all 0.2s ease;
-    position: relative;
-    top: 1px;
-}
-
-.form-table td fieldset label input[type="radio"]:checked {
-    background-color: var(--asa-admin-primary-color);
-    border-color: var(--asa-admin-primary-color);
-}
-
-.form-table td fieldset label input[type="radio"]:checked::before {
-    content: '';
-    display: block;
-    width: 8px;
-    height: 8px;
-    background-color: #fff;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* Hide inactive tabs */
-.asa-tab-content:not(.active) {
-    display: none;
-}
-
-.asa-footer-links {
-    margin-top: 30px;
-    text-align: center;
-    font-size: 0.95em;
-    color: #666;
-}
-
-.asa-footer-links a {
-    text-decoration: none;
-    color: var(--asa-admin-primary-color);
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
-
-.asa-footer-links a:hover {
-    color: var(--asa-admin-secondary-color);
-}
-
-.asa-buy-me-a-coffee {
-    display: inline-flex;
-    align-items: center;
-    background-color: #FFDD00; /* Buy Me a Coffee brand color */
-    color: #1a1a1a; /* Dark text for contrast */
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: 600;
-    margin-right: 15px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    transition: all 0.2s ease;
-}
-
-.asa-buy-me-a-coffee:hover {
-    background-color: #e6cb00;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transform: translateY(-1px);
-}
-
-.asa-buy-me-a-coffee i {
-    margin-right: 8px;
-    font-size: 1.1em;
-}
+/* 9. Icon Picker Modal
+-------------------------------------------------- */
+#asa-icon-picker-modal { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); }
+.asa-icon-picker-modal-content { border-radius: var(--asa-radius); }
+.asa-icon-list i:hover { background-color: var(--asa-primary); color: var(--asa-text-white); transform: scale(1.1); }

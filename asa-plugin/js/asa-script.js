@@ -1,5 +1,6 @@
 (function($){
     $(function(){
+        
         let chatbot = $('#asa-chatbot');
         let launcher = chatbot.find('.asa-launcher');
         let windowEl = chatbot.find('.asa-window');
@@ -11,8 +12,13 @@
         let welcomeEl = chatbot.find('.asa-proactive-message');
         let welcomeWrapper = chatbot.find('.asa-welcome-wrapper');
         let proactiveCloseBtn = chatbot.find('.asa-proactive-close');
+        let clearHistoryBtn = chatbot.find('.asa-clear-history');
         let history = JSON.parse(localStorage.getItem('asa_chat_history')) || []; // Load history from local storage
-        let currentPageContent = document.body.innerText; // Get all visible text from the page
+        
+        // Smarter content extraction and cleaning
+        let mainContent = document.querySelector('.entry-content') || document.querySelector('.post-content') || document.querySelector('article') || document.body;
+        let rawText = mainContent.innerText;
+        let currentPageContent = rawText.replace(/\s\s+/g, ' ').trim(); // Remove extra whitespace and trim
 
         // Render existing messages from history
         history.forEach(msg => {
@@ -22,17 +28,28 @@
         // Fetch proactive message asynchronously
         $.ajax({
             url: asaSettings.proactiveMessageAjaxUrl,
-            type: 'GET',
+            type: 'POST',
+            data: {
+                action: 'asa_generate_proactive_message',
+                security: asaSettings.nonce, // Add nonce for security
+                currentPageUrl: window.location.href, // Use live URL
+                currentPageTitle: document.title, // Use live title
+                currentPageContent: currentPageContent
+            },
             dataType: 'json',
             success: function(response) {
-                if (response.success) {
-                    welcomeEl.text(response.data);
-                } else {
-                    welcomeEl.text('Hello! How can I help you today?');
+                if (response.success && response.data) {
+                    // Add a random delay to simulate human behavior
+                    const delay = Math.floor(Math.random() * 2000) + 2000; // Delay between 2-4 seconds
+                    setTimeout(function() {
+                        welcomeEl.text(response.data);
+                        welcomeWrapper.addClass('active');
+                    }, delay);
                 }
+                // If not successful, do nothing. The bubble remains hidden.
             },
             error: function() {
-                welcomeEl.text('Hello! How can I help you today?');
+                // On error, do nothing. The bubble remains hidden.
             }
         });
 
@@ -60,6 +77,12 @@
             windowEl.slideUp(150, function(){
                 chatbot.removeClass('asa-open');
             });
+        });
+
+        clearHistoryBtn.on('click', function(){
+            history = [];
+            localStorage.removeItem('asa_chat_history');
+            messagesEl.empty();
         });
 
         sendBtn.on('click', function(){
@@ -140,9 +163,17 @@
             history.push({role: sender === 'user' ? 'user' : 'model', parts: [{text: text}]});
             localStorage.setItem('asa_chat_history', JSON.stringify(history)); // Save history to local storage
             let wrapper = $('<div>').addClass(sender);
-            $('<div>').addClass('bubble').text(text).appendTo(wrapper);
+            let bubble = $('<div>').addClass('bubble');
+            if (sender === 'bot' || sender === 'model') {
+                let converter = new showdown.Converter();
+                let html = converter.makeHtml(text);
+                bubble.html(html);
+            } else {
+                bubble.text(text);
+            }
+            bubble.appendTo(wrapper);
             messagesEl.append(wrapper);
             messagesEl.scrollTop(messagesEl.prop('scrollHeight'));
         }
     });
-})(jQuery));
+})(jQuery);

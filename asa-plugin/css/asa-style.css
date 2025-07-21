@@ -96,48 +96,33 @@
     transform: translateX(50%) translateY(-8px); /* More pronounced lift on appearance */
 }
 
+#asa-chatbot.asa-position-right .asa-welcome-wrapper {
+    right: 0;
+    transform: translateX(0);
+}
+
+#asa-chatbot.asa-position-right .asa-welcome-wrapper.active {
+    transform: translateX(0) translateY(-8px);
+}
+
+#asa-chatbot.asa-position-right .asa-welcome-wrapper::after {
+    left: auto;
+    right: 25px; /* Position arrow near the launcher */
+    transform: translateX(0);
+}
+
 #asa-chatbot.asa-position-left .asa-welcome-wrapper {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
+    left: 0;
+    transform: translateX(0);
 }
 
 #asa-chatbot.asa-position-left .asa-welcome-wrapper.active {
-    transform: translateX(-50%) translateY(-8px);
-}
-
-/* Proactive Message Close Button */
-#asa-chatbot .asa-proactive-close {
-    background: none;
-    border: none;
-    color: var(--asa-text-dark);
-    font-size: 20px; /* Slightly larger close button */
-    cursor: pointer;
-    padding: 0 5px;
-    line-height: 1;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-}
-
-#asa-chatbot .asa-proactive-close:hover {
-    opacity: 1;
-}
-
-/* Arrow for the proactive message bubble */
-#asa-chatbot .asa-welcome-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 10px; /* Larger arrow */
-    border-style: solid;
-    border-color: var(--asa-bg-light) transparent transparent transparent;
+    transform: translateX(0) translateY(-8px);
 }
 
 #asa-chatbot.asa-position-left .asa-welcome-wrapper::after {
-    left: 50%;
-    transform: translateX(-50%);
+    left: 25px; /* Position arrow near the launcher */
+    transform: translateX(0);
 }
 
 #asa-chatbot .asa-avatar {
@@ -163,47 +148,88 @@
 
 #asa-chatbot .asa-window {
     width: 370px;
-    height: 500px; /* Increased height for better chat experience */
+    height: 500px;
     background: var(--asa-bg-light);
     border-radius: 16px;
-    box-shadow: var(--asa-shadow);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     opacity: 0;
-    transform: scale(0.8) translateY(20px); /* Initial state for animation */
-    transform-origin: bottom right; /* Origin for scaling */
-    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Spring-like animation */
-    pointer-events: none; /* Prevent interaction when hidden */
+    transform: translateY(10px);
+    transform-origin: bottom right;
+    transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+    pointer-events: none;
     z-index: 10000;
 }
 
 #asa-chatbot.asa-open .asa-window {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: translateY(0);
     pointer-events: auto;
 }
 
 #asa-chatbot.asa-open .asa-launcher {
-    transform: scale(0);
+    transform: scale(0.8);
     opacity: 0;
 }
 
 #asa-chatbot .asa-header {
-    background: var(--asa-color, var(--asa-primary-color));
+    background: linear-gradient(to right, var(--asa-color, var(--asa-primary-color)), color-mix(in srgb, var(--asa-color, var(--asa-primary-color)) 85%, black));
     color: var(--asa-text-light);
     padding: 16px;
     display: flex;
     align-items: center;
     gap: 12px;
     position: relative;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 #asa-chatbot .asa-header .asa-avatar {
     width: 40px;
     height: 40px;
     border: 2px solid rgba(255,255,255,0.3);
+}
+
+/* Proactive Message Close Button */
+#asa-chatbot .asa-proactive-close {
+    background: rgba(0,0,0,0.1);
+    border: none;
+    color: var(--asa-text-dark);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+#asa-chatbot .asa-proactive-close:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.2);
+    transform: scale(1.1);
+}
+
+#asa-chatbot .asa-clear-history {
+    background: none;
+    border: none;
+    color: var(--asa-text-light);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+    opacity: 0.8;
+}
+
+#asa-chatbot .asa-clear-history:hover {
+    background: rgba(255, 255, 255, 0.2);
+    opacity: 1;
 }
 
 #asa-chatbot .asa-header-text {
@@ -269,35 +295,49 @@
 
 #asa-chatbot .asa-messages .bubble {
     padding: 12px 18px;
-    border-radius: 22px;
+    border-radius: 18px; /* Squircle shape */
     max-width: 80%;
     line-height: 1.5;
     word-wrap: break-word;
     position: relative;
     font-size: 0.95em;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Subtle shadow for all bubbles */
-    word-break: break-word; /* Ensure long words break */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* Softer shadow */
+    word-break: break-word;
 }
 
 #asa-chatbot .asa-messages .user .bubble {
     background: var(--asa-color, var(--asa-primary-color));
     color: var(--asa-text-light);
-    border-bottom-right-radius: 8px; /* More rounded */
-    border-top-right-radius: 22px; /* Keep one side fully rounded */
-    border-bottom-left-radius: 22px;
-    border-top-left-radius: 22px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border-bottom-right-radius: 6px; /* Pointed corner */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
 }
 
 #asa-chatbot .asa-messages .bot .bubble {
     background: var(--asa-bg-light);
     color: var(--asa-text-dark);
     border: 1px solid var(--asa-border-color);
-    border-bottom-left-radius: 8px; /* More rounded */
-    border-top-left-radius: 22px; /* Keep one side fully rounded */
-    border-bottom-right-radius: 22px;
-    border-top-right-radius: 22px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-bottom-left-radius: 6px; /* Pointed corner */
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+/* Custom Scrollbar */
+#asa-chatbot .asa-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+#asa-chatbot .asa-messages::-webkit-scrollbar-track {
+    background: var(--asa-bg-medium);
+    border-radius: 10px;
+}
+
+#asa-chatbot .asa-messages::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 10px;
+    border: 2px solid var(--asa-bg-medium);
+}
+
+#asa-chatbot .asa-messages::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
 }
 
 #asa-chatbot .asa-typing {
@@ -327,45 +367,48 @@
 }
 
 #asa-chatbot .asa-input {
-    padding: 15px;
+    padding: 12px;
     border-top: 1px solid var(--asa-border-color);
-    display: flex;
-    gap: 10px;
     background: var(--asa-bg-light);
-    position: relative; /* Added for positioning clear button */
+}
+
+#asa-chatbot .asa-input-wrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--asa-bg-medium);
+    border-radius: 25px;
+    padding: 5px;
+    border: 1px solid var(--asa-border-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#asa-chatbot .asa-input-wrapper:focus-within {
+    border-color: var(--asa-color, var(--asa-primary-color));
+    box-shadow: 0 0 0 3px rgba(var(--asa-primary-color-rgb), 0.2);
 }
 
 #asa-chatbot .asa-input input {
     flex: 1;
-    padding: 12px 40px 12px 12px; /* Increased right padding for clear button */
-    border: 1px solid var(--asa-border-color);
-    border-radius: 25px;
+    border: none;
+    background: transparent;
+    padding: 10px;
     font-size: 1rem;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
 }
 
 #asa-chatbot .asa-input .asa-clear-input {
-    position: absolute;
-    right: 65px; /* Position relative to the send button */
-    top: 50%;
-    transform: translateY(-50%);
     background: none;
     border: none;
-    color: #ccc; /* Light color when not hovered */
+    color: #ccc;
     font-size: 1.1rem;
     cursor: pointer;
     transition: color 0.2s ease;
     padding: 5px;
+    margin-right: 5px;
 }
 
 #asa-chatbot .asa-input .asa-clear-input:hover {
-    color: #888; /* Darker on hover */
-}
-
-#asa-chatbot .asa-input input:focus {
-    outline: none;
-    border-color: var(--asa-color, var(--asa-primary-color));
-    box-shadow: 0 0 0 3px rgba(var(--asa-primary-color-rgb), 0.2);
+    color: #888;
 }
 
 #asa-chatbot .asa-input button {
@@ -373,14 +416,15 @@
     color: var(--asa-text-light);
     border: none;
     cursor: pointer;
-    border-radius: 25px;
+    border-radius: 50%;
     font-size: 1.1rem;
-    width: 45px; /* Make it a circle */
-    height: 45px;
+    width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
 }
 
 #asa-chatbot .asa-input button:hover {
@@ -400,6 +444,10 @@
     background: var(--asa-bg-medium);
     color: #6c757d;
     border-top: 1px solid var(--asa-border-color);
+    display: flex; /* Add flexbox */
+    align-items: center; /* Vertically align items */
+    justify-content: center; /* Horizontally center items */
+    gap: 5px; /* Add a small gap */
 }
 
 #asa-chatbot .asa-credit a {
@@ -407,6 +455,43 @@
     text-decoration: none;
     font-weight: 500;
 }
+
+/* AI Name Reveal Animation */
+.ai-name-reveal {
+    position: relative;
+    display: inline-block;
+    width: 20px; /* Initial width for "AI" */
+    transition: width 0.35s ease-in-out;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle; /* Aligns the text properly */
+}
+
+.ai-name-reveal .short-name,
+.ai-name-reveal .full-name {
+    display: inline-block;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.ai-name-reveal .full-name {
+    position: absolute;
+    left: 0;
+    opacity: 0;
+}
+
+.ai-name-reveal:hover {
+    width: 80px; /* Width to fit "Adem Isler" */
+}
+
+.ai-name-reveal:hover .short-name {
+    opacity: 0;
+}
+
+.ai-name-reveal:hover .full-name {
+    opacity: 1;
+    transition-delay: 0.1s; /* Delay the appearance of the full name */
+}
+
 
 /* Responsive Design */
 @media (max-width: 480px) {

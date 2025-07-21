@@ -1,34 +1,36 @@
 jQuery(document).ready(function($){
-    // Tabs
+    // Set initial tab state on page load
+    $('.asa-tab-content').hide();
+    $('.asa-tab-content.active').show();
+
+    // Tabs click handler
     $('.asa-tabs a').on('click', function(e){
         e.preventDefault();
         var target = $(this).attr('href');
+        
+        // Update active class on tabs
         $('.asa-tabs a').removeClass('nav-tab-active');
         $(this).addClass('nav-tab-active');
-        $('.asa-tab-content').removeClass('active').hide();
-        $(target).addClass('active').show();
+        
+        // Show/hide tab content
+        $('.asa-tab-content').hide();
+        $(target).show();
     });
 
     // Color Picker
     if (typeof wp !== 'undefined' && wp.colorPicker){
-        $('.asa-color-field').wpColorPicker({
-            change: function(event, ui) {
-                // Update live preview color
-                $('#asa-chatbot').css('--asa-color', ui.color.toString());
-            }
-        });
+        $('.asa-color-field').wpColorPicker();
     }
 
     // Save Settings Feedback
     $('form').on('submit', function(e){
+        e.preventDefault();
         const submitButton = $('#submit');
         const originalText = submitButton.val();
-        submitButton.val('Kaydediliyor...');
-        submitButton.prop('disabled', true);
-        submitButton.css({'background-color': '#ffc107', 'border-color': '#ffc107'}); // Indicate saving
+        
+        submitButton.val('Saving...');
+        submitButton.prop('disabled', true).addClass('asa-saving');
 
-        // Using AJAX for better feedback
-        e.preventDefault(); // Prevent default form submission
         const formData = new FormData(this);
         formData.append('action', 'asa_save_settings');
         formData.append('security', asaAdminSettings.nonce);
@@ -41,28 +43,26 @@ jQuery(document).ready(function($){
             contentType: false,
             success: function(response) {
                 if(response.success) {
-                    submitButton.val('Kaydedildi!');
-                    submitButton.css({'background-color': 'var(--asa-admin-success-color)', 'border-color': 'var(--asa-admin-success-color)'});
+                    submitButton.val('Saved!');
+                    submitButton.removeClass('asa-saving').addClass('asa-success');
                 } else {
-                    submitButton.val('Hata!');
-                    submitButton.css({'background-color': 'var(--asa-admin-error-color)', 'border-color': 'var(--asa-admin-error-color)'});
+                    submitButton.val('Error!');
+                    submitButton.removeClass('asa-saving').addClass('asa-error');
                     console.error('Error saving settings:', response.data);
                 }
                 setTimeout(function(){
                     submitButton.val(originalText);
-                    submitButton.prop('disabled', false);
-                    submitButton.css({'background-color': '', 'border-color': ''}); // Revert to original style
-                }, 2000); // Show "Kaydedildi!" or "Hata!" for 2 seconds
+                    submitButton.prop('disabled', false).removeClass('asa-success asa-error');
+                }, 2000);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                submitButton.val('Hata!');
-                submitButton.css({'background-color': 'var(--asa-admin-error-color)', 'border-color': 'var(--asa-admin-error-color)'});
+                submitButton.val('Error!');
+                submitButton.removeClass('asa-saving').addClass('asa-error');
                 console.error('AJAX Error:', textStatus, errorThrown, jqXHR.responseText);
                 setTimeout(function(){
                     submitButton.val(originalText);
-                    submitButton.prop('disabled', false);
-                    submitButton.css({'background-color': '', 'border-color': ''}); // Revert to original style
-                }, 2000); // Show "Hata!" for 2 seconds
+                    submitButton.prop('disabled', false).removeClass('asa-success asa-error');
+                }, 2000);
             }
         });
     });
@@ -80,15 +80,8 @@ jQuery(document).ready(function($){
         }
     });
 
-    $('.asa-icon-picker-close').on('click', function(){
-        modal.hide();
-    });
-
-    $(window).on('click', function(e){
-        if ($(e.target).is(modal)) {
-            modal.hide();
-        }
-    });
+    $('.asa-icon-picker-close').on('click', function(){ modal.hide(); });
+    $(window).on('click', function(e){ if ($(e.target).is(modal)) { modal.hide(); } });
 
     searchInput.on('keyup', function(){
         const searchTerm = $(this).val().toLowerCase();
@@ -115,65 +108,5 @@ jQuery(document).ready(function($){
         $('#asa_avatar_icon').val(selectedIcon);
         $('.asa-icon-preview i').attr('class', selectedIcon);
         modal.hide();
-        // Update live preview avatar
-        $('#asa-chatbot .asa-launcher i').attr('class', selectedIcon + ' asa-avatar');
-        $('#asa-chatbot .asa-header i').attr('class', selectedIcon + ' asa-avatar');
-        $('#asa-chatbot .asa-launcher img').remove(); // Remove image if icon is selected
-        $('#asa-chatbot .asa-header img').remove();
     });
-
-    // Tooltip Logic
-    $('.asa-tooltip-icon').on({
-        mouseenter: function(){
-            const tooltipText = $(this).data('tooltip');
-            const tooltip = $('<div class="asa-tooltip-content"></div>').text(tooltipText);
-            $(this).append(tooltip);
-        },
-        mouseleave: function(){
-            $(this).find('.asa-tooltip-content').remove();
-        }
-    });
-
-    // Live Preview Updates
-    $('input[name="asa_title"]').on('keyup', function(){
-        $('#asa-chatbot .asa-title').text($(this).val());
-    });
-
-    $('input[name="asa_subtitle"]').on('keyup', function(){
-        $('#asa-chatbot .asa-subtitle').text($(this).val());
-    });
-
-    $('input[name="asa_avatar_image_url"]').on('keyup', function(){
-        const imageUrl = $(this).val();
-        if (imageUrl) {
-            $('#asa-chatbot .asa-launcher').html('<img src="' + imageUrl + '" class="asa-avatar" />');
-            $('#asa-chatbot .asa-header').find('.asa-avatar').remove(); // Remove existing icon/image
-            $('#asa-chatbot .asa-header').prepend('<img src="' + imageUrl + '" class="asa-avatar" />');
-        } else {
-            // If image URL is cleared, revert to icon
-            const currentIcon = $('#asa_avatar_icon').val();
-            $('#asa-chatbot .asa-launcher').html('<i class="' + currentIcon + ' asa-avatar"></i>');
-            $('#asa-chatbot .asa-header').find('.asa-avatar').remove();
-            $('#asa-chatbot .asa-header').prepend('<i class="' + currentIcon + ' asa-avatar"></i>');
-        }
-    });
-
-    $('input[name="asa_position"]').on('change', function(){
-        $('#asa-chatbot').removeClass('asa-position-left asa-position-right').addClass('asa-position-' + $(this).val());
-    });
-
-    $('input[name="asa_show_credit"]').on('change', function(){
-        if ($(this).is(':checked')) {
-            $('#asa-chatbot .asa-credit').show();
-        } else {
-            $('#asa-chatbot .asa-credit').hide();
-        }
-    });
-
-    // Initial live preview update on load
-    $('input[name="asa_title"]').trigger('keyup');
-    $('input[name="asa_subtitle"]').trigger('keyup');
-    $('input[name="asa_avatar_image_url"]').trigger('keyup');
-    $('input[name="asa_position"]').trigger('change');
-    $('input[name="asa_show_credit"]').trigger('change');
 });
