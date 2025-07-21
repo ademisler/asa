@@ -144,7 +144,7 @@ class ASAAISalesAgent {
         ?>
         <div class="wrap">
             <div class="asa-page-header">
-                <h1><?php esc_html_e('ASA ', 'asa'); ?><span class="asa-ai-highlight"><?php esc_html_e('AI', 'asa'); ?></span><?php esc_html_e(' Sales Agent', 'asa'); ?></h1>
+                <h1><?php esc_html_e('ASA ', 'asa'); ?><span class="asa-ai-highlight"><?php esc_html_e('Ai', 'asa'); ?></span><?php esc_html_e(' Sales Agent', 'asa'); ?></h1>
                 <div class="asa-header-links">
                     <div class="asa-support-wrapper">
                         <a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-bmac-button">
