@@ -134,7 +134,6 @@ class ASAAISalesAgent {
                             <td>
                                 <input type="text" name="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text" />
                                 <p class="description"><a href="https://aistudio.google.com/app/apikey" target="_blank">AI Studio'dan anahtar alın</a></p>
-                                <p><a href="https://buymeacoffee.com/ademisler" target="_blank">Buy Me a Coffee</a> | <a href="https://ademisler.com/iletisim" target="_blank">Contact Us</a></p>
                             </td>
                         </tr>
                     </table>
@@ -200,8 +199,9 @@ class ASAAISalesAgent {
 
                 <?php submit_button(); ?>
             </form>
-            <h2>Canlı Önizleme</h2>
-            <?php echo do_shortcode('[asa_chatbot]'); ?>
+            <div class="asa-footer-links">
+                <p><a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-buy-me-a-coffee"><i class="fas fa-coffee"></i> Buy Me a Coffee</a> | <a href="https://ademisler.com/iletisim" target="_blank">Contact Us</a></p>
+            </div>
         </div>
         <div id="asa-icon-picker-modal">
             <div class="asa-icon-picker-modal-content">
@@ -317,13 +317,24 @@ class ASAAISalesAgent {
 
     private function generate_proactive_message() {
         $api_key = get_option('asa_api_key');
-        
+
         if (defined('WP_DEBUG') && WP_DEBUG) {
             error_log('ASA Proactive Message Debug: API Key - ' . ($api_key ? 'Set' : 'Not Set'));
         }
 
         if (!$api_key) {
             return __('Hello! How can I help you today?', 'asa');
+        }
+
+        // Try to get from cache
+        $cache_key = 'asa_proactive_message_' . md5(get_the_ID() . get_option('asa_system_prompt')); // Cache per page and system prompt
+        $cached_message = get_transient($cache_key);
+
+        if ($cached_message) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('ASA Proactive Message Debug: Message from cache.');
+            }
+            return $cached_message;
         }
 
         $system_prompt = get_option('asa_system_prompt', 'You are a helpful sales agent.');
@@ -334,6 +345,9 @@ class ASAAISalesAgent {
             error_log('ASA Proactive Message Debug: Page Content (first 500 chars) - ' . substr($page_content, 0, 500));
         }
 
+        // Add instruction for conciseness
+        $prompt_instruction = "Generate a very concise and short proactive message (max 2-3 sentences) based on the following page content and your role. Do not ask questions unless explicitly part of your system prompt.";
+
         $payload = json_encode([
             'contents' => [
                 [
@@ -342,7 +356,7 @@ class ASAAISalesAgent {
                 ]
             ],
             'system_instruction' => [
-                'parts' => [ ['text' => $system_prompt] ]
+                'parts' => [ ['text' => $system_prompt . "\n\n" . $prompt_instruction] ]
             ]
         ]);
 
@@ -383,6 +397,8 @@ class ASAAISalesAgent {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 error_log('ASA Proactive Message Debug: Generated Message - ' . $proactive_message);
             }
+            // Cache the generated message for 1 hour (3600 seconds)
+            set_transient($cache_key, $proactive_message, HOUR_IN_SECONDS);
             return $proactive_message;
         }
 

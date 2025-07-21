@@ -163,9 +163,11 @@ textarea:focus {
 /* Color Picker */
 .wp-picker-container .wp-color-result {
     height: 40px; /* Increased height */
-    border-radius: var(--asa-admin-border-radius);
+    border-radius: var(--asa-admin-border-radius); /* Use defined border-radius */
     box-shadow: var(--asa-admin-shadow);
     border: 1px solid var(--asa-admin-border-color);
+    background-color: #fff; /* Ensure white background */
+    transition: all 0.2s ease; /* Smooth transitions */
 }
 
 .wp-picker-container .wp-color-result:focus {
@@ -173,55 +175,59 @@ textarea:focus {
     box-shadow: 0 0 0 1px var(--asa-admin-primary-color), 0 0 0 4px rgba(0, 115, 170, 0.2); /* Added focus ring */
 }
 
+.wp-picker-container .wp-picker-open.wp-color-result {
+    box-shadow: 0 0 0 1px var(--asa-admin-primary-color), 0 0 0 4px rgba(0, 115, 170, 0.2); /* Add focus style when open */
+}
+
 /* Avatar/Icon Section */
 .asa-icon-picker-wrapper,
 .asa-image-url-wrapper {
-    margin-bottom: 25px; /* Increased margin */
-    padding: 25px; /* Increased padding */
+    margin-bottom: 20px; /* Slightly reduced margin */
+    padding: 20px; /* Slightly reduced padding */
     border: 1px solid #eee;
     border-radius: var(--asa-admin-border-radius);
     background: #fdfdfd;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Lighter shadow */
 }
 
 .asa-icon-picker-wrapper label,
 .asa-image-url-wrapper label {
     font-weight: 600;
-    margin-bottom: 15px; /* Increased margin */
+    margin-bottom: 10px; /* Slightly reduced margin */
     display: block;
-    font-size: 1.1em;
+    font-size: 1em; /* Slightly smaller font */
     color: var(--asa-admin-text-color);
 }
 
 .asa-icon-picker-wrapper input[type="text"] {
-    max-width: 300px; /* Adjusted max-width */
+    max-width: 250px; /* Adjusted max-width */
     display: inline-block;
-    margin-right: 20px; /* Increased margin */
+    margin-right: 15px; /* Adjusted margin */
 }
 
 .asa-icon-preview {
-    font-size: 40px; /* Increased size */
-    padding: 10px;
+    font-size: 36px; /* Adjusted size */
+    padding: 8px;
     border: 1px solid var(--asa-admin-border-color);
     border-radius: var(--asa-admin-border-radius);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 65px; /* Increased size */
-    height: 65px; /* Increased size */
+    width: 55px; /* Adjusted size */
+    height: 55px; /* Adjusted size */
     vertical-align: middle;
     background: #fff;
     box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
 }
 
 .asa-image-url-wrapper input[type="text"] {
-    max-width: 450px; /* Adjusted max-width */
+    max-width: 400px; /* Adjusted max-width */
 }
 
 hr {
     border: none;
     border-top: 1px solid #eee;
-    margin: 30px 0; /* Increased margin */
+    margin: 25px 0; /* Adjusted margin */
 }
 
 /* Tooltip Styles */
@@ -382,16 +388,100 @@ hr {
     box-shadow: 0 6px 15px rgba(0,0,0,0.25); /* Stronger shadow on hover */
 }
 
-/* Live Preview */
-.wrap h2:last-of-type {
-    margin-top: 40px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    color: var(--asa-admin-text-color);
+/* Position Radios */
+.form-table td fieldset label {
+    display: inline-flex; /* Use flexbox for alignment */
+    align-items: center;
+    margin-right: 20px; /* Space between options */
+    cursor: pointer;
+    padding: 8px 12px;
+    border: 1px solid var(--asa-admin-border-color);
+    border-radius: var(--asa-admin-border-radius);
+    transition: all 0.2s ease;
+    background-color: #f9f9f9;
+}
+
+.form-table td fieldset label:hover {
+    background-color: #f0f0f0;
+    border-color: var(--asa-admin-primary-color);
+}
+
+.form-table td fieldset label input[type="radio"] {
+    margin-right: 8px;
+    /* Hide default radio button */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border: 2px solid #ccc;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    transition: all 0.2s ease;
+    position: relative;
+    top: 1px;
+}
+
+.form-table td fieldset label input[type="radio"]:checked {
+    background-color: var(--asa-admin-primary-color);
+    border-color: var(--asa-admin-primary-color);
+}
+
+.form-table td fieldset label input[type="radio"]:checked::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 /* Hide inactive tabs */
 .asa-tab-content:not(.active) {
     display: none;
+}
+
+.asa-footer-links {
+    margin-top: 30px;
+    text-align: center;
+    font-size: 0.95em;
+    color: #666;
+}
+
+.asa-footer-links a {
+    text-decoration: none;
+    color: var(--asa-admin-primary-color);
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.asa-footer-links a:hover {
+    color: var(--asa-admin-secondary-color);
+}
+
+.asa-buy-me-a-coffee {
+    display: inline-flex;
+    align-items: center;
+    background-color: #FFDD00; /* Buy Me a Coffee brand color */
+    color: #1a1a1a; /* Dark text for contrast */
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: 600;
+    margin-right: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+}
+
+.asa-buy-me-a-coffee:hover {
+    background-color: #e6cb00;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transform: translateY(-1px);
+}
+
+.asa-buy-me-a-coffee i {
+    margin-right: 8px;
+    font-size: 1.1em;
 }
