@@ -25,6 +25,7 @@ jQuery(document).ready(function($){
         const originalText = submitButton.val();
         submitButton.val('Kaydediliyor...');
         submitButton.prop('disabled', true);
+        submitButton.css({'background-color': '#ffc107', 'border-color': '#ffc107'}); // Indicate saving
 
         // Using AJAX for better feedback
         e.preventDefault(); // Prevent default form submission
@@ -41,21 +42,26 @@ jQuery(document).ready(function($){
             success: function(response) {
                 if(response.success) {
                     submitButton.val('Kaydedildi!');
+                    submitButton.css({'background-color': 'var(--asa-admin-success-color)', 'border-color': 'var(--asa-admin-success-color)'});
                 } else {
                     submitButton.val('Hata!');
+                    submitButton.css({'background-color': 'var(--asa-admin-error-color)', 'border-color': 'var(--asa-admin-error-color)'});
                     console.error('Error saving settings:', response.data);
                 }
                 setTimeout(function(){
                     submitButton.val(originalText);
                     submitButton.prop('disabled', false);
-                }, 2000); // Show "Kaydedildi!" for 2 seconds
+                    submitButton.css({'background-color': '', 'border-color': ''}); // Revert to original style
+                }, 2000); // Show "Kaydedildi!" or "Hata!" for 2 seconds
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 submitButton.val('Hata!');
+                submitButton.css({'background-color': 'var(--asa-admin-error-color)', 'border-color': 'var(--asa-admin-error-color)'});
                 console.error('AJAX Error:', textStatus, errorThrown, jqXHR.responseText);
                 setTimeout(function(){
                     submitButton.val(originalText);
                     submitButton.prop('disabled', false);
+                    submitButton.css({'background-color': '', 'border-color': ''}); // Revert to original style
                 }, 2000); // Show "Hata!" for 2 seconds
             }
         });

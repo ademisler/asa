@@ -51,6 +51,8 @@ class ASAAISalesAgent {
             'proactiveMessage' => $this->generate_proactive_message(),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('asa_chat_nonce'),
+            'currentPageUrl' => get_permalink(),
+            'currentPageTitle' => get_the_title(),
         ]);
     }
 
@@ -226,7 +228,7 @@ class ASAAISalesAgent {
             <div class="asa-launcher">
                 <?php echo $avatar_html; ?>
             </div>
-            <div class="asa-welcome-wrapper"><span class="asa-welcome asa-proactive-message active"></span><button class="asa-proactive-close">&times;</button></div>
+            <div class="asa-welcome-wrapper active"><span class="asa-welcome asa-proactive-message"></span><button class="asa-proactive-close">&times;</button></div>
             <div class="asa-window" style="display:none;">
                 <div class="asa-header">
                     <?php echo $avatar_html; ?>
@@ -240,6 +242,7 @@ class ASAAISalesAgent {
                 <div class="asa-typing" style="display:none;"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
                 <div class="asa-input">
                     <input type="text" class="asa-text" placeholder="Type your message" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> />
+                    <button class="asa-clear-input" style="display:none;"><i class="fas fa-times-circle"></i></button>
                     <button class="asa-send" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?>><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <?php if (get_option('asa_show_credit', 'yes') === 'yes'): ?>
@@ -257,12 +260,30 @@ class ASAAISalesAgent {
         $api_key = get_option('asa_api_key');
         $message = sanitize_text_field($_POST['message'] ?? '');
         $history = json_decode(stripslashes($_POST['history'] ?? '[]'), true);
+        $currentPageUrl = esc_url_raw($_POST['currentPageUrl'] ?? '');
+        $currentPageTitle = sanitize_text_field($_POST['currentPageTitle'] ?? '');
+        $currentPageContent = sanitize_textarea_field($_POST['currentPageContent'] ?? '');
 
         if (!$api_key || empty($message)) {
             wp_send_json_error('Invalid request');
         }
 
         $system_prompt = get_option('asa_system_prompt', 'You are a helpful sales agent.');
+        
+        // Add page context to the system instruction
+        if (!empty($currentPageUrl)) {
+            $system_prompt .= "\n\nCurrent Page URL: " . $currentPageUrl;
+        }
+        if (!empty($currentPageTitle)) {
+            $system_prompt .= "\nCurrent Page Title: " . $currentPageTitle;
+        }
+        // Add page content to the system instruction, truncating if too long
+        if (!empty($currentPageContent)) {
+            // Limit content to avoid exceeding token limits, adjust as needed
+            $currentPageContent = substr($currentPageContent, 0, 4000); 
+            $system_prompt .= "\n\nCurrent Page Content: " . $currentPageContent;
+        }
+
         $contents = $history;
         $contents[] = ['role' => 'user', 'parts' => [['text' => $message]]];
 
@@ -355,6 +376,10 @@ class ASAAISalesAgent {
 
         if (!empty($data['candidates'][0]['content']['parts'][0]['text'])) {
             $proactive_message = $data['candidates'][0]['content']['parts'][0]['text'];
+            // Ensure the text is properly UTF-8 encoded
+            if (!mb_check_encoding($proactive_message, 'UTF-8')) {
+                $proactive_message = mb_convert_encoding($proactive_message, 'UTF-8', mb_detect_encoding($proactive_message, 'UTF-8, ISO-8859-1', true));
+            }
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 error_log('ASA Proactive Message Debug: Generated Message - ' . $proactive_message);
             }

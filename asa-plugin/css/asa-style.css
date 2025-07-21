@@ -42,9 +42,10 @@
     justify-content: center;
     cursor: pointer;
     box-shadow: var(--asa-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; /* Added opacity transition */
+    transition: all 0.3s ease-in-out; /* More general transition */
     position: relative; /* Added for positioning the proactive message */
     animation: asa-pulse 2s infinite; /* Added pulse animation */
+    z-index: 10001; /* Ensure it's above the window when closed */
 }
 
 @keyframes asa-pulse {
@@ -75,11 +76,11 @@
     transform: translateX(50%);
     background-color: var(--asa-bg-light);
     color: var(--asa-text-dark);
-    padding: 10px 15px;
-    border-radius: 8px;
+    padding: 12px 18px; /* Increased padding */
+    border-radius: 10px; /* Slightly larger radius */
     box-shadow: var(--asa-shadow);
     white-space: nowrap;
-    font-size: 0.9em;
+    font-size: 0.95em; /* Slightly larger font */
     pointer-events: auto; /* Allow clicks on the wrapper */
     display: flex;
     align-items: center;
@@ -92,7 +93,7 @@
 #asa-chatbot .asa-welcome-wrapper.active {
     opacity: 1;
     visibility: visible;
-    transform: translateX(50%) translateY(-5px); /* Slight lift on appearance */
+    transform: translateX(50%) translateY(-8px); /* More pronounced lift on appearance */
 }
 
 #asa-chatbot.asa-position-left .asa-welcome-wrapper {
@@ -102,7 +103,7 @@
 }
 
 #asa-chatbot.asa-position-left .asa-welcome-wrapper.active {
-    transform: translateX(-50%) translateY(-5px);
+    transform: translateX(-50%) translateY(-8px);
 }
 
 /* Proactive Message Close Button */
@@ -110,11 +111,11 @@
     background: none;
     border: none;
     color: var(--asa-text-dark);
-    font-size: 18px;
+    font-size: 20px; /* Slightly larger close button */
     cursor: pointer;
     padding: 0 5px;
     line-height: 1;
-    opacity: 0.7;
+    opacity: 0.8;
     transition: opacity 0.2s ease;
 }
 
@@ -129,7 +130,7 @@
     top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    border-width: 8px;
+    border-width: 10px; /* Larger arrow */
     border-style: solid;
     border-color: var(--asa-bg-light) transparent transparent transparent;
 }
@@ -144,14 +145,20 @@
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
+    display: flex; /* Ensure flex properties apply to img as well */
+    align-items: center;
+    justify-content: center;
 }
 
 #asa-chatbot .asa-avatar.fa-solid,
 #asa-chatbot .asa-avatar.fas,
 #asa-chatbot .asa-avatar.fa {
     font-size: 28px;
-    line-height: 1;
+    /* line-height: 1; */ /* Removed as flexbox handles vertical alignment */
     color: var(--asa-text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #asa-chatbot .asa-window {
@@ -164,14 +171,16 @@
     flex-direction: column;
     overflow: hidden;
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: scale(0.8) translateY(20px); /* Initial state for animation */
+    transform-origin: bottom right; /* Origin for scaling */
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Spring-like animation */
     pointer-events: none; /* Prevent interaction when hidden */
+    z-index: 10000;
 }
 
 #asa-chatbot.asa-open .asa-window {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
     pointer-events: auto;
 }
 
@@ -266,12 +275,17 @@
     word-wrap: break-word;
     position: relative;
     font-size: 0.95em;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Subtle shadow for all bubbles */
+    word-break: break-word; /* Ensure long words break */
 }
 
 #asa-chatbot .asa-messages .user .bubble {
     background: var(--asa-color, var(--asa-primary-color));
     color: var(--asa-text-light);
-    border-bottom-right-radius: 5px;
+    border-bottom-right-radius: 8px; /* More rounded */
+    border-top-right-radius: 22px; /* Keep one side fully rounded */
+    border-bottom-left-radius: 22px;
+    border-top-left-radius: 22px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
@@ -279,7 +293,10 @@
     background: var(--asa-bg-light);
     color: var(--asa-text-dark);
     border: 1px solid var(--asa-border-color);
-    border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 8px; /* More rounded */
+    border-top-left-radius: 22px; /* Keep one side fully rounded */
+    border-bottom-right-radius: 22px;
+    border-top-right-radius: 22px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
@@ -315,15 +332,34 @@
     display: flex;
     gap: 10px;
     background: var(--asa-bg-light);
+    position: relative; /* Added for positioning clear button */
 }
 
 #asa-chatbot .asa-input input {
     flex: 1;
-    padding: 12px;
+    padding: 12px 40px 12px 12px; /* Increased right padding for clear button */
     border: 1px solid var(--asa-border-color);
     border-radius: 25px;
     font-size: 1rem;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#asa-chatbot .asa-input .asa-clear-input {
+    position: absolute;
+    right: 65px; /* Position relative to the send button */
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #ccc; /* Light color when not hovered */
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 5px;
+}
+
+#asa-chatbot .asa-input .asa-clear-input:hover {
+    color: #888; /* Darker on hover */
 }
 
 #asa-chatbot .asa-input input:focus {

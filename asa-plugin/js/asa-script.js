@@ -7,10 +7,12 @@
         let typingEl = chatbot.find('.asa-typing');
         let inputEl = chatbot.find('.asa-text');
         let sendBtn = chatbot.find('.asa-send');
+        let clearBtn = chatbot.find('.asa-clear-input');
         let welcomeEl = chatbot.find('.asa-proactive-message');
         let welcomeWrapper = chatbot.find('.asa-welcome-wrapper');
         let proactiveCloseBtn = chatbot.find('.asa-proactive-close');
         let history = JSON.parse(localStorage.getItem('asa_chat_history')) || []; // Load history from local storage
+        let currentPageContent = document.body.innerText; // Get all visible text from the page
 
         // Render existing messages from history
         history.forEach(msg => {
@@ -61,12 +63,30 @@
             sendBtn.prop('disabled', true);
         }
 
+        // Toggle clear button visibility
+        inputEl.on('keyup change', function(){
+            if ($(this).val().length > 0) {
+                clearBtn.show();
+            } else {
+                clearBtn.hide();
+            }
+        });
+
+        // Clear input on button click
+        clearBtn.on('click', function(){
+            inputEl.val('').trigger('change'); // Trigger change to hide button if empty
+            inputEl.focus();
+        });
+
         function sendMessage(){
             let text = inputEl.val().trim();
             if(!text) return;
             addMessage('user', text);
             inputEl.val('');
             typingEl.show();
+            inputEl.prop('disabled', true);
+            sendBtn.prop('disabled', true);
+            clearBtn.hide(); // Hide clear button when sending
             $.ajax({
                 type: 'POST',
                 url: asaSettings.ajaxUrl,
@@ -74,7 +94,10 @@
                     action: 'asa_chat', 
                     message: text,
                     history: JSON.stringify(history),
-                    security: asaSettings.nonce
+                    security: asaSettings.nonce,
+                    currentPageUrl: asaSettings.currentPageUrl,
+                    currentPageTitle: asaSettings.currentPageTitle,
+                    currentPageContent: currentPageContent
                 },
                 dataType: 'json'
             }).done(function(res){
@@ -84,9 +107,17 @@
                 } else {
                     addMessage('bot', 'Üzgünüm, bir hata oluştu: ' + (res.data.message || 'Yanıt alınamadı.'));
                 }
+                inputEl.prop('disabled', false);
+                sendBtn.prop('disabled', false);
+                inputEl.focus();
+                if (inputEl.val().length > 0) clearBtn.show(); // Show clear button if input has text
             }).fail(function(jqXHR, textStatus, errorThrown){
                 typingEl.hide();
                 addMessage('bot','Üzgünüm, sunucuyla iletişim kurulamadı. Lütfen daha sonra tekrar deneyin.');
+                inputEl.prop('disabled', false);
+                sendBtn.prop('disabled', false);
+                inputEl.focus();
+                if (inputEl.val().length > 0) clearBtn.show(); // Show clear button if input has text
             });
         }
 

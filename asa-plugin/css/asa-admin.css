@@ -9,18 +9,30 @@
     --asa-admin-shadow: 0 1px 1px rgba(0,0,0,.04);
     --asa-admin-border-radius: 4px;
     --asa-admin-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    --asa-admin-success-color: #4CAF50;
+    --asa-admin-error-color: #f44336;
 }
 
 body {
     font-family: var(--asa-admin-font-family);
+    background-color: var(--asa-admin-bg-color);
+}
+
+.wrap {
+    background-color: var(--asa-admin-light-bg);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-top: 20px;
 }
 
 .wrap h1 {
     color: var(--asa-admin-text-color);
-    font-size: 2em;
-    margin-bottom: 20px;
+    font-size: 2.2em;
+    margin-bottom: 25px;
     border-bottom: 1px solid #eee;
     padding-bottom: 15px;
+    font-weight: 600;
 }
 
 .asa-tabs {
@@ -28,7 +40,8 @@ body {
     border-bottom: 1px solid var(--asa-admin-border-color);
     padding-left: 0;
     display: flex;
-    gap: 5px;
+    gap: 2px; /* Reduced gap between tabs */
+    margin-top: 20px;
 }
 
 .asa-tabs .nav-tab {
@@ -36,31 +49,33 @@ body {
     border: 1px solid var(--asa-admin-border-color);
     border-bottom: none;
     border-radius: var(--asa-admin-border-radius) var(--asa-admin-border-radius) 0 0;
-    margin-right: 5px;
-    padding: 10px 15px;
+    padding: 12px 20px; /* Increased padding */
     font-weight: 600;
     color: var(--asa-admin-text-color);
     transition: all 0.2s ease-in-out;
     text-decoration: none;
+    position: relative;
+    top: 1px; /* Align tabs better with content box */
 }
 
 .asa-tabs .nav-tab-active {
     background: var(--asa-admin-light-bg);
     border-bottom: 1px solid var(--asa-admin-light-bg);
     color: var(--asa-admin-primary-color);
-    position: relative;
     z-index: 1;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05); /* Subtle shadow for active tab */
 }
 
 .asa-tabs .nav-tab:hover {
     background: var(--asa-admin-light-bg);
     color: var(--asa-admin-primary-color);
+    border-color: var(--asa-admin-primary-color);
 }
 
 .asa-tab-content {
     background: var(--asa-admin-light-bg);
     border: 1px solid var(--asa-admin-border-color);
-    padding: 25px;
+    padding: 30px; /* Increased padding */
     border-radius: 0 var(--asa-admin-border-radius) var(--asa-admin-border-radius) var(--asa-admin-border-radius);
     box-shadow: var(--asa-admin-shadow);
     margin-top: -1px; /* Overlap with border */
@@ -93,16 +108,18 @@ body {
 }
 
 .regular-text,
-textarea {
+textarea,
+.wp-picker-container .wp-color-result {
     width: 100%;
-    max-width: 450px; /* Increased max-width */
-    padding: 10px 12px; /* Increased padding */
+    max-width: 500px; /* Increased max-width for better input field size */
+    padding: 12px 15px; /* Increased padding */
     border: 1px solid var(--asa-admin-border-color);
     border-radius: var(--asa-admin-border-radius);
     box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
     background-color: #fff;
     color: var(--asa-admin-text-color);
     transition: all 0.1s linear;
+    font-size: 1em; /* Ensure consistent font size */
 }
 
 .regular-text:focus,
@@ -113,10 +130,10 @@ textarea:focus {
 }
 
 .description {
-    font-size: 0.85em; /* Slightly smaller */
+    font-size: 0.9em; /* Slightly larger and more readable */
     color: #666;
-    margin-top: 8px; /* Increased margin */
-    line-height: 1.5;
+    margin-top: 10px; /* Increased margin */
+    line-height: 1.6;
 }
 
 .button.button-primary {
@@ -124,27 +141,28 @@ textarea:focus {
     color: #fff;
     border: none;
     border-radius: var(--asa-admin-border-radius);
-    padding: 10px 20px; /* Increased padding */
+    padding: 12px 25px; /* Increased padding */
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-    font-size: 1em;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    font-size: 1.05em;
     font-weight: 600;
-    box-shadow: var(--asa-admin-shadow);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* More prominent shadow */
 }
 
 .button.button-primary:hover {
     background: var(--asa-admin-secondary-color);
-    transform: translateY(-1px); /* Slight lift on hover */
+    transform: translateY(-2px); /* More pronounced lift on hover */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .button.button-primary:active {
     transform: translateY(0);
-    box-shadow: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 /* Color Picker */
 .wp-picker-container .wp-color-result {
-    height: 36px; /* Increased height */
+    height: 40px; /* Increased height */
     border-radius: var(--asa-admin-border-radius);
     box-shadow: var(--asa-admin-shadow);
     border: 1px solid var(--asa-admin-border-color);
@@ -158,71 +176,77 @@ textarea:focus {
 /* Avatar/Icon Section */
 .asa-icon-picker-wrapper,
 .asa-image-url-wrapper {
-    margin-bottom: 20px; /* Increased margin */
-    padding: 20px; /* Increased padding */
+    margin-bottom: 25px; /* Increased margin */
+    padding: 25px; /* Increased padding */
     border: 1px solid #eee;
     border-radius: var(--asa-admin-border-radius);
     background: #fdfdfd;
-    box-shadow: var(--asa-admin-shadow);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Subtle shadow */
 }
 
 .asa-icon-picker-wrapper label,
 .asa-image-url-wrapper label {
     font-weight: 600;
-    margin-bottom: 12px; /* Increased margin */
+    margin-bottom: 15px; /* Increased margin */
     display: block;
-    font-size: 1.05em;
+    font-size: 1.1em;
+    color: var(--asa-admin-text-color);
 }
 
 .asa-icon-picker-wrapper input[type="text"] {
-    max-width: 280px; /* Adjusted max-width */
+    max-width: 300px; /* Adjusted max-width */
     display: inline-block;
-    margin-right: 15px; /* Increased margin */
+    margin-right: 20px; /* Increased margin */
 }
 
 .asa-icon-preview {
-    font-size: 36px; /* Increased size */
-    padding: 8px;
+    font-size: 40px; /* Increased size */
+    padding: 10px;
     border: 1px solid var(--asa-admin-border-color);
     border-radius: var(--asa-admin-border-radius);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 60px; /* Increased size */
-    height: 60px; /* Increased size */
+    width: 65px; /* Increased size */
+    height: 65px; /* Increased size */
     vertical-align: middle;
     background: #fff;
     box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
 }
 
 .asa-image-url-wrapper input[type="text"] {
-    max-width: 400px; /* Adjusted max-width */
+    max-width: 450px; /* Adjusted max-width */
 }
 
 hr {
     border: none;
     border-top: 1px solid #eee;
-    margin: 25px 0; /* Increased margin */
+    margin: 30px 0; /* Increased margin */
 }
 
 /* Tooltip Styles */
 .asa-tooltip-icon {
-    display: inline-flex; /* Changed to flex for better centering */
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 18px; /* Slightly larger */
-    height: 18px; /* Slightly larger */
+    width: 20px; /* Slightly larger */
+    height: 20px; /* Slightly larger */
     line-height: 1;
     text-align: center;
     border-radius: 50%;
-    background-color: #0073aa;
+    background-color: var(--asa-admin-primary-color);
     color: #fff;
-    font-size: 13px; /* Slightly larger */
+    font-size: 14px; /* Slightly larger */
     font-weight: bold;
     cursor: help;
-    margin-left: 8px; /* Increased margin */
+    margin-left: 10px; /* Increased margin */
     position: relative;
     vertical-align: middle;
+    transition: background-color 0.2s ease;
+}
+
+.asa-tooltip-icon:hover {
+    background-color: var(--asa-admin-secondary-color);
 }
 
 .asa-tooltip-content {
@@ -230,16 +254,17 @@ hr {
     position: absolute;
     background-color: #333;
     color: #fff;
-    padding: 10px 15px; /* Increased padding */
-    border-radius: 6px; /* Slightly larger radius */
-    font-size: 0.9em;
-    width: 280px; /* Slightly wider */
+    padding: 12px 18px; /* Increased padding */
+    border-radius: 8px; /* Slightly larger radius */
+    font-size: 0.95em;
+    width: 300px; /* Slightly wider */
     z-index: 100;
     bottom: 100%; /* Position above the icon */
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 12px; /* Increased space */
-    box-shadow: 0 3px 8px rgba(0,0,0,0.3); /* Stronger shadow */
+    margin-bottom: 15px; /* Increased space */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35); /* Stronger shadow */
+    text-align: left;
 }
 
 .asa-tooltip-content::after {
@@ -247,8 +272,8 @@ hr {
     position: absolute;
     top: 100%;
     left: 50%;
-    margin-left: -6px; /* Adjusted for larger arrow */
-    border-width: 6px; /* Larger arrow */
+    margin-left: -8px; /* Adjusted for larger arrow */
+    border-width: 8px; /* Larger arrow */
     border-style: solid;
     border-color: #333 transparent transparent transparent;
 }
@@ -267,25 +292,25 @@ hr {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.6);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background-color: rgba(0,0,0,0.7); /* Darker overlay */
+    backdrop-filter: blur(8px); /* Stronger blur */
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .asa-icon-picker-modal-content {
     background-color: var(--asa-admin-light-bg);
-    margin: 5% auto;
-    padding: 30px;
+    margin: 3% auto; /* Adjusted margin for better vertical centering */
+    padding: 35px; /* Increased padding */
     border: 1px solid var(--asa-admin-border-color);
-    width: 90%;
-    max-width: 900px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 95%; /* Wider modal */
+    max-width: 1000px; /* Increased max-width */
+    border-radius: 10px; /* Slightly larger border-radius */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Stronger shadow */
     animation: fadeInScale 0.3s ease-out;
 }
 
 @keyframes fadeInScale {
-    from { opacity: 0; transform: scale(0.97); }
+    from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
 }
 
@@ -294,18 +319,18 @@ hr {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--asa-admin-border-color);
-    padding-bottom: 20px; /* Increased padding */
-    margin-bottom: 25px; /* Increased margin */
+    padding-bottom: 20px;
+    margin-bottom: 30px; /* Increased margin */
 }
 
 .asa-icon-picker-header h2 {
     margin: 0;
-    font-size: 2em; /* Slightly larger */
+    font-size: 2.4em; /* Larger title */
     color: var(--asa-admin-text-color);
 }
 
 .asa-icon-picker-close {
-    font-size: 36px; /* Larger close button */
+    font-size: 40px; /* Larger close button */
     font-weight: normal;
     color: #888;
     cursor: pointer;
@@ -318,27 +343,28 @@ hr {
 
 #asa-icon-search {
     width: 100%;
-    padding: 12px; /* Consistent padding */
-    margin-bottom: 25px; /* Increased margin */
+    padding: 14px; /* Consistent padding */
+    margin-bottom: 30px; /* Increased margin */
     border: 1px solid var(--asa-admin-border-color);
     border-radius: var(--asa-admin-border-radius);
     box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
     background-color: #fff;
     color: var(--asa-admin-text-color);
+    font-size: 1.1em;
 }
 
 .asa-icon-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Larger grid items */
-    gap: 15px; /* Increased gap */
-    max-height: 65vh; /* Slightly taller */
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); /* Larger grid items */
+    gap: 20px; /* Increased gap */
+    max-height: 70vh; /* Taller */
     overflow-y: auto;
     padding-right: 15px; /* For scrollbar */
 }
 
 .asa-icon-list i {
-    font-size: 32px; /* Larger icons */
-    padding: 20px; /* Increased padding */
+    font-size: 36px; /* Larger icons */
+    padding: 25px; /* Increased padding */
     text-align: center;
     border: 1px solid #eee;
     border-radius: var(--asa-admin-border-radius);
@@ -346,14 +372,14 @@ hr {
     transition: all 0.2s ease;
     background-color: #fdfdfd;
     color: #555;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08); /* Added subtle shadow */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* Added subtle shadow */
 }
 
 .asa-icon-list i:hover {
     background-color: var(--asa-admin-primary-color);
     color: #fff;
-    transform: translateY(-3px); /* More pronounced lift */
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Stronger shadow on hover */
+    transform: translateY(-5px); /* More pronounced lift */
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25); /* Stronger shadow on hover */
 }
 
 /* Live Preview */
