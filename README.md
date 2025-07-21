@@ -17,11 +17,24 @@ The current admin panel is functional but lacks visual organization and modern f
 -   **Action Item 2.3: Refine Typography and Spacing.**
     -   **Problem:** Default WordPress styles are used, leading to a generic appearance.
     -   **Solution:** Introduce subtle improvements in font weights, section descriptions, and consistent spacing to create a cleaner, custom-tailored look.
-**Action Item 2.4: Buymecoffe and contact section in admin panel**
+-   **Action Item 2.4: Buymecoffe and contact section in admin panel**
     -   **Problem:** Tasarım olarak berbat bir halde.
     -   **Solution:** Make it much better.
 
+### Newly Identified Admin Panel Issues:
 
+-   **Issue 2.5: Icon Picker Modal (Popup) Layout is Broken.**
+    -   **Problem:** The icon picker modal is shifted to the left, the close button is too small, and the popup title is broken.
+    -   **Potential Cause:** Incorrect CSS styling for modal positioning, close button size, and header text.
+-   **Issue 2.6: "Search for icons" Field Removal.**
+    -   **Problem:** The "Search for icons" input field and its associated functionality are unnecessary and should be removed.
+    -   **Potential Cause:** HTML structure in `asa-ai-sales-agent.php` and JavaScript logic in `asa-admin.js` related to the search field.
+-   **Issue 2.7: Icon Picker Modal Header and Close Button Background is Transparent.**
+    -   **Problem:** The background of the "Choose an Icon" title and the "×" close button in the icon picker modal is transparent, causing visual glitches and reduced visibility.
+    -   **Potential Cause:** Missing or incorrect background color definition in CSS for `.asa-icon-picker-header` or `.asa-icon-picker-modal-content`.
+-   **Issue 2.8: 'Support ASA's Development' Section UI/UX Improvement.**
+    -   **Problem:** The button and descriptive text in the 'Support ASA's Development' section appear unorganized. The button needs a better UI, and the text should be limited to a maximum of 2 lines.
+    -   **Potential Cause:** Inadequate CSS styling for `.asa-bmac-button`, `.asa-support-text`, and `.asa-support-wrapper` in `asa-plugin/css/asa-admin.css`.
 
 ## 3. Frontend Chat Widget Redesign
 

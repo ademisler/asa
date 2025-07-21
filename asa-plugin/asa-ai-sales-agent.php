@@ -136,7 +136,6 @@ class ASAAISalesAgent {
                         </a>
                         <span class="asa-support-text"><?php esc_html_e('This plugin is 100% free. If you find it useful, your support helps keep the updates coming!', 'asa'); ?></span>
                     </div>
-                    <a href="https://ademisler.com/iletisim" target="_blank" class="asa-contact-link"><i class="fas fa-life-ring"></i> <?php esc_html_e('Get Support', 'asa'); ?></a>
                 </div>
             </div>
             <h2 class="nav-tab-wrapper asa-tabs">
@@ -252,7 +251,6 @@ class ASAAISalesAgent {
                     <h2><?php esc_html_e('Choose an Icon', 'asa'); ?></h2>
                     <span class="asa-icon-picker-close">&times;</span>
                 </div>
-                <input type="text" id="asa-icon-search" placeholder="<?php esc_attr_e('Search for icons...', 'asa'); ?>">
                 <div class="asa-icon-list"></div>
             </div>
         </div>

@@ -70,7 +70,6 @@ jQuery(document).ready(function($){
     // Icon Picker
     const modal = $('#asa-icon-picker-modal');
     const iconList = $('.asa-icon-list');
-    const searchInput = $('#asa-icon-search');
     let allIcons = [];
 
     $('#asa-open-icon-picker').on('click', function(){
@@ -82,12 +81,6 @@ jQuery(document).ready(function($){
 
     $('.asa-icon-picker-close').on('click', function(){ modal.hide(); });
     $(window).on('click', function(e){ if ($(e.target).is(modal)) { modal.hide(); } });
-
-    searchInput.on('keyup', function(){
-        const searchTerm = $(this).val().toLowerCase();
-        const filteredIcons = allIcons.filter(icon => icon.toLowerCase().includes(searchTerm));
-        renderIcons(filteredIcons);
-    });
 
     function fetchIcons() {
         const faIcons = ["fas fa-robot", "fas fa-comment-dots", "fas fa-user-astronaut", "fas fa-headset", "fas fa-life-ring", "fas fa-question-circle", "fas fa-cogs", "fas fa-paper-plane", "fas fa-lightbulb", "fas fa-rocket", "fas fa-user-circle", "fas fa-comment", "fas fa-comments", "fas fa-smile", "fas fa-store", "fas fa-shopping-cart", "fas fa-book", "fas fa-brain", "fas fa-briefcase", "fas fa-bullhorn", "fas fa-chart-bar", "fas fa-check-circle", "fas fa-clipboard-list", "fas fa-coffee", "fas fa-concierge-bell", "fas fa-credit-card", "fas fa-desktop", "fas fa-envelope", "fas fa-gift", "fas fa-globe", "fas fa-graduation-cap", "fas fa-heart", "fas fa-home", "fas fa-info-circle", "fas fa-key", "fas fa-mobile-alt", "fas fa-money-bill-wave", "fas fa-paint-brush", "fas fa-phone", "fas fa-plug", "fas fa-plus-circle", "fas fa-search", "fas fa-shield-alt", "fas fa-star", "fas fa-sync-alt", "fas fa-thumbs-up", "fas fa-tools", "fas fa-trash", "fas fa-trophy", "fas fa-user-friends", "fas fa-video"];
