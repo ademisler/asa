@@ -57,8 +57,8 @@ body { background-color: var(--asa-bg-main); }
 }
 
 .asa-api-key-link-button {
-    background: var(--asa-primary); /* Match support button background */
-    color: var(--asa-text-white) !important; /* Match support button text color */
+    background: var(--asa-primary-dark); /* Black background */
+    color: var(--asa-text-white) !important; /* White text */
     padding: 8px 12px; /* Match support button padding */
     border-radius: var(--asa-radius);
     font-weight: 600;
@@ -66,10 +66,11 @@ body { background-color: var(--asa-bg-main); }
     transition: all 0.25s ease;
     flex-shrink: 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    height: 45px; /* Fixed height to match input field */
+    height: 38px; /* Reduced height */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border: none; /* Removed border */
 }
 
 .asa-api-key-link-button:hover {
@@ -155,31 +156,61 @@ body { background-color: var(--asa-bg-main); }
 }
 
 .asa-api-key-link-button {
-    background: var(--asa-bg-card); /* White background */
-    color: var(--asa-primary) !important; /* Dark text */
-    padding: 12px 18px; /* Adjusted padding to match input height */
+    background: var(--asa-primary-dark); /* Arka plan zaten siyahtı, doğru. */
+    color: black !important; /* Yazı rengi siyah yapıldı */
     border-radius: var(--asa-radius);
     font-weight: 600;
     text-decoration: none;
     transition: all 0.25s ease;
     flex-shrink: 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    height: 45px; /* Match height of input */
+    height: 30px; /* Butonun yüksekliği ayarlandı */
+    line-height: 30px; /* Metni dikeyde ortalamak için line-height yüksekliğe eşitlendi */
+    padding: 0 15px; /* Dikey padding kaldırıldı, yatay padding korundu */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--asa-border); /* Add border for definition */
+    border: 1px solid transparent; /* Input'un border'ı ile hizalama için eklendi */
+    box-sizing: border-box; /* Padding ve border hesaplamalarını tutarlı hale getirir. */
 }
 
 .asa-api-key-link-button:hover {
-    background: var(--asa-bg-main); /* Slightly darker background on hover */
+    background: var(--asa-primary); /* Hover rengini biraz daha açık gri yaptık. */
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 .regular-text:focus, textarea:focus { border-color: var(--asa-primary); box-shadow: 0 0 0 3px rgba(51, 51, 51, 0.1); outline: none; }
 .description { color: var(--asa-text-light); font-style: italic; margin-top: 8px; display: block;}
-.wp-picker-container .wp-color-result.button { height: 45px; width: 100px; border-radius: var(--asa-radius); border: 1px solid var(--asa-border); }
-.wp-picker-container .wp-color-result.button::after { font-size: 1.2em; line-height: 45px; }
+.wp-picker-container .wp-color-result.button {
+    height: 38px; /* Daha küçük yükseklik */
+    width: 38px; /* Kare şeklinde */
+    border-radius: var(--asa-radius); /* Yuvarlak köşeler */
+    border: 1px solid var(--asa-border);
+    box-shadow: none; /* Gölgeyi kaldır */
+    margin-left: 10px; /* Giriş alanından biraz boşluk */
+    flex-shrink: 0;
+}
+.wp-picker-container .wp-color-result.button::after {
+    font-size: 1em; /* Daha küçük ikon */
+    line-height: 38px; /* Yüksekliğe göre ayarla */
+    width: 100%;
+    text-align: center;
+}
+.wp-picker-container {
+    display: flex; /* Flexbox kullanarak hizalama */
+    align-items: center;
+    width: 100%;
+}
+.wp-picker-container .wp-color-result {
+    order: 2; /* Düğmeyi giriş alanının sağına taşı */
+}
+.wp-picker-container .wp-picker-input-wrap {
+    order: 1; /* Giriş alanını sola taşı */
+    flex-grow: 1; /* Giriş alanının kalan alanı kaplamasını sağla */
+}
+.wp-picker-container .wp-picker-input {
+    width: 100%; /* Giriş alanının tam genişliğini kullanmasını sağla */
+}
 
 /* 7. Specific Component Redesigns
 -------------------------------------------------- */

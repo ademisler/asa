@@ -4,13 +4,16 @@ Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
 
 Version: 1.0.0
-Author: Adem İşler
-Text Domain: asa
+Author: Adem Isler
+Author URI: https://ademisler.com
+Text Domain: asa-ai-sales-agent
 Domain Path: /languages
 
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
+
+define('ASA_VERSION', '1.0.0');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -28,8 +31,7 @@ class ASAAISalesAgent {
     }
 
     private function __construct() {
-        load_plugin_textdomain( 'asa', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-        $this->default_avatar = plugins_url('img/avatar1.svg', __FILE__);
+        
         add_action('admin_menu', array($this, 'register_settings_page'));
         add_action('admin_init', array($this, 'register_settings'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
@@ -46,12 +48,16 @@ class ASAAISalesAgent {
     }
 
     public function enqueue_assets() {
-        wp_enqueue_style('asa-style', plugins_url('css/asa-style.css', __FILE__));
-        wp_enqueue_style('asa-fa', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
-        wp_enqueue_script('showdown', 'https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js', array(), null, true);
-        wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown'), false, true);
+        wp_enqueue_style('asa-style', plugins_url('css/asa-style.css', __FILE__), [], ASA_VERSION);
+        wp_enqueue_style('asa-fa', plugins_url('assets/css/all.min.css', __FILE__), [], ASA_VERSION);
+        
+        // Google Fonts'u buraya ekleyin
+        wp_enqueue_style('asa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], ASA_VERSION);
+
+        wp_enqueue_script('showdown', plugins_url('assets/js/showdown.min.js', __FILE__), array(), '2.1.0', true);
+        wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown'), ASA_VERSION, true);
         wp_localize_script('asa-script', 'asaSettings', [
-            'apiKey' => get_option('asa_api_key'),
+            
             'systemPrompt' => get_option('asa_system_prompt'),
             'title' => get_option('asa_title'),
             'subtitle' => get_option('asa_subtitle'),
@@ -66,17 +72,17 @@ class ASAAISalesAgent {
             'currentPageUrl' => get_permalink(),
             'currentPageTitle' => get_the_title(),
             'proactiveMessageAjaxUrl' => admin_url('admin-ajax.php?action=asa_generate_proactive_message'),
-            'apiKeyPlaceholder' => esc_attr__('Configure API key in settings', 'asa'),
-            'errorMessage' => esc_html__('Sorry, an error occurred: ', 'asa'),
-            'noResponseText' => esc_html__('No response received.', 'asa'),
-            'serverErrorText' => esc_html__('Sorry, could not communicate with the server. Please try again later.', 'asa'),
-            'clearHistoryConfirm' => esc_html__('Are you sure you want to clear the chat history?', 'asa'),
+            'apiKeyPlaceholder' => esc_attr__('Configure API key in settings', 'asa-ai-sales-agent'),
+            'errorMessage' => esc_html__('Sorry, an error occurred: ', 'asa-ai-sales-agent'),
+            'noResponseText' => esc_html__('No response received.', 'asa-ai-sales-agent'),
+            'serverErrorText' => esc_html__('Sorry, could not communicate with the server. Please try again later.', 'asa-ai-sales-agent'),
+            'clearHistoryConfirm' => esc_html__('Are you sure you want to clear the chat history?', 'asa-ai-sales-agent'),
         ]);
     }
 
     public function generate_proactive_message() {
         // This is a placeholder. The actual proactive message is fetched via AJAX.
-        return esc_html__('Hello! How can I help you today?', 'asa');
+        return esc_html__('Hello! How can I help you today?', 'asa-ai-sales-agent');
     }
 
     public function enqueue_admin_assets($hook) {
@@ -84,15 +90,15 @@ class ASAAISalesAgent {
             return;
         }
         wp_enqueue_style('wp-color-picker');
-        wp_enqueue_style('asa-admin-style', plugins_url('css/asa-admin.css', __FILE__));
-        wp_enqueue_style('asa-fa', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
-        wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), false, true);
+        wp_enqueue_style('asa-admin-style', plugins_url('css/asa-admin.css', __FILE__), [], ASA_VERSION);
+        wp_enqueue_style('asa-fa', plugins_url('assets/css/all.min.css', __FILE__), [], ASA_VERSION);
+        wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), ASA_VERSION, true);
         wp_localize_script('asa-admin-script', 'asaAdminSettings', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('asa_settings_nonce'),
-            'savingText' => esc_html__('Saving...', 'asa'),
-            'savedText' => esc_html__('Saved!', 'asa'),
-            'errorText' => esc_html__('Error!', 'asa'),
+            'savingText' => esc_html__('Saving...', 'asa-ai-sales-agent'),
+            'savedText' => esc_html__('Saved!', 'asa-ai-sales-agent'),
+            'errorText' => esc_html__('Error!', 'asa-ai-sales-agent'),
             
         ]);
         wp_enqueue_style('thickbox');
@@ -101,7 +107,7 @@ class ASAAISalesAgent {
     public function register_settings_page() {
         add_options_page(
             'ASA AI Sales Agent',
-            esc_html__('ASA AI Sales Agent', 'asa'),
+            esc_html__('ASA AI Sales Agent', 'asa-ai-sales-agent'),
             'manage_options',
             'asa-ai-sales-agent',
             array($this, 'render_settings_page')
@@ -109,55 +115,61 @@ class ASAAISalesAgent {
     }
 
     public function register_settings() {
-        register_setting('asa_settings_group', 'asa_api_key');
-        register_setting('asa_settings_group', 'asa_system_prompt');
-        register_setting('asa_settings_group', 'asa_title');
-        register_setting('asa_settings_group', 'asa_subtitle');
-        register_setting('asa_settings_group', 'asa_primary_color');
-        register_setting('asa_settings_group', 'asa_avatar_icon');
-        register_setting('asa_settings_group', 'asa_avatar_image_url');
-        register_setting('asa_settings_group', 'asa_position');
-        register_setting('asa_settings_group', 'asa_show_credit');
+        $settings = [
+            'asa_api_key'           => 'sanitize_text_field',
+            'asa_system_prompt'     => 'sanitize_textarea_field',
+            'asa_title'             => 'sanitize_text_field',
+            'asa_subtitle'          => 'sanitize_text_field',
+            'asa_primary_color'     => 'sanitize_hex_color',
+            'asa_avatar_icon'       => 'sanitize_text_field',
+            'asa_avatar_image_url'  => 'esc_url_raw',
+            'asa_position'          => 'sanitize_text_field',
+            'asa_show_credit'       => 'sanitize_text_field'
+        ];
+
+        foreach ($settings as $option_name => $sanitize_callback) {
+            register_setting('asa_settings_group', $option_name, ['sanitize_callback' => $sanitize_callback]);
+        }
     }
 
     public function asa_save_settings() {
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(esc_html__('You do not have sufficient permissions to access this page.', 'asa'));
+            wp_send_json_error(esc_html__('You do not have sufficient permissions to access this page.', 'asa-ai-sales-agent'));
         }
 
         check_ajax_referer('asa_settings_nonce', 'security');
 
-        update_option('asa_api_key', sanitize_text_field($_POST['asa_api_key']));
-        update_option('asa_system_prompt', sanitize_textarea_field($_POST['asa_system_prompt']));
-        update_option('asa_title', sanitize_text_field($_POST['asa_title']));
-        update_option('asa_subtitle', sanitize_text_field($_POST['asa_subtitle']));
-        update_option('asa_primary_color', sanitize_hex_color($_POST['asa_primary_color']));
-        update_option('asa_avatar_icon', sanitize_text_field($_POST['asa_avatar_icon']));
-        update_option('asa_avatar_image_url', esc_url_raw($_POST['asa_avatar_image_url']));
-        update_option('asa_position', sanitize_text_field($_POST['asa_position']));
-        update_option('asa_show_credit', sanitize_text_field($_POST['asa_show_credit']));
+        update_option('asa_api_key', sanitize_text_field(wp_unslash($_POST['asa_api_key'] ?? '')));
+        update_option('asa_system_prompt', sanitize_textarea_field(wp_unslash($_POST['asa_system_prompt'] ?? '')));
+        update_option('asa_title', sanitize_text_field(wp_unslash($_POST['asa_title'] ?? '')));
+        update_option('asa_subtitle', sanitize_text_field(wp_unslash($_POST['asa_subtitle'] ?? '')));
+        update_option('asa_primary_color', sanitize_hex_color(wp_unslash($_POST['asa_primary_color'] ?? '')));
+        update_option('asa_avatar_icon', sanitize_text_field(wp_unslash($_POST['asa_avatar_icon'] ?? '')));
+        update_option('asa_avatar_image_url', esc_url_raw(wp_unslash($_POST['asa_avatar_image_url'] ?? '')));
+        update_option('asa_position', sanitize_text_field(wp_unslash($_POST['asa_position'] ?? '')));
+        update_option('asa_show_credit', sanitize_text_field(wp_unslash($_POST['asa_show_credit'] ?? '')));
 
-        wp_send_json_success(esc_html__('Settings saved.', 'asa'));
+        wp_send_json_success(esc_html__('Settings saved.', 'asa-ai-sales-agent'));
     }
 
     public function render_settings_page() {
         ?>
         <div class="wrap">
             <div class="asa-page-header">
-                <h1><?php esc_html_e('ASA ', 'asa'); ?><span class="asa-ai-highlight"><?php esc_html_e('Ai', 'asa'); ?></span><?php esc_html_e(' Sales Agent', 'asa'); ?></h1>
+                <h1><?php esc_html_e('ASA ', 'asa-ai-sales-agent'); ?><span class="asa-ai-highlight"><?php esc_html_e('Ai', 'asa-ai-sales-agent'); ?></span><?php esc_html_e(' Sales Agent', 'asa-ai-sales-agent'); ?></h1>
                 <div class="asa-header-links">
                     <div class="asa-support-wrapper">
                         <a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-bmac-button">
-                            <i class="fas fa-heart"></i> <?php esc_html_e('Support ASA\'s Development', 'asa'); ?>
+                            <i class="fas fa-heart"></i> <?php esc_html_e('Support ASA\'s Development', 'asa-ai-sales-agent'); ?>
                         </a>
-                        <span class="asa-support-text"><?php esc_html_e('This plugin is 100% free. If you find it useful, your support helps keep the updates coming!', 'asa'); ?></span>
+                        <span class="asa-support-text"><?php esc_html_e('This plugin is 100% free. If you find it useful, your support helps keep the updates coming!', 'asa-ai-sales-agent'); ?></span>
                     </div>
                 </div>
             </div>
             <h2 class="nav-tab-wrapper asa-tabs">
-                <a href="#asa-tab-general" class="nav-tab nav-tab-active"><?php esc_html_e('General', 'asa'); ?></a>
-                <a href="#asa-tab-appearance" class="nav-tab"><?php esc_html_e('Appearance', 'asa'); ?></a>
-                <a href="#asa-tab-behavior" class="nav-tab"><?php esc_html_e('Behavior', 'asa'); ?></a>
+                <a href="#asa-tab-general" class="nav-tab nav-tab-active"><?php esc_html_e('General', 'asa-ai-sales-agent'); ?></a>
+                <a href="#asa-tab-appearance" class="nav-tab"><?php esc_html_e('Appearance', 'asa-ai-sales-agent'); ?></a>
+                <a href="#asa-tab-behavior" class="nav-tab"><?php esc_html_e('Behavior', 'asa-ai-sales-agent'); ?></a>
             </h2>
             <form id="asa-settings-form" method="post" action="options.php">
                 <?php settings_errors(); ?>
@@ -167,13 +179,13 @@ class ASAAISalesAgent {
                 <div id="asa-tab-general" class="asa-tab-content active">
                     <div class="asa-card">
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('Gemini API Key', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('Gemini API Key', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <div class="asa-api-key-input-group">
                                     <input type="text" name="asa_api_key" id="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text asa-api-key-input" />
-                                    <a href="https://aistudio.google.com/app/apikey" target="_blank" class="button asa-api-key-link-button"><?php esc_html_e('Get API Key', 'asa'); ?></a>
+                                     <a href="https://aistudio.google.com/app/apikey" target="_blank" class="button asa-api-key-link-button asa-api-key-button"><?php esc_html_e('Get API Key', 'asa-ai-sales-agent'); ?></a>
                                 </div>
-                                <p class="description"><?php esc_html_e('Enter your Google Gemini API Key here.', 'asa'); ?></p>
+                                <p class="description"><?php esc_html_e('Enter your Google Gemini API Key here.', 'asa-ai-sales-agent'); ?></p>
                             </div>
                         </div>
                     </div>
@@ -182,31 +194,31 @@ class ASAAISalesAgent {
                 <div id="asa-tab-appearance" class="asa-tab-content">
                     <div class="asa-card">
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('Title', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('Title', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <input type="text" name="asa_title" value="<?php echo esc_attr(get_option('asa_title')); ?>" class="regular-text" />
                             </div>
                         </div>
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('Subtitle', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('Subtitle', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <input type="text" name="asa_subtitle" value="<?php echo esc_attr(get_option('asa_subtitle')); ?>" class="regular-text" />
                             </div>
                         </div>
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('Primary Color', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('Primary Color', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <input type="text" name="asa_primary_color" id="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>" class="asa-color-field" />
                             </div>
                         </div>
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('Avatar', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('Avatar', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <div class="asa-icon-picker-wrapper">
-                                    <label><strong><?php esc_html_e('Choose an Icon:', 'asa'); ?></strong></label>
+                                    <label><strong><?php esc_html_e('Choose an Icon:', 'asa-ai-sales-agent'); ?></strong></label>
                                     <div class="asa-icon-input-group">
                                         <input type="text" name="asa_avatar_icon" id="asa_avatar_icon" value="<?php echo esc_attr(get_option('asa_avatar_icon', 'fas fa-robot')); ?>" class="regular-text" readonly />
-                                        <button type="button" class="button" id="asa-open-icon-picker"><?php esc_html_e('Choose', 'asa'); ?></button>
+                                        <button type="button" class="button" id="asa-open-icon-picker"><?php esc_html_e('Choose', 'asa-ai-sales-agent'); ?></button>
                                         <div class="asa-icon-preview">
                                             <i class="<?php echo esc_attr(get_option('asa_avatar_icon', 'fas fa-robot')); ?>"></i>
                                         </div>
@@ -214,34 +226,34 @@ class ASAAISalesAgent {
                                 </div>
                                 <hr class="asa-separator">
                                 <div class="asa-image-url-wrapper">
-                                    <label><strong><?php esc_html_e('Or Use Image URL:', 'asa'); ?></strong></label>
+                                    <label><strong><?php esc_html_e('Or Use Image URL:', 'asa-ai-sales-agent'); ?></strong></label>
                                     <input type="text" name="asa_avatar_image_url" id="asa_avatar_image_url" value="<?php echo esc_attr(get_option('asa_avatar_image_url')); ?>" class="regular-text" placeholder="https://example.com/avatar.png" />
                                 </div>
                             </div>
                         </div>
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('Position', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('Position', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <div class="asa-position-selector">
                                     <label>
                                         <input type="radio" name="asa_position" value="left" <?php checked(get_option('asa_position', 'right'), 'left'); ?> />
                                         <div class="asa-position-card">
                                             <div class="asa-position-preview left"></div>
-                                            <span><?php esc_html_e('Left', 'asa'); ?></span>
+                                            <span><?php esc_html_e('Left', 'asa-ai-sales-agent'); ?></span>
                                         </div>
                                     </label>
                                     <label>
                                         <input type="radio" name="asa_position" value="right" <?php checked(get_option('asa_position', 'right'), 'right'); ?> />
                                         <div class="asa-position-card">
                                             <div class="asa-position-preview right"></div>
-                                            <span><?php esc_html_e('Right', 'asa'); ?></span>
+                                            <span><?php esc_html_e('Right', 'asa-ai-sales-agent'); ?></span>
                                         </div>
                                     </label>
                                 </div>
                             </div>
                         </div>
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('Show Developer Credit', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('Show Developer Credit', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <input type="checkbox" name="asa_show_credit" value="yes" <?php checked(get_option('asa_show_credit', 'yes'), 'yes'); ?> />
                             </div>
@@ -252,22 +264,22 @@ class ASAAISalesAgent {
                 <div id="asa-tab-behavior" class="asa-tab-content">
                     <div class="asa-card">
                         <div class="asa-card-section">
-                            <label class="asa-section-label"><?php esc_html_e('System Prompt', 'asa'); ?></label>
+                            <label class="asa-section-label"><?php esc_html_e('System Prompt', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
-                                <textarea name="asa_system_prompt" class="large-text" rows="5" placeholder="<?php esc_attr_e('You are a helpful sales agent.', 'asa'); ?>"><?php echo esc_textarea(get_option('asa_system_prompt')); ?></textarea>
-                                <p class="description"><?php esc_html_e('Define the chatbot\'s personality, role, and response style.', 'asa'); ?></p>
+                                <textarea name="asa_system_prompt" class="large-text" rows="5" placeholder="<?php esc_attr_e('You are a helpful sales agent.', 'asa-ai-sales-agent'); ?>"><?php echo esc_textarea(get_option('asa_system_prompt')); ?></textarea>
+                                <p class="description"><?php esc_html_e('Define the chatbot\'s personality, role, and response style.', 'asa-ai-sales-agent'); ?></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <?php submit_button(esc_html__('Save Changes', 'asa')); ?>
+                <?php submit_button(esc_html__('Save Changes', 'asa-ai-sales-agent')); ?>
             </form>
         </div>
         <div id="asa-icon-picker-modal">
             <div class="asa-icon-picker-modal-content">
                 <div class="asa-icon-picker-header">
-                    <h2><?php esc_html_e('Choose an Icon', 'asa'); ?></h2>
+                    <h2><?php esc_html_e('Choose an Icon', 'asa-ai-sales-agent'); ?></h2>
                     <span class="asa-icon-picker-close">&times;</span>
                 </div>
                 <div class="asa-icon-list"></div>
@@ -284,32 +296,43 @@ class ASAAISalesAgent {
             ? '<img src="' . esc_url($avatar_image_url) . '" class="asa-avatar" />' 
             : '<i class="' . esc_attr($avatar_icon) . ' asa-avatar"></i>';
         ?>
+        <?php
+        $allowed_html = [
+            'img' => [
+                'src'   => [],
+                'class' => [],
+            ],
+            'i'   => [
+                'class' => [],
+            ],
+        ];
+        ?>
         <div id="asa-chatbot" class="asa-position-<?php echo esc_attr(get_option('asa_position', 'right')); ?>" style="--asa-color: <?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>">
             <div class="asa-launcher">
-                <?php echo $avatar_html; ?>
+                <?php echo wp_kses($avatar_html, $allowed_html); ?>
             </div>
             <div class="asa-welcome-wrapper"><span class="asa-welcome asa-proactive-message"></span><button class="asa-proactive-close"><i class="fas fa-times"></i></button></div>
             <div class="asa-window" style="display:none;">
                 <div class="asa-header">
-                    <?php echo $avatar_html; ?>
+                    <?php echo wp_kses($avatar_html, $allowed_html); ?>
                     <div class="asa-header-text">
-                        <span class="asa-title"><?php echo esc_html(get_option('asa_title', esc_html__('Sales Agent', 'asa'))); ?></span>
+                        <span class="asa-title"><?php echo esc_html(get_option('asa_title', esc_html__('Sales Agent', 'asa-ai-sales-agent'))); ?></span>
                         <span class="asa-subtitle"><?php echo esc_html(get_option('asa_subtitle')); ?></span>
                     </div>
-                    <button class="asa-clear-history" title="<?php esc_attr_e('Clear History', 'asa'); ?>" aria-label="<?php esc_attr_e('Clear History', 'asa'); ?>"><i class="fas fa-trash-alt"></i></button>
-                    <button class="asa-close" aria-label="<?php esc_attr_e('Close Chat', 'asa'); ?>">&times;</button>
+                    <button class="asa-clear-history" title="<?php esc_attr_e('Clear History', 'asa-ai-sales-agent'); ?>" aria-label="<?php esc_attr_e('Clear History', 'asa-ai-sales-agent'); ?>"><i class="fas fa-trash-alt"></i></button>
+                    <button class="asa-close" aria-label="<?php esc_attr_e('Close Chat', 'asa-ai-sales-agent'); ?>">&times;</button>
                 </div>
                 <div class="asa-messages"></div>
                 <div class="asa-typing" style="display:none;"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
                 <div class="asa-input">
                     <div class="asa-input-wrapper">
-                        <input type="text" class="asa-text" placeholder="<?php esc_attr_e('Type your message', 'asa'); ?>" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> />
-                        <button class="asa-clear-input" style="display:none;" aria-label="<?php esc_attr_e('Clear Input', 'asa'); ?>"><i class="fas fa-times-circle"></i></button>
-                        <button class="asa-send" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> aria-label="<?php esc_attr_e('Send Message', 'asa'); ?>"><i class="fas fa-paper-plane"></i></button>
+                        <input type="text" class="asa-text" placeholder="<?php esc_attr_e('Type your message', 'asa-ai-sales-agent'); ?>" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> />
+                        <button class="asa-clear-input" style="display:none;" aria-label="<?php esc_attr_e('Clear Input', 'asa-ai-sales-agent'); ?>"><i class="fas fa-times-circle"></i></button>
+                        <button class="asa-send" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> aria-label="<?php esc_attr_e('Send Message', 'asa-ai-sales-agent'); ?>"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
                 <?php if (get_option('asa_show_credit', 'yes') === 'yes'): ?>
-                    <div class="asa-credit"><?php esc_html_e('Developed by:', 'asa'); ?> <a href="https://ademisler.com" target="_blank" class="ai-name-reveal"><span class="short-name">AI</span><span class="full-name">Adem Isler</span></a></div>
+                    <div class="asa-credit"><?php esc_html_e('Developed by:', 'asa-ai-sales-agent'); ?> <a href="https://ademisler.com" target="_blank" class="ai-name-reveal"><span class="short-name">AI</span><span class="full-name">Adem Isler</span></a></div>
                 <?php endif; ?>
             </div>
         </div>
@@ -321,17 +344,21 @@ class ASAAISalesAgent {
         check_ajax_referer('asa_chat_nonce', 'security');
 
         $api_key = get_option('asa_api_key');
-        $message = sanitize_text_field($_POST['message'] ?? '');
-        $history = json_decode(stripslashes($_POST['history'] ?? '[]'), true);
-        $currentPageUrl = esc_url_raw($_POST['currentPageUrl'] ?? '');
-        $currentPageTitle = sanitize_text_field($_POST['currentPageTitle'] ?? '');
-        $currentPageContent = sanitize_textarea_field($_POST['currentPageContent'] ?? '');
+        $message = sanitize_text_field(wp_unslash($_POST['message'] ?? ''));
+        
+        $raw_history_json = isset($_POST['history']) ? sanitize_text_field(wp_unslash($_POST['history'])) : '[]';
+        $decoded_history  = json_decode($raw_history_json, true);
+        $history          = $this->sanitize_chat_history($decoded_history);
+
+        $currentPageUrl = esc_url_raw(wp_unslash($_POST['currentPageUrl'] ?? ''));
+        $currentPageTitle = sanitize_text_field(wp_unslash($_POST['currentPageTitle'] ?? ''));
+        $currentPageContent = sanitize_textarea_field(wp_unslash($_POST['currentPageContent'] ?? ''));
 
         if (!$api_key || empty($message)) {
-            wp_send_json_error(esc_html__('Invalid request', 'asa'));
+            wp_send_json_error(esc_html__('Invalid request', 'asa-ai-sales-agent'));
         }
 
-        $system_prompt = get_option('asa_system_prompt', esc_html__('You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa'));
+        $system_prompt = get_option('asa_system_prompt', esc_html__('You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa-ai-sales-agent'));
         
         if (!empty($currentPageUrl)) {
             $system_prompt .= "\n\nCurrent Page URL: " . $currentPageUrl;
@@ -361,18 +388,18 @@ class ASAAISalesAgent {
         ]);
 
         if (is_wp_error($response)) {
-            wp_send_json_error(esc_html__('API request failed: ', 'asa') . $response->get_error_message());
+            wp_send_json_error(esc_html__('API request failed: ', 'asa-ai-sales-agent') . $response->get_error_message());
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if (isset($data['error'])) {
-            wp_send_json_error(esc_html__('API Error: ', 'asa') . $data['error']['message']);
+            wp_send_json_error(esc_html__('API Error: ', 'asa-ai-sales-agent') . $data['error']['message']);
         }
 
         if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
-            wp_send_json_error(esc_html__('AI did not return a valid response.', 'asa'));
+            wp_send_json_error(esc_html__('AI did not return a valid response.', 'asa-ai-sales-agent'));
         }
 
         $text = $data['candidates'][0]['content']['parts'][0]['text'];
@@ -384,11 +411,11 @@ class ASAAISalesAgent {
 
         $api_key = get_option('asa_api_key');
         if (!$api_key) {
-            wp_send_json_error(['message' => esc_html__('API key is not set.', 'asa')]);
+            wp_send_json_error(['message' => esc_html__('API key is not set.', 'asa-ai-sales-agent')]);
         }
 
-        $currentPageUrl = esc_url_raw($_POST['currentPageUrl'] ?? '');
-        $currentPageContent = sanitize_textarea_field($_POST['currentPageContent'] ?? '');
+        $currentPageUrl = esc_url_raw(wp_unslash($_POST['currentPageUrl'] ?? ''));
+        $currentPageContent = sanitize_textarea_field(wp_unslash($_POST['currentPageContent'] ?? ''));
 
         $cache_key = 'asa_proactive_message_' . md5($currentPageUrl . $currentPageContent);
         $cached_message = get_transient($cache_key);
@@ -397,9 +424,9 @@ class ASAAISalesAgent {
             return;
         }
 
-        $system_prompt = get_option('asa_system_prompt', esc_html__('You are Salista, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa'));
+        $system_prompt = get_option('asa_system_prompt', esc_html__('You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa-ai-sales-agent'));
         $page_content_for_prompt = substr($currentPageContent, 0, 4000);
-        $currentPageTitle = sanitize_text_field($_POST['currentPageTitle'] ?? '');
+        $currentPageTitle = sanitize_text_field(wp_unslash($_POST['currentPageTitle'] ?? ''));
         $prompt_instruction = "Generate an extremely short proactive message. It MUST be a single, insightful question of MAXIMUM 5-6 words. Do not use any greetings. Base the question directly on the provided page content. Page Title: {$currentPageTitle}.";
 
         $payload = json_encode([
@@ -414,14 +441,14 @@ class ASAAISalesAgent {
         ]);
 
         if (is_wp_error($response)) {
-            wp_send_json_error(['message' => esc_html__('API request failed: ', 'asa') . $response->get_error_message()]);
+            wp_send_json_error(['message' => esc_html__('API request failed: ', 'asa-ai-sales-agent') . $response->get_error_message()]);
         }
 
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
         if (isset($data['error'])) {
-            wp_send_json_error(['message' => esc_html__('API Error: ', 'asa') . $data['error']['message']]);
+            wp_send_json_error(['message' => esc_html__('API Error: ', 'asa-ai-sales-agent') . $data['error']['message']]);
         }
 
         if ( ! empty( $data['candidates'][0]['content']['parts'][0]['text'] ) ) {
@@ -436,7 +463,7 @@ class ASAAISalesAgent {
             wp_send_json_success($generated_message);
         } else {
             // Yanıt boş veya hatalıysa burası çalışacak
-            wp_send_json_error(['message' => esc_html__('AI did not return a valid response.', 'asa')]);
+            wp_send_json_error(['message' => esc_html__('AI did not return a valid response.', 'asa-ai-sales-agent')]);
         }
     }
 
@@ -445,10 +472,42 @@ class ASAAISalesAgent {
     public function print_chatbot() {
         echo do_shortcode('[asa_chatbot]');
     }
+
+    /**
+     * Sohbet geçmişi dizisini özyinelemeli olarak temizler.
+     *
+     * @param array $history_array Temizlenecek sohbet geçmişi.
+     * @return array Temizlenmiş sohbet geçmişi.
+     */
+    private function sanitize_chat_history( $history_array ) {
+        if ( ! is_array( $history_array ) ) {
+            return [];
+        }
+
+        $sanitized_history = [];
+        foreach ( $history_array as $entry ) {
+            if ( is_array( $entry ) && isset( $entry['role'], $entry['parts'] ) && is_array( $entry['parts'] ) ) {
+                $sanitized_entry = [
+                    'role' => sanitize_text_field( $entry['role'] ),
+                    'parts' => [],
+                ];
+
+                foreach($entry['parts'] as $part) {
+                    if(is_array($part) && isset($part['text'])) {
+                        $sanitized_entry['parts'][] = [ 'text' => sanitize_textarea_field( $part['text'] ) ];
+                    }
+                }
+                if(!empty($sanitized_entry['parts'])) {
+                    $sanitized_history[] = $sanitized_entry;
+                }
+            }
+        }
+        return $sanitized_history;
+    }
 }
 
 function asa_activate_plugin() {
-    $default_prompt = esc_html__('You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa');
+    $default_prompt = esc_html__('You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa-ai-sales-agent');
     add_option('asa_system_prompt', $default_prompt);
 }
 register_activation_hook(__FILE__, 'asa_activate_plugin');
