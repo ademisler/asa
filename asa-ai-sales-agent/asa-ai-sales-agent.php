@@ -420,7 +420,12 @@ class ASAAISalesAgent {
             <div class="asa-launcher" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-label="<?php esc_attr_e('Open chat', 'asa-ai-sales-agent'); ?>">
                 <?php echo wp_kses($avatar_html, $allowed_html); ?>
             </div>
-            <div class="asa-welcome-wrapper"><span class="asa-welcome asa-proactive-message"></span><button class="asa-proactive-close"><i class="fas fa-times"></i></button></div>
+            <div class="asa-welcome-wrapper">
+                <span class="asa-welcome asa-proactive-message"></span>
+                <button class="asa-proactive-close" aria-label="<?php esc_attr_e('Close proactive message', 'asa-ai-sales-agent'); ?>">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <div class="asa-window" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e('Chat window', 'asa-ai-sales-agent'); ?>" style="display:none;">
                 <div class="asa-header">
                     <?php echo wp_kses($avatar_html, $allowed_html); ?>
