@@ -3,7 +3,7 @@
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot that sends user input to the Google Gemini API. AI responses may be inaccurate.
 
-Version: 1.0.5
+Version: 1.0.6
 Author: Adem Isler
 Author URI: https://ademisler.com
 Text Domain: asa-ai-sales-agent
@@ -13,7 +13,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('ASA_VERSION', '1.0.5');
+define('ASA_VERSION', '1.0.6');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -61,6 +61,7 @@ class ASAAISalesAgent {
         
         // Google Fonts'u buraya ekleyin
         wp_enqueue_style('asa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], ASA_VERSION);
+        wp_enqueue_script('showdown', plugins_url('assets/js/showdown.min.js', __FILE__), [], '2.1.0', true);
         wp_enqueue_script('dompurify', plugins_url('assets/js/dompurify.min.js', __FILE__), [], '2.4.1', true);
         wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown', 'dompurify'), ASA_VERSION, true);
         wp_localize_script('asa-script', 'asaSettings', [
@@ -454,7 +455,7 @@ class ASAAISalesAgent {
         $api_key = get_option('asa_api_key');
         $message = sanitize_text_field(wp_unslash($_POST['message'] ?? ''));
         
-        $raw_history_json = isset($_POST['history']) ? sanitize_text_field(wp_unslash($_POST['history'])) : '[]';
+        $raw_history_json = isset($_POST['history']) ? wp_unslash($_POST['history']) : '[]';
         $decoded_history  = json_decode($raw_history_json, true);
         $history          = $this->sanitize_chat_history($decoded_history);
 
@@ -680,6 +681,9 @@ class ASAAISalesAgent {
 function asa_activate_plugin() {
     $default_prompt = esc_html__('You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa-ai-sales-agent');
     add_option('asa_system_prompt', $default_prompt);
+    add_option('asa_title', esc_html__('Sales Agent', 'asa-ai-sales-agent'));
+    add_option('asa_subtitle', esc_html__('How can I help you?', 'asa-ai-sales-agent'));
+    add_option('asa_primary_color', '#333333');
     add_option('asa_auto_insert', 'yes');
     add_option('asa_display_types', ['everywhere']);
     add_option('asa_history_limit', 50);
