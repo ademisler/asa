@@ -324,3 +324,9 @@ body { background-color: var(--asa-bg-main); }
 #asa-api-key-test-status.error {
     color: var(--asa-error);
 }
+
+#asa-color-contrast-warning {
+    color: var(--asa-error);
+    font-weight: 600;
+    margin-top: 6px;
+}

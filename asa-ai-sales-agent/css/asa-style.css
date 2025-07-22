@@ -365,6 +365,21 @@
     40% { transform: scale(1.0); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    #asa-chatbot .asa-launcher,
+    #asa-chatbot .asa-messages .user,
+    #asa-chatbot .asa-messages .bot,
+    #asa-chatbot .asa-typing .dot {
+        animation: none !important;
+    }
+    #asa-chatbot .asa-launcher,
+    #asa-chatbot .asa-window,
+    #asa-chatbot .asa-messages .user,
+    #asa-chatbot .asa-messages .bot {
+        transition: none !important;
+    }
+}
+
 #asa-chatbot .asa-input {
     padding: 12px;
     border-top: 1px solid var(--asa-border-color);

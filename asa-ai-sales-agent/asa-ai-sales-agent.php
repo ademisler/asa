@@ -3,7 +3,7 @@
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
 
-Version: 1.0.3
+Version: 1.0.4
 Author: Adem Isler
 Author URI: https://ademisler.com
 Text Domain: asa-ai-sales-agent
@@ -13,7 +13,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('ASA_VERSION', '1.0.3');
+define('ASA_VERSION', '1.0.4');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -282,6 +282,7 @@ class ASAAISalesAgent {
                             <label class="asa-section-label"><?php esc_html_e('Primary Color', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <input type="text" name="asa_primary_color" id="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>" class="asa-color-field" />
+                                <p id="asa-color-contrast-warning" class="asa-color-warning" style="display:none;"></p>
                             </div>
                         </div>
                         <div class="asa-card-section">
@@ -389,9 +390,9 @@ class ASAAISalesAgent {
         ob_start();
         $avatar_image_url = get_option('asa_avatar_image_url');
         $avatar_icon = get_option('asa_avatar_icon', 'fas fa-robot');
-        $avatar_html = $avatar_image_url 
-            ? '<img src="' . esc_url($avatar_image_url) . '" class="asa-avatar" />' 
-            : '<i class="' . esc_attr($avatar_icon) . ' asa-avatar"></i>';
+        $avatar_html = $avatar_image_url
+            ? '<img src="' . esc_url($avatar_image_url) . '" class="asa-avatar" alt="' . esc_attr__( 'Chatbot avatar', 'asa-ai-sales-agent' ) . '" />'
+            : '<i class="' . esc_attr($avatar_icon) . ' asa-avatar" aria-hidden="true"></i>';
         ?>
         <?php
         $allowed_html = [
@@ -405,11 +406,11 @@ class ASAAISalesAgent {
         ];
         ?>
         <div id="asa-chatbot" class="asa-position-<?php echo esc_attr(get_option('asa_position', 'right')); ?>" style="--asa-color: <?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>">
-            <div class="asa-launcher">
+            <div class="asa-launcher" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-label="<?php esc_attr_e('Open chat', 'asa-ai-sales-agent'); ?>">
                 <?php echo wp_kses($avatar_html, $allowed_html); ?>
             </div>
             <div class="asa-welcome-wrapper"><span class="asa-welcome asa-proactive-message"></span><button class="asa-proactive-close"><i class="fas fa-times"></i></button></div>
-            <div class="asa-window" style="display:none;">
+            <div class="asa-window" role="dialog" aria-modal="true" aria-label="<?php esc_attr_e('Chat window', 'asa-ai-sales-agent'); ?>" style="display:none;">
                 <div class="asa-header">
                     <?php echo wp_kses($avatar_html, $allowed_html); ?>
                     <div class="asa-header-text">
@@ -419,11 +420,11 @@ class ASAAISalesAgent {
                     <button class="asa-clear-history" title="<?php esc_attr_e('Clear History', 'asa-ai-sales-agent'); ?>" aria-label="<?php esc_attr_e('Clear History', 'asa-ai-sales-agent'); ?>"><i class="fas fa-trash-alt"></i></button>
                     <button class="asa-close" aria-label="<?php esc_attr_e('Close Chat', 'asa-ai-sales-agent'); ?>">&times;</button>
                 </div>
-                <div class="asa-messages"></div>
+                <div class="asa-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
                 <div class="asa-typing" style="display:none;"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
                 <div class="asa-input">
                     <div class="asa-input-wrapper">
-                        <input type="text" class="asa-text" placeholder="<?php esc_attr_e('Type your message', 'asa-ai-sales-agent'); ?>" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> />
+                        <input type="text" class="asa-text" placeholder="<?php esc_attr_e('Type your message', 'asa-ai-sales-agent'); ?>" aria-label="<?php esc_attr_e('Message', 'asa-ai-sales-agent'); ?>" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> />
                         <button class="asa-clear-input" style="display:none;" aria-label="<?php esc_attr_e('Clear Input', 'asa-ai-sales-agent'); ?>"><i class="fas fa-times-circle"></i></button>
                         <button class="asa-send" <?php if(!get_option('asa_api_key')) echo 'disabled'; ?> aria-label="<?php esc_attr_e('Send Message', 'asa-ai-sales-agent'); ?>"><i class="fas fa-paper-plane"></i></button>
                     </div>

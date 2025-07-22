@@ -13,6 +13,10 @@
         const welcomeWrapper = chatbot.find('.asa-welcome-wrapper');
         const proactiveCloseBtn = chatbot.find('.asa-proactive-close');
         const clearHistoryBtn = chatbot.find('.asa-clear-history');
+
+        let focusableEls = $();
+        let firstFocusable;
+        let lastFocusable;
         
         let history = [];
         const historyLimit = parseInt(asaSettings.historyLimit, 10) || 50;
@@ -81,14 +85,56 @@
             hideProactiveMessage();
         });
 
+        function updateFocusable() {
+            focusableEls = windowEl.find('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])').filter(':visible');
+            firstFocusable = focusableEls.first();
+            lastFocusable = focusableEls.last();
+        }
+
         launcher.on('click', function() {
             const isOpen = chatbot.hasClass('asa-open');
             if (isOpen) {
-                windowEl.slideUp(150, () => chatbot.removeClass('asa-open'));
+                windowEl.slideUp(150, () => {
+                    chatbot.removeClass('asa-open');
+                    launcher.attr('aria-expanded', 'false');
+                });
             } else {
                 hideProactiveMessage();
                 chatbot.addClass('asa-open');
-                windowEl.slideDown(150, () => inputEl.focus());
+                windowEl.slideDown(150, () => {
+                    updateFocusable();
+                    inputEl.focus();
+                    launcher.attr('aria-expanded', 'true');
+                });
+            }
+        });
+
+        launcher.on('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                $(this).trigger('click');
+            }
+        });
+
+        windowEl.on('keydown', function(e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                launcher.trigger('click');
+                return;
+            }
+            if (e.key === 'Tab') {
+                updateFocusable();
+                if (e.shiftKey) {
+                    if (document.activeElement === firstFocusable[0]) {
+                        e.preventDefault();
+                        lastFocusable.focus();
+                    }
+                } else {
+                    if (document.activeElement === lastFocusable[0]) {
+                        e.preventDefault();
+                        firstFocusable.focus();
+                    }
+                }
             }
         });
 
