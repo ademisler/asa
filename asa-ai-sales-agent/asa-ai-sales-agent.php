@@ -66,6 +66,7 @@ class ASAAISalesAgent {
             'avatar_icon' => get_option('asa_avatar_icon', 'fas fa-robot'),
             'position' => get_option('asa_position', 'right'),
             'showCredit' => get_option('asa_show_credit', 'yes'),
+            'hasApiKey' => ! empty(get_option('asa_api_key')),
             'proactiveMessage' => $this->generate_proactive_message(),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('asa_chat_nonce'),
