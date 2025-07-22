@@ -36,7 +36,7 @@
         const currentPageContent = mainContent ? mainContent.innerText.replace(/\s\s+/g, ' ').trim().substring(0, 4000) : '';
 
         // API anahtarı yoksa erken çık
-        if (!asaSettings.apiKey) {
+        if (!asaSettings.hasApiKey) {
             inputEl.prop('disabled', true).attr('placeholder', asaSettings.apiKeyPlaceholder);
             sendBtn.prop('disabled', true);
         } else {
