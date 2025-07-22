@@ -285,7 +285,7 @@ class ASAAISalesAgent {
                         <div class="asa-card-section">
                             <label class="asa-section-label"><?php esc_html_e('Primary Color', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
-                                <input type="text" name="asa_primary_color" id="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>" class="asa-color-field" />
+                                <input type="color" name="asa_primary_color" id="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>" class="asa-color-field" />
                                 <p id="asa-color-contrast-warning" class="asa-color-warning" style="display:none;"></p>
                             </div>
                         </div>

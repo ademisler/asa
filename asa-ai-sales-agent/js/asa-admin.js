@@ -24,10 +24,8 @@ jQuery(document).ready(function($) {
         $(target).show();
     });
 
-    // --- 2. WORDPRESS COLOR PICKER ---
-    if ($.fn.wpColorPicker) {
-        $('.asa-color-field').wpColorPicker();
-    }
+    // --- 2. Native Color Picker ---
+    // No initialization needed for <input type="color"> elements
 
     function hexToRgb(hex) {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
