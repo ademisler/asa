@@ -29,6 +29,46 @@ jQuery(document).ready(function($) {
         $('.asa-color-field').wpColorPicker();
     }
 
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    function luminance(r, g, b) {
+        const a = [r, g, b].map(v => {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    function contrast(rgb1, rgb2) {
+        const lum1 = luminance(rgb1.r, rgb1.g, rgb1.b) + 0.05;
+        const lum2 = luminance(rgb2.r, rgb2.g, rgb2.b) + 0.05;
+        return lum1 > lum2 ? lum1 / lum2 : lum2 / lum1;
+    }
+
+    function checkContrast() {
+        const color = $('#asa_primary_color').val();
+        const rgb = hexToRgb(color);
+        if (!rgb) return;
+        const ratio = contrast(rgb, { r: 255, g: 255, b: 255 });
+        const warning = $('#asa-color-contrast-warning');
+        if (ratio < 4.5) {
+            warning.text('Low contrast with white text');
+            warning.show();
+        } else {
+            warning.hide();
+        }
+    }
+
+    $('#asa_primary_color').on('change input', checkContrast);
+    checkContrast();
+
     // --- 3. AJAX SAVE SETTINGS ---
     $('#asa-settings-form').on('submit', function(e) { // Düzeltme: Spesifik form ID'si kullanıldı.
         e.preventDefault();
