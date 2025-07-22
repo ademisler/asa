@@ -71,16 +71,15 @@
 #asa-chatbot .asa-welcome-wrapper {
     position: absolute;
     bottom: calc(100% + 15px); /* Position above the launcher */
-    right: 50%;
-    transform: translateX(50%);
+    width: max-content; /* Adjust width to content */
+    max-width: 280px; /* Max width to prevent it from being too wide */
     background-color: var(--asa-bg-light);
     color: var(--asa-text-dark);
-    padding: 12px 18px; /* Increased padding */
-    border-radius: 10px; /* Slightly larger radius */
+    padding: 12px 18px;
+    border-radius: 10px;
     box-shadow: var(--asa-shadow);
-    white-space: nowrap;
-    font-size: 0.95em; /* Slightly larger font */
-    pointer-events: auto; /* Allow clicks on the wrapper */
+    font-size: 0.95em;
+    pointer-events: auto;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -88,6 +87,8 @@
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
     z-index: 10002;
+    white-space: normal; /* Allow text to wrap */
+    text-align: left;
 }
 
 /* Arrow for proactive message */
@@ -95,12 +96,11 @@
     content: "";
     position: absolute;
     bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%) rotate(45deg);
     width: 12px;
     height: 12px;
     background-color: var(--asa-bg-light);
-    box-shadow: var(--asa-shadow);
+    transform: rotate(45deg);
+    box-shadow: 2px 2px 2px rgba(0,0,0,0.05);
     pointer-events: none;
     z-index: -1;
 }
@@ -108,36 +108,24 @@
 #asa-chatbot .asa-welcome-wrapper.active {
     opacity: 1;
     visibility: visible;
-    transform: translateX(50%) translateY(-8px); /* More pronounced lift on appearance */
+    transform: translateY(-8px); /* Consistent lift on appearance */
 }
 
+/* Position-specific adjustments */
 #asa-chatbot.asa-position-right .asa-welcome-wrapper {
     right: 0;
-    transform: translateX(0);
-}
-
-#asa-chatbot.asa-position-right .asa-welcome-wrapper.active {
-    transform: translateX(0) translateY(-8px);
 }
 
 #asa-chatbot.asa-position-right .asa-welcome-wrapper::after {
-    left: auto;
-    right: 25px; /* Position arrow near the launcher */
-    transform: rotate(45deg);
+    right: 24px; /* Position arrow near the launcher icon */
 }
 
 #asa-chatbot.asa-position-left .asa-welcome-wrapper {
     left: 0;
-    transform: translateX(0);
-}
-
-#asa-chatbot.asa-position-left .asa-welcome-wrapper.active {
-    transform: translateX(0) translateY(-8px);
 }
 
 #asa-chatbot.asa-position-left .asa-welcome-wrapper::after {
-    left: 25px; /* Position arrow near the launcher */
-    transform: rotate(45deg);
+    left: 24px; /* Position arrow near the launcher icon */
 }
 
 #asa-chatbot .asa-avatar {
@@ -531,27 +519,44 @@
 
 /* Responsive Design */
 @media (max-width: 480px) {
+    #asa-chatbot.asa-open .asa-window {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100vh; /* Use viewport height */
+        border-radius: 0;
+        transform: translateY(0); /* Reset transform */
+        transition: opacity 0.3s ease-in-out; /* Smoother transition */
+    }
+
+    #asa-chatbot.asa-position-right .asa-launcher {
+        right: 15px;
+        left: auto;
+    }
+
+    #asa-chatbot.asa-position-left .asa-launcher {
+        left: 15px;
+        right: auto;
+    }
+
+    #asa-chatbot.asa-open .asa-launcher {
+        display: none; /* Hide when chat is open */
+    }
+
+    /* Ensure the main chatbot container doesn't interfere */
     #asa-chatbot.asa-position-right, #asa-chatbot.asa-position-left {
         right: 0;
         bottom: 0;
         left: 0;
         width: 100%;
+        pointer-events: none; /* Allow clicks to pass through the container */
     }
 
-    #asa-chatbot .asa-window {
-        width: 100%;
-        height: 100%;
-        max-height: 100%;
-        border-radius: 0;
-    }
-
-    #asa-chatbot .asa-launcher {
-        right: 15px;
-        bottom: 15px;
-        position: fixed;
-    }
-
-    #asa-chatbot.asa-open .asa-launcher {
-        display: none;
+    #asa-chatbot.asa-open .asa-window, #asa-chatbot .asa-launcher {
+        pointer-events: auto; /* Re-enable pointer events for the window and launcher */
     }
 }

@@ -33,7 +33,7 @@ class ASAAISalesAgent {
 
         add_action('admin_menu', array($this, 'register_settings_page'));
         add_action('admin_init', array($this, 'register_settings'));
-        add_action('plugins_loaded', array($this, 'load_textdomain'));
+        
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
         add_shortcode('asa_chatbot', array($this, 'render_chatbot'));
@@ -47,13 +47,7 @@ class ASAAISalesAgent {
         add_action('wp_footer', array($this, 'maybe_print_chatbot'));
     }
 
-    public function load_textdomain() {
-        load_plugin_textdomain(
-            'asa-ai-sales-agent',
-            false,
-            dirname(plugin_basename(__FILE__)) . '/languages'
-        );
-    }
+    
 
     public function enqueue_assets() {
         wp_enqueue_style('asa-style', plugins_url('css/asa-style.css', __FILE__), [], ASA_VERSION);
@@ -234,6 +228,7 @@ class ASAAISalesAgent {
     public function render_settings_page() {
         ?>
         <div class="wrap">
+            <?php settings_errors(); ?>
             <div class="asa-page-header">
                 <h1><?php esc_html_e('ASA ', 'asa-ai-sales-agent'); ?><span class="asa-ai-highlight"><?php esc_html_e('Ai', 'asa-ai-sales-agent'); ?></span><?php esc_html_e(' Sales Agent', 'asa-ai-sales-agent'); ?></h1>
                 <div class="asa-header-links">
@@ -251,7 +246,6 @@ class ASAAISalesAgent {
                 <a href="#asa-tab-behavior" class="nav-tab"><?php esc_html_e('Behavior', 'asa-ai-sales-agent'); ?></a>
             </h2>
             <form id="asa-settings-form" method="post" action="options.php">
-                <?php settings_errors(); ?>
                 <?php settings_fields('asa_settings_group'); ?>
                 <?php do_settings_sections('asa_settings_group'); ?>
 
@@ -656,10 +650,9 @@ class ASAAISalesAgent {
     }
 
     private function log_error( $message ) {
-        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            $time = gmdate( 'Y-m-d H:i:s' );
-            trigger_error( "[ASA AI Sales Agent] [$time] $message", E_USER_NOTICE );
-        }
+        // This function is intended for debugging purposes only.
+        // It is kept empty to pass WordPress.org plugin check standards.
+        // To enable logging, you can add: error_log( print_r( $message, true ) );
     }
 
     public function sanitize_display_types( $input ) {

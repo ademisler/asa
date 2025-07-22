@@ -1,7 +1,7 @@
 (function($) {
     $(function() {
         const chatbot = $('#asa-chatbot');
-        if (chatbot.length === 0) return; // Chatbot yoksa devam etme
+        if (chatbot.length === 0) return;
 
         const launcher = chatbot.find('.asa-launcher');
         const windowEl = chatbot.find('.asa-window');
@@ -23,14 +23,14 @@
         let history = [];
         const historyLimit = parseInt(asaSettings.historyLimit, 10) || 50;
         let proactiveMessageTimeout;
+        let lastProactiveMessage = null; // Store the last proactive message
 
-        // Geçmişi yükle ve render et
         try {
             const storedHistory = JSON.parse(localStorage.getItem('asa_chat_history'));
             if (Array.isArray(storedHistory)) {
                 history = storedHistory.slice(-historyLimit);
                 history.forEach(msg => {
-                    renderMessage(msg.role, msg.parts[0].text); // Sadece render et, geçmişe tekrar ekleme
+                    renderMessage(msg.role, msg.parts[0].text);
                 });
             }
         } catch (e) {
@@ -38,16 +38,13 @@
             localStorage.removeItem('asa_chat_history');
         }
 
-        // Akıllı içerik çıkarma
         const mainContent = document.querySelector('.entry-content, .post-content, article, main, body');
         const currentPageContent = mainContent ? mainContent.innerText.replace(/\s\s+/g, ' ').trim().substring(0, 4000) : '';
 
-        // API anahtarı yoksa erken çık
         if (!asaSettings.hasApiKey) {
             inputEl.prop('disabled', true).attr('placeholder', asaSettings.apiKeyPlaceholder);
             sendBtn.prop('disabled', true);
         } else {
-             // Sadece API anahtarı varsa proaktif mesajı getir
             fetchProactiveMessage();
         }
 
@@ -68,8 +65,18 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success && response.data) {
+                        const proactiveText = response.data;
+
+                        // If chat is already open, add the message directly and stop.
+                        if (chatbot.hasClass('asa-open')) {
+                            updateHistoryAndRender('model', proactiveText);
+                            return;
+                        }
+
+                        // Otherwise, prepare the external bubble for later.
+                        lastProactiveMessage = proactiveText;
                         setTimeout(() => {
-                            welcomeWrapper.find('.asa-proactive-message').text(response.data);
+                            welcomeWrapper.find('.asa-proactive-message').text(proactiveText);
                             welcomeWrapper.addClass('active');
                             proactiveMessageTimeout = setTimeout(() => hideProactiveMessage(), 15000);
                         }, proactiveDelay);
@@ -97,6 +104,26 @@
             lastFocusable = focusableEls.last();
         }
 
+        function openChatWindow() {
+            hideProactiveMessage();
+            chatbot.addClass('asa-open');
+            windowEl.slideDown(150, () => {
+                updateFocusable();
+                inputEl.focus();
+                launcher.attr('aria-expanded', 'true');
+
+                // Add proactive message to chat if it exists and hasn't been added
+                if (lastProactiveMessage) {
+                    // Check if the last message in history is not the proactive one
+                    const lastMessage = history.length > 0 ? history[history.length - 1] : null;
+                    if (!lastMessage || lastMessage.parts[0].text !== lastProactiveMessage) {
+                         updateHistoryAndRender('model', lastProactiveMessage);
+                    }
+                    lastProactiveMessage = null; // Clear after adding
+                }
+            });
+        }
+
         launcher.on('click', function() {
             const isOpen = chatbot.hasClass('asa-open');
             if (isOpen) {
@@ -105,13 +132,7 @@
                     launcher.attr('aria-expanded', 'false');
                 });
             } else {
-                hideProactiveMessage();
-                chatbot.addClass('asa-open');
-                windowEl.slideDown(150, () => {
-                    updateFocusable();
-                    inputEl.focus();
-                    launcher.attr('aria-expanded', 'true');
-                });
+                openChatWindow();
             }
         });
 
@@ -146,7 +167,7 @@
 
         welcomeWrapper.on('click', function() {
             if (!chatbot.hasClass('asa-open')) {
-                launcher.trigger('click');
+                openChatWindow();
             }
         });
 
@@ -203,20 +224,17 @@
                 if (res.success && res.data) {
                     updateHistoryAndRender('model', res.data);
                 } else {
-                    // Hatalı yanıtları geçmişe kaydetme, sadece göster
                     renderMessage('bot', asaSettings.errorMessage + (res.data.message || asaSettings.noResponseText));
                 }
             }).fail(function() {
-                // Sunucu hatalarını geçmişe kaydetme, sadece göster
                 renderMessage('bot', asaSettings.serverErrorText);
             }).always(function() {
                 typingEl.hide();
-                inputEl.prop('disabled', false).focus();
+                inputEl.prop('disabled', false);
                 sendBtn.prop('disabled', false);
             });
         }
         
-        // İyileştirme: Sadece render eden ve geçmişi GÜNCELLEMEYEN fonksiyon
         function renderMessage(sender, text) {
             const wrapper = $('<div>').addClass(sender === 'model' ? 'bot' : sender);
             const bubble = $('<div>').addClass('bubble');
@@ -237,7 +255,6 @@
             messagesEl.scrollTop(messagesEl.prop('scrollHeight'));
         }
 
-        // İyileştirme: Hem geçmişi güncelleyen hem de render eden fonksiyon
         function updateHistoryAndRender(sender, text) {
             history.push({ role: sender, parts: [{ text: text }] });
             if (history.length > historyLimit) {

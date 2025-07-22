@@ -19,30 +19,26 @@ $option_names = [
     'asa_proactive_delay'
 ];
 
-foreach ($option_names as $option) {
-    delete_option($option);
+// Clear plugin options
+foreach ( $option_names as $option ) {
+	delete_option( $option );
 }
 
+// Clear transients using a direct database query, as there is no other way.
 global $wpdb;
-$like       = $wpdb->esc_like( 'asa_proactive_message_' ) . '%';
-$cache_key  = 'asa_uninstall_transients';
-$rows       = wp_cache_get( $cache_key );
-if ( false === $rows ) {
-    $rows = $wpdb->get_col(
-        $wpdb->prepare(
-            "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
-            '_transient_' . $like,
-            '_transient_timeout_' . $like
-        )
-    );
-    wp_cache_set( $cache_key, $rows );
-}
-if ($rows) {
-    $transients = array_unique(array_map(function ($name) {
-        return str_replace(['_transient_', '_transient_timeout_'], '', $name);
-    }, $rows));
-    foreach ($transients as $transient) {
-        delete_transient($transient);
-    }
-}
+$transient_prefix_like = $wpdb->esc_like( '_transient_asa_proactive_message_' ) . '%';
+$timeout_prefix_like   = $wpdb->esc_like( '_transient_timeout_asa_proactive_message_' ) . '%';
+
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
+$wpdb->query(
+	$wpdb->prepare(
+		"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+		$transient_prefix_like,
+		$timeout_prefix_like
+	)
+);
+// phpcs:enable
+
+// Flush the cache to ensure the transients are gone.
+wp_cache_flush();
 
