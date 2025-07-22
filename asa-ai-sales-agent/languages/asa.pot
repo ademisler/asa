@@ -1,92 +1,321 @@
+# Copyright (C) 2025 Adem Isler
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ASA AI Sales Agent 1.0.0\n"
+"Project-Id-Version: ASA AI Sales Agent 1.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/asa-ai-sales-agent\n"
-"POT-Creation-Date: 2024-07-22 00:00+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-07-22T09:52:10+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: asa-ai-sales-agent\n"
 
+#. Plugin Name of the plugin
 #: asa-ai-sales-agent.php
-msgid "Configure API key in settings"
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "Sorry, an error occurred: "
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "No response received."
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "Sorry, could not communicate with the server. Please try again later."
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "Are you sure you want to clear the chat history?"
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "Hello! How can I help you today?"
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "Saving..."
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "Saved!"
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "Error!"
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "AJAX error: "
-msgstr ""
-
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:123
 msgid "ASA AI Sales Agent"
 msgstr ""
 
+#. Description of the plugin
 #: asa-ai-sales-agent.php
+msgid "AI Sales Agent chatbot powered by Google Gemini API."
+msgstr ""
+
+#. Author of the plugin
+#: asa-ai-sales-agent.php
+msgid "Adem Isler"
+msgstr ""
+
+#. Author URI of the plugin
+#: asa-ai-sales-agent.php
+msgid "https://ademisler.com"
+msgstr ""
+
+#: asa-ai-sales-agent.php:83
+msgid "Configure API key in settings"
+msgstr ""
+
+#: asa-ai-sales-agent.php:84
+msgid "Sorry, an error occurred: "
+msgstr ""
+
+#: asa-ai-sales-agent.php:85
+msgid "No response received."
+msgstr ""
+
+#: asa-ai-sales-agent.php:86
+msgid "Sorry, could not communicate with the server. Please try again later."
+msgstr ""
+
+#: asa-ai-sales-agent.php:87
+msgid "Are you sure you want to clear the chat history?"
+msgstr ""
+
+#: asa-ai-sales-agent.php:94
+msgid "Hello! How can I help you today?"
+msgstr ""
+
+#: asa-ai-sales-agent.php:108
+msgid "Saving..."
+msgstr ""
+
+#: asa-ai-sales-agent.php:109
+msgid "Saved!"
+msgstr ""
+
+#: asa-ai-sales-agent.php:110
+msgid "Error!"
+msgstr ""
+
+#: asa-ai-sales-agent.php:111
+msgid "AJAX error: "
+msgstr ""
+
+#: asa-ai-sales-agent.php:112
+msgid "Testing..."
+msgstr ""
+
+#: asa-ai-sales-agent.php:113
+msgid "Valid API Key!"
+msgstr ""
+
+#: asa-ai-sales-agent.php:114
+msgid "Invalid API Key."
+msgstr ""
+
+#: asa-ai-sales-agent.php:153
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:172
 msgid "Settings saved."
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:177
+msgid "Unauthorized"
+msgstr ""
+
+#: asa-ai-sales-agent.php:184
+msgid "API key is missing."
+msgstr ""
+
+#: asa-ai-sales-agent.php:218
+msgid "API Key is valid."
+msgstr ""
+
+#: asa-ai-sales-agent.php:221
+msgid "Unexpected response."
+msgstr ""
+
+#: asa-ai-sales-agent.php:228
+msgid "ASA "
+msgstr ""
+
+#: asa-ai-sales-agent.php:228
+msgid "Ai"
+msgstr ""
+
+#: asa-ai-sales-agent.php:228
+msgid " Sales Agent"
+msgstr ""
+
+#: asa-ai-sales-agent.php:232
+msgid "Support ASA's Development"
+msgstr ""
+
+#: asa-ai-sales-agent.php:234
+msgid "This plugin is 100% free. If you find it useful, your support helps keep the updates coming!"
+msgstr ""
+
+#: asa-ai-sales-agent.php:239
+msgid "General"
+msgstr ""
+
+#: asa-ai-sales-agent.php:240
+msgid "Appearance"
+msgstr ""
+
+#: asa-ai-sales-agent.php:241
+msgid "Behavior"
+msgstr ""
+
+#: asa-ai-sales-agent.php:251
+msgid "Gemini API Key"
+msgstr ""
+
+#: asa-ai-sales-agent.php:255
+msgid "Get API Key"
+msgstr ""
+
+#: asa-ai-sales-agent.php:258
+msgid "Test API Key"
+msgstr ""
+
+#: asa-ai-sales-agent.php:261
+msgid "Enter your Google Gemini API Key here."
+msgstr ""
+
+#: asa-ai-sales-agent.php:270
+msgid "Title"
+msgstr ""
+
+#: asa-ai-sales-agent.php:276
+msgid "Subtitle"
+msgstr ""
+
+#: asa-ai-sales-agent.php:282
+msgid "Primary Color"
+msgstr ""
+
+#: asa-ai-sales-agent.php:288
+msgid "Avatar"
+msgstr ""
+
+#: asa-ai-sales-agent.php:291
+msgid "Choose an Icon:"
+msgstr ""
+
+#: asa-ai-sales-agent.php:294
+msgid "Choose"
+msgstr ""
+
+#: asa-ai-sales-agent.php:302
+msgid "Or Use Image URL:"
+msgstr ""
+
+#: asa-ai-sales-agent.php:308
+msgid "Position"
+msgstr ""
+
+#: asa-ai-sales-agent.php:315
+msgid "Left"
+msgstr ""
+
+#: asa-ai-sales-agent.php:322
+msgid "Right"
+msgstr ""
+
+#: asa-ai-sales-agent.php:329
+msgid "Show Developer Credit"
+msgstr ""
+
+#: asa-ai-sales-agent.php:340
+msgid "System Prompt"
+msgstr ""
+
+#: asa-ai-sales-agent.php:342
+msgid "You are a helpful sales agent."
+msgstr ""
+
+#: asa-ai-sales-agent.php:343
+msgid "Define the chatbot's personality, role, and response style."
+msgstr ""
+
+#: asa-ai-sales-agent.php:347
+msgid "Auto Insert"
+msgstr ""
+
+#: asa-ai-sales-agent.php:350
+msgid "Automatically add chatbot to footer"
+msgstr ""
+
+#: asa-ai-sales-agent.php:354
+msgid "Display On"
+msgstr ""
+
+#: asa-ai-sales-agent.php:357
+msgid "Entire Site"
+msgstr ""
+
+#: asa-ai-sales-agent.php:358
+msgid "Front Page"
+msgstr ""
+
+#: asa-ai-sales-agent.php:359
+msgid "Posts"
+msgstr ""
+
+#: asa-ai-sales-agent.php:360
+msgid "Pages"
+msgstr ""
+
+#: asa-ai-sales-agent.php:361
+msgid "Archives"
+msgstr ""
+
+#: asa-ai-sales-agent.php:365
+msgid "History Limit"
+msgstr ""
+
+#: asa-ai-sales-agent.php:373
 msgid "Save Changes"
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:379
+msgid "Choose an Icon"
+msgstr ""
+
+#: asa-ai-sales-agent.php:416
 msgid "Sales Agent"
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:419
+msgid "Clear History"
+msgstr ""
+
+#: asa-ai-sales-agent.php:420
+msgid "Close Chat"
+msgstr ""
+
+#: asa-ai-sales-agent.php:426
+msgid "Type your message"
+msgstr ""
+
+#: asa-ai-sales-agent.php:427
+msgid "Clear Input"
+msgstr ""
+
+#: asa-ai-sales-agent.php:428
+msgid "Send Message"
+msgstr ""
+
+#: asa-ai-sales-agent.php:432
+msgid "Developed by:"
+msgstr ""
+
+#: asa-ai-sales-agent.php:455
 msgid "Invalid request"
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:458
+#: asa-ai-sales-agent.php:533
+#: asa-ai-sales-agent.php:671
+msgid "You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience."
+msgstr ""
+
+#: asa-ai-sales-agent.php:489
+#: asa-ai-sales-agent.php:551
 msgid "API request failed: "
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:495
+msgid "HTTP status: "
+msgstr ""
+
+#: asa-ai-sales-agent.php:503
+#: asa-ai-sales-agent.php:565
 msgid "API Error: "
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:508
+#: asa-ai-sales-agent.php:581
 msgid "AI did not return a valid response."
 msgstr ""
 
-#: asa-ai-sales-agent.php
+#: asa-ai-sales-agent.php:520
 msgid "API key is not set."
-msgstr ""
-
-#: asa-ai-sales-agent.php
-msgid "You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience."
 msgstr ""
