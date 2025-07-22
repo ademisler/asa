@@ -31,9 +31,10 @@ class ASAAISalesAgent {
     }
 
     private function __construct() {
-        
+
         add_action('admin_menu', array($this, 'register_settings_page'));
         add_action('admin_init', array($this, 'register_settings'));
+        add_action('plugins_loaded', array($this, 'load_textdomain'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
         add_shortcode('asa_chatbot', array($this, 'render_chatbot'));
@@ -45,6 +46,14 @@ class ASAAISalesAgent {
         
         
         add_action('wp_footer', array($this, 'print_chatbot'));
+    }
+
+    public function load_textdomain() {
+        load_plugin_textdomain(
+            'asa-ai-sales-agent',
+            false,
+            dirname(plugin_basename(__FILE__)) . '/languages'
+        );
     }
 
     public function enqueue_assets() {
@@ -100,7 +109,8 @@ class ASAAISalesAgent {
             'savingText' => esc_html__('Saving...', 'asa-ai-sales-agent'),
             'savedText' => esc_html__('Saved!', 'asa-ai-sales-agent'),
             'errorText' => esc_html__('Error!', 'asa-ai-sales-agent'),
-            
+            'ajaxErrorText' => esc_html__('AJAX error: ', 'asa-ai-sales-agent'),
+
         ]);
         wp_enqueue_style('thickbox');
     }
