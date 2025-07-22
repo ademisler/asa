@@ -99,8 +99,13 @@
     width: 12px;
     height: 12px;
     background-color: var(--asa-bg-light);
-    box-shadow: var(--asa-shadow);
+    box-shadow: none; /* Prevent background artifact */
     pointer-events: none;
+}
+
+/* Ensure full background behind text */
+#asa-chatbot .asa-proactive-message {
+    display: block;
 }
 
 #asa-chatbot .asa-welcome-wrapper.active {

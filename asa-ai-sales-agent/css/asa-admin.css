@@ -200,6 +200,7 @@ body { background-color: var(--asa-bg-main); }
     display: flex; /* Flexbox kullanarak hizalama */
     align-items: center;
     width: 100%;
+    position: relative; /* Color palette positioning */
 }
 .wp-picker-container .wp-color-result {
     order: 2; /* Düğmeyi giriş alanının sağına taşı */
@@ -210,6 +211,17 @@ body { background-color: var(--asa-bg-main); }
 }
 .wp-picker-container .wp-picker-input {
     width: 100%; /* Giriş alanının tam genişliğini kullanmasını sağla */
+}
+
+/* Prevent jump when opening picker */
+.wp-picker-holder {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    z-index: 1000;
+}
+.wp-picker-open .wp-picker-input-wrap {
+    margin-right: 0;
 }
 
 /* 7. Specific Component Redesigns
