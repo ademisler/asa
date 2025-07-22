@@ -8,6 +8,8 @@ Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
+AI-powered sales assistant chatbot for WordPress.
+
 == Description ==
 ASA AI Sales Agent is a powerful WordPress plugin that integrates a smart AI chatbot into your website, powered by the Google Gemini API. This chatbot acts as a proactive sales assistant, engaging with your visitors, answering their questions, and guiding them through their journey on your site.
 
