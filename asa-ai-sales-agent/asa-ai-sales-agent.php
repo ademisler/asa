@@ -3,7 +3,7 @@
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
 
-Version: 1.0.1
+Version: 1.0.2
 Author: Adem Isler
 Author URI: https://ademisler.com
 Text Domain: asa-ai-sales-agent
@@ -13,7 +13,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('ASA_VERSION', '1.0.1');
+define('ASA_VERSION', '1.0.2');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -45,7 +45,7 @@ class ASAAISalesAgent {
         add_action('wp_ajax_asa_save_settings', array($this, 'asa_save_settings'));
         
         
-        add_action('wp_footer', array($this, 'print_chatbot'));
+        add_action('wp_footer', array($this, 'maybe_print_chatbot'));
     }
 
     public function load_textdomain() {
@@ -86,6 +86,7 @@ class ASAAISalesAgent {
             'noResponseText' => esc_html__('No response received.', 'asa-ai-sales-agent'),
             'serverErrorText' => esc_html__('Sorry, could not communicate with the server. Please try again later.', 'asa-ai-sales-agent'),
             'clearHistoryConfirm' => esc_html__('Are you sure you want to clear the chat history?', 'asa-ai-sales-agent'),
+            'historyLimit' => intval(get_option('asa_history_limit', 50)),
         ]);
     }
 
@@ -134,7 +135,10 @@ class ASAAISalesAgent {
             'asa_avatar_icon'       => 'sanitize_text_field',
             'asa_avatar_image_url'  => 'esc_url_raw',
             'asa_position'          => 'sanitize_text_field',
-            'asa_show_credit'       => 'sanitize_text_field'
+            'asa_show_credit'       => 'sanitize_text_field',
+            'asa_auto_insert'      => 'sanitize_text_field',
+            'asa_history_limit'    => 'absint',
+            'asa_display_types'    => [ $this, 'sanitize_display_types' ]
         ];
 
         foreach ($settings as $option_name => $sanitize_callback) {
@@ -158,6 +162,10 @@ class ASAAISalesAgent {
         update_option('asa_avatar_image_url', esc_url_raw(wp_unslash($_POST['asa_avatar_image_url'] ?? '')));
         update_option('asa_position', sanitize_text_field(wp_unslash($_POST['asa_position'] ?? '')));
         update_option('asa_show_credit', sanitize_text_field(wp_unslash($_POST['asa_show_credit'] ?? '')));
+        update_option('asa_auto_insert', sanitize_text_field(wp_unslash($_POST['asa_auto_insert'] ?? 'no')));
+        update_option('asa_history_limit', absint(wp_unslash($_POST['asa_history_limit'] ?? 50)));
+        $display_types = isset($_POST['asa_display_types']) ? (array) wp_unslash($_POST['asa_display_types']) : [];
+        update_option('asa_display_types', $this->sanitize_display_types($display_types));
 
         wp_send_json_success(esc_html__('Settings saved.', 'asa-ai-sales-agent'));
     }
@@ -280,6 +288,30 @@ class ASAAISalesAgent {
                                 <p class="description"><?php esc_html_e('Define the chatbot\'s personality, role, and response style.', 'asa-ai-sales-agent'); ?></p>
                             </div>
                         </div>
+                        <div class="asa-card-section">
+                            <label class="asa-section-label"><?php esc_html_e('Auto Insert', 'asa-ai-sales-agent'); ?></label>
+                            <div class="asa-section-content">
+                                <input type="checkbox" name="asa_auto_insert" value="yes" <?php checked(get_option('asa_auto_insert', 'yes'), 'yes'); ?> />
+                                <span class="description"><?php esc_html_e('Automatically add chatbot to footer', 'asa-ai-sales-agent'); ?></span>
+                            </div>
+                        </div>
+                        <div class="asa-card-section">
+                            <label class="asa-section-label"><?php esc_html_e('Display On', 'asa-ai-sales-agent'); ?></label>
+                            <div class="asa-section-content">
+                                <?php $types = (array)get_option('asa_display_types', ['everywhere']); ?>
+                                <label><input type="checkbox" name="asa_display_types[]" value="everywhere" <?php checked(in_array('everywhere', $types), true); ?> /> <?php esc_html_e('Entire Site', 'asa-ai-sales-agent'); ?></label><br />
+                                <label><input type="checkbox" name="asa_display_types[]" value="front_page" <?php checked(in_array('front_page', $types), true); ?> /> <?php esc_html_e('Front Page', 'asa-ai-sales-agent'); ?></label><br />
+                                <label><input type="checkbox" name="asa_display_types[]" value="posts" <?php checked(in_array('posts', $types), true); ?> /> <?php esc_html_e('Posts', 'asa-ai-sales-agent'); ?></label><br />
+                                <label><input type="checkbox" name="asa_display_types[]" value="pages" <?php checked(in_array('pages', $types), true); ?> /> <?php esc_html_e('Pages', 'asa-ai-sales-agent'); ?></label><br />
+                                <label><input type="checkbox" name="asa_display_types[]" value="archives" <?php checked(in_array('archives', $types), true); ?> /> <?php esc_html_e('Archives', 'asa-ai-sales-agent'); ?></label>
+                            </div>
+                        </div>
+                        <div class="asa-card-section">
+                            <label class="asa-section-label"><?php esc_html_e('History Limit', 'asa-ai-sales-agent'); ?></label>
+                            <div class="asa-section-content">
+                                <input type="number" name="asa_history_limit" min="1" value="<?php echo esc_attr(get_option('asa_history_limit', 50)); ?>" />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -398,6 +430,7 @@ class ASAAISalesAgent {
         ]);
 
         if (is_wp_error($response)) {
+            $this->log_error('Chat request error: ' . $response->get_error_message());
             wp_send_json_error(esc_html__('API request failed: ', 'asa-ai-sales-agent') . $response->get_error_message());
         }
 
@@ -405,10 +438,12 @@ class ASAAISalesAgent {
         $data = json_decode($body, true);
 
         if (isset($data['error'])) {
+            $this->log_error('Chat API error: ' . $data['error']['message']);
             wp_send_json_error(esc_html__('API Error: ', 'asa-ai-sales-agent') . $data['error']['message']);
         }
 
         if (!isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+            $this->log_error('Chat API empty response');
             wp_send_json_error(esc_html__('AI did not return a valid response.', 'asa-ai-sales-agent'));
         }
 
@@ -451,6 +486,7 @@ class ASAAISalesAgent {
         ]);
 
         if (is_wp_error($response)) {
+            $this->log_error('Proactive request error: ' . $response->get_error_message());
             wp_send_json_error(['message' => esc_html__('API request failed: ', 'asa-ai-sales-agent') . $response->get_error_message()]);
         }
 
@@ -458,6 +494,7 @@ class ASAAISalesAgent {
         $data = json_decode($body, true);
 
         if (isset($data['error'])) {
+            $this->log_error('Proactive API error: ' . $data['error']['message']);
             wp_send_json_error(['message' => esc_html__('API Error: ', 'asa-ai-sales-agent') . $data['error']['message']]);
         }
 
@@ -473,6 +510,7 @@ class ASAAISalesAgent {
             wp_send_json_success($generated_message);
         } else {
             // Yanıt boş veya hatalıysa burası çalışacak
+            $this->log_error('Proactive API empty response');
             wp_send_json_error(['message' => esc_html__('AI did not return a valid response.', 'asa-ai-sales-agent')]);
         }
     }
@@ -481,6 +519,52 @@ class ASAAISalesAgent {
 
     public function print_chatbot() {
         echo do_shortcode('[asa_chatbot]');
+    }
+
+    public function maybe_print_chatbot() {
+        if (get_option('asa_auto_insert', 'yes') !== 'yes') {
+            return;
+        }
+
+        $types = (array) get_option('asa_display_types', ['everywhere']);
+        $show  = in_array('everywhere', $types, true);
+
+        if (!$show) {
+            if (in_array('front_page', $types, true) && is_front_page()) {
+                $show = true;
+            } elseif (in_array('pages', $types, true) && is_page()) {
+                $show = true;
+            } elseif (in_array('posts', $types, true) && is_single()) {
+                $show = true;
+            } elseif (in_array('archives', $types, true) && (is_home() || is_archive())) {
+                $show = true;
+            }
+        }
+
+        if ($show) {
+            $this->print_chatbot();
+        }
+    }
+
+    private function log_error( $message ) {
+        $file = plugin_dir_path( __FILE__ ) . 'error.log';
+        $time = date( 'Y-m-d H:i:s' );
+        error_log( "[$time] $message\n", 3, $file );
+    }
+
+    public function sanitize_display_types( $input ) {
+        $allowed = [ 'everywhere', 'front_page', 'posts', 'pages', 'archives' ];
+        if ( ! is_array( $input ) ) {
+            return [];
+        }
+        $sanitized = [];
+        foreach ( $input as $item ) {
+            $item = sanitize_text_field( $item );
+            if ( in_array( $item, $allowed, true ) ) {
+                $sanitized[] = $item;
+            }
+        }
+        return $sanitized;
     }
 
     /**
@@ -519,6 +603,9 @@ class ASAAISalesAgent {
 function asa_activate_plugin() {
     $default_prompt = esc_html__('You are ASA, a friendly and expert sales assistant for this website. Your primary goal is to be proactive, engaging, and helpful. Use the content of the page the user is viewing to understand their interests. Start conversations with insightful questions, highlight product benefits, answer questions clearly, and gently guide them towards making a purchase. Your tone should be persuasive but never pushy. Always aim to provide value and a great customer experience.', 'asa-ai-sales-agent');
     add_option('asa_system_prompt', $default_prompt);
+    add_option('asa_auto_insert', 'yes');
+    add_option('asa_display_types', ['everywhere']);
+    add_option('asa_history_limit', 50);
 }
 register_activation_hook(__FILE__, 'asa_activate_plugin');
 

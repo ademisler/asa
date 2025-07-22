@@ -15,13 +15,14 @@
         const clearHistoryBtn = chatbot.find('.asa-clear-history');
         
         let history = [];
+        const historyLimit = parseInt(asaSettings.historyLimit, 10) || 50;
         let proactiveMessageTimeout;
 
         // Geçmişi yükle ve render et
         try {
             const storedHistory = JSON.parse(localStorage.getItem('asa_chat_history'));
             if (Array.isArray(storedHistory)) {
-                history = storedHistory;
+                history = storedHistory.slice(-historyLimit);
                 history.forEach(msg => {
                     renderMessage(msg.role, msg.parts[0].text); // Sadece render et, geçmişe tekrar ekleme
                 });
@@ -187,6 +188,9 @@
         // İyileştirme: Hem geçmişi güncelleyen hem de render eden fonksiyon
         function updateHistoryAndRender(sender, text) {
             history.push({ role: sender, parts: [{ text: text }] });
+            if (history.length > historyLimit) {
+                history = history.slice(-historyLimit);
+            }
             localStorage.setItem('asa_chat_history', JSON.stringify(history));
             renderMessage(sender, text);
         }
