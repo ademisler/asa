@@ -174,7 +174,9 @@
                     strikethrough: true,
                     tables: true
                 });
-                bubble.html(converter.makeHtml(text));
+                const dirty = converter.makeHtml(text);
+                const clean = DOMPurify.sanitize(dirty);
+                bubble.html(clean);
             } else {
                 bubble.text(text);
             }

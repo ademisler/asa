@@ -3,7 +3,7 @@
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
 
-Version: 1.0.0
+Version: 1.0.1
 Author: Adem Isler
 Author URI: https://ademisler.com
 Text Domain: asa-ai-sales-agent
@@ -13,7 +13,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('ASA_VERSION', '1.0.0');
+define('ASA_VERSION', '1.0.1');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -62,9 +62,8 @@ class ASAAISalesAgent {
         
         // Google Fonts'u buraya ekleyin
         wp_enqueue_style('asa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], ASA_VERSION);
-
-        wp_enqueue_script('showdown', plugins_url('assets/js/showdown.min.js', __FILE__), array(), '2.1.0', true);
-        wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown'), ASA_VERSION, true);
+        wp_enqueue_script('dompurify', plugins_url('assets/js/dompurify.min.js', __FILE__), [], '2.4.1', true);
+        wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown', 'dompurify'), ASA_VERSION, true);
         wp_localize_script('asa-script', 'asaSettings', [
             
             'systemPrompt' => get_option('asa_system_prompt'),
