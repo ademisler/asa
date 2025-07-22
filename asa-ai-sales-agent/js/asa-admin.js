@@ -26,8 +26,51 @@ jQuery(document).ready(function($) {
 
     // --- 2. WORDPRESS COLOR PICKER ---
     if ($.fn.wpColorPicker) {
-        $('.asa-color-field').wpColorPicker();
+        $('.asa-color-field').wpColorPicker({
+            change: checkContrast,
+            clear: checkContrast
+        });
     }
+
+    function hexToRgb(hex) {
+        hex = hex.replace('#', '');
+        if (hex.length === 3) {
+            hex = hex.split('').map(c => c + c).join('');
+        }
+        const bigint = parseInt(hex, 16);
+        return {
+            r: (bigint >> 16) & 255,
+            g: (bigint >> 8) & 255,
+            b: bigint & 255
+        };
+    }
+
+    function luminance(c) {
+        const a = [c.r, c.g, c.b].map(v => {
+            v /= 255;
+            return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    function contrast(rgb1, rgb2) {
+        const l1 = luminance(rgb1) + 0.05;
+        const l2 = luminance(rgb2) + 0.05;
+        return l1 > l2 ? l1 / l2 : l2 / l1;
+    }
+
+    function checkContrast() {
+        const color = $('#asa_primary_color').val() || '#333333';
+        const ratio = contrast(hexToRgb(color), { r: 255, g: 255, b: 255 });
+        const warning = $('#asa-contrast-warning');
+        if (ratio < 4.5) {
+            warning.text(asaAdminSettings.contrastWarningText).show();
+        } else {
+            warning.hide();
+        }
+    }
+
+    checkContrast();
 
     // --- 3. AJAX SAVE SETTINGS ---
     $('#asa-settings-form').on('submit', function(e) { // Düzeltme: Spesifik form ID'si kullanıldı.

@@ -81,14 +81,31 @@
             hideProactiveMessage();
         });
 
+        function openChat() {
+            hideProactiveMessage();
+            chatbot.addClass('asa-open');
+            windowEl.slideDown(150, () => {
+                inputEl.focus();
+            });
+        }
+
+        function closeChat() {
+            windowEl.slideUp(150, () => chatbot.removeClass('asa-open'));
+        }
+
         launcher.on('click', function() {
             const isOpen = chatbot.hasClass('asa-open');
             if (isOpen) {
-                windowEl.slideUp(150, () => chatbot.removeClass('asa-open'));
+                closeChat();
             } else {
-                hideProactiveMessage();
-                chatbot.addClass('asa-open');
-                windowEl.slideDown(150, () => inputEl.focus());
+                openChat();
+            }
+        });
+
+        launcher.on('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                launcher.trigger('click');
             }
         });
 
@@ -98,7 +115,41 @@
             }
         });
 
-        chatbot.find('.asa-close').on('click', () => launcher.trigger('click'));
+        const closeBtn = chatbot.find('.asa-close');
+        closeBtn.on('click', () => launcher.trigger('click'));
+        closeBtn.on('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                launcher.trigger('click');
+            }
+        });
+
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && chatbot.hasClass('asa-open')) {
+                e.preventDefault();
+                closeChat();
+            }
+        });
+
+        function trapFocus(e) {
+            if (e.key !== 'Tab') return;
+            const focusable = windowEl.find('a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"]');
+            const first = focusable.first()[0];
+            const last = focusable.last()[0];
+            if (e.shiftKey) {
+                if (document.activeElement === first) {
+                    e.preventDefault();
+                    $(last).focus();
+                }
+            } else {
+                if (document.activeElement === last) {
+                    e.preventDefault();
+                    $(first).focus();
+                }
+            }
+        }
+
+        windowEl.on('keydown', trapFocus);
 
         clearHistoryBtn.on('click', function() {
             if (confirm(asaSettings.clearHistoryConfirm)) {

@@ -112,6 +112,7 @@ class ASAAISalesAgent {
             'testingText'     => esc_html__('Testing...', 'asa-ai-sales-agent'),
             'testSuccessText' => esc_html__('Valid API Key!', 'asa-ai-sales-agent'),
             'testErrorText'   => esc_html__('Invalid API Key.', 'asa-ai-sales-agent'),
+            'contrastWarningText' => esc_html__('Selected color may not have enough contrast with white text.', 'asa-ai-sales-agent'),
 
         ]);
         wp_enqueue_style('thickbox');
@@ -282,6 +283,7 @@ class ASAAISalesAgent {
                             <label class="asa-section-label"><?php esc_html_e('Primary Color', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <input type="text" name="asa_primary_color" id="asa_primary_color" value="<?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>" class="asa-color-field" />
+                                <p id="asa-contrast-warning" class="description" style="display:none;color:#dc3545;"></p>
                             </div>
                         </div>
                         <div class="asa-card-section">
@@ -389,15 +391,16 @@ class ASAAISalesAgent {
         ob_start();
         $avatar_image_url = get_option('asa_avatar_image_url');
         $avatar_icon = get_option('asa_avatar_icon', 'fas fa-robot');
-        $avatar_html = $avatar_image_url 
-            ? '<img src="' . esc_url($avatar_image_url) . '" class="asa-avatar" />' 
-            : '<i class="' . esc_attr($avatar_icon) . ' asa-avatar"></i>';
+        $avatar_html = $avatar_image_url
+            ? '<img src="' . esc_url($avatar_image_url) . '" class="asa-avatar" alt="' . esc_attr__( 'Chatbot Avatar', 'asa-ai-sales-agent' ) . '" />'
+            : '<i class="' . esc_attr($avatar_icon) . ' asa-avatar" aria-hidden="true"></i>';
         ?>
         <?php
         $allowed_html = [
             'img' => [
                 'src'   => [],
                 'class' => [],
+                'alt'   => [],
             ],
             'i'   => [
                 'class' => [],
@@ -405,21 +408,21 @@ class ASAAISalesAgent {
         ];
         ?>
         <div id="asa-chatbot" class="asa-position-<?php echo esc_attr(get_option('asa_position', 'right')); ?>" style="--asa-color: <?php echo esc_attr(get_option('asa_primary_color', '#333333')); ?>">
-            <div class="asa-launcher">
+            <div class="asa-launcher" role="button" tabindex="0" aria-label="<?php esc_attr_e('Open Chat', 'asa-ai-sales-agent'); ?>">
                 <?php echo wp_kses($avatar_html, $allowed_html); ?>
             </div>
             <div class="asa-welcome-wrapper"><span class="asa-welcome asa-proactive-message"></span><button class="asa-proactive-close"><i class="fas fa-times"></i></button></div>
-            <div class="asa-window" style="display:none;">
+            <div class="asa-window" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="asa-chatbot-title">
                 <div class="asa-header">
                     <?php echo wp_kses($avatar_html, $allowed_html); ?>
                     <div class="asa-header-text">
-                        <span class="asa-title"><?php echo esc_html(get_option('asa_title', esc_html__('Sales Agent', 'asa-ai-sales-agent'))); ?></span>
+                        <span class="asa-title" id="asa-chatbot-title"><?php echo esc_html(get_option('asa_title', esc_html__('Sales Agent', 'asa-ai-sales-agent'))); ?></span>
                         <span class="asa-subtitle"><?php echo esc_html(get_option('asa_subtitle')); ?></span>
                     </div>
                     <button class="asa-clear-history" title="<?php esc_attr_e('Clear History', 'asa-ai-sales-agent'); ?>" aria-label="<?php esc_attr_e('Clear History', 'asa-ai-sales-agent'); ?>"><i class="fas fa-trash-alt"></i></button>
                     <button class="asa-close" aria-label="<?php esc_attr_e('Close Chat', 'asa-ai-sales-agent'); ?>">&times;</button>
                 </div>
-                <div class="asa-messages"></div>
+                <div class="asa-messages" role="log" aria-live="polite"></div>
                 <div class="asa-typing" style="display:none;"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
                 <div class="asa-input">
                     <div class="asa-input-wrapper">

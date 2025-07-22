@@ -518,3 +518,12 @@
         display: none;
     }
 }
+
+@media (prefers-reduced-motion: reduce) {
+    #asa-chatbot .asa-launcher {
+        animation: none;
+    }
+    #asa-chatbot .asa-typing .dot {
+        animation: none;
+    }
+}
