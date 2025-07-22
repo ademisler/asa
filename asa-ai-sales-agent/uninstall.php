@@ -15,7 +15,8 @@ $option_names = [
     'asa_show_credit',
     'asa_auto_insert',
     'asa_display_types',
-    'asa_history_limit'
+    'asa_history_limit',
+    'asa_proactive_delay'
 ];
 
 foreach ($option_names as $option) {

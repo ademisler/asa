@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: ASA AI Sales Agent
-Description: AI Sales Agent chatbot powered by Google Gemini API.
+Description: AI Sales Agent chatbot that sends user input to the Google Gemini API. AI responses may be inaccurate.
 
 Version: 1.0.5
 Author: Adem Isler
@@ -625,9 +625,8 @@ class ASAAISalesAgent {
     }
 
     private function log_error( $message ) {
-        $file = plugin_dir_path( __FILE__ ) . 'error.log';
         $time = date( 'Y-m-d H:i:s' );
-        error_log( "[$time] $message\n", 3, $file );
+        error_log( "[ASA AI Sales Agent] [$time] $message" );
     }
 
     public function sanitize_display_types( $input ) {

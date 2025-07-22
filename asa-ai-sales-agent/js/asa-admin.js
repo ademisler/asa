@@ -66,6 +66,16 @@ jQuery(document).ready(function($) {
         }
     }
 
+    function showNotice(type, message) {
+        if (window.wp && wp.data && wp.data.dispatch) {
+            wp.data.dispatch('core/notices').createNotice(type, message, { isDismissible: true });
+        } else {
+            const notice = $('<div>').addClass('notice notice-' + type).text(message);
+            $('.wrap').prepend(notice);
+            setTimeout(() => notice.fadeOut(300, () => notice.remove()), 5000);
+        }
+    }
+
     $('#asa_primary_color').on('change input', checkContrast);
     checkContrast();
 
@@ -88,12 +98,12 @@ jQuery(document).ready(function($) {
                     submitButton.val(asaAdminSettings.savedText).removeClass('asa-saving').addClass('asa-success');
                 } else {
                     submitButton.val(asaAdminSettings.errorText).removeClass('asa-saving').addClass('asa-error');
-                    alert('Error: ' + (response.data.message || 'Unknown error occurred.'));
+                    showNotice('error', 'Error: ' + (response.data.message || 'Unknown error occurred.'));
                 }
             },
             error: function(jqXHR) {
                 submitButton.val(asaAdminSettings.errorText).removeClass('asa-saving').addClass('asa-error');
-                alert(asaAdminSettings.ajaxErrorText + jqXHR.statusText);
+                showNotice('error', asaAdminSettings.ajaxErrorText + jqXHR.statusText);
             },
             complete: function() {
                 setTimeout(function() {
