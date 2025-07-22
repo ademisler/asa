@@ -24,9 +24,13 @@ foreach ($option_names as $option) {
 }
 
 global $wpdb;
-$like = $wpdb->esc_like('asa_proactive_message_');
-$query = "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_{$like}%' OR option_name LIKE '_transient_timeout_{$like}%'";
-$rows = $wpdb->get_col($query);
+$like      = $wpdb->esc_like( 'asa_proactive_message_' ) . '%';
+$query     = $wpdb->prepare(
+    "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+    '_transient_' . $like,
+    '_transient_timeout_' . $like
+);
+$rows = $wpdb->get_col( $query );
 if ($rows) {
     $transients = array_unique(array_map(function ($name) {
         return str_replace(['_transient_', '_transient_timeout_'], '', $name);
