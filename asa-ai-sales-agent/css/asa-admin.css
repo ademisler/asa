@@ -212,6 +212,25 @@ body { background-color: var(--asa-bg-main); }
     width: 100%; /* Giriş alanının tam genişliğini kullanmasını sağla */
 }
 
+/* Native color input styling */
+.asa-color-field {
+    appearance: none;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--asa-border);
+    border-radius: var(--asa-radius);
+    cursor: pointer;
+}
+.asa-color-field::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: var(--asa-radius);
+}
+.asa-color-field::-webkit-color-swatch {
+    border: none;
+    border-radius: var(--asa-radius);
+}
+
 /* 7. Specific Component Redesigns
 -------------------------------------------------- */
 .asa-icon-picker-wrapper, .asa-image-url-wrapper { width: 100%; }
