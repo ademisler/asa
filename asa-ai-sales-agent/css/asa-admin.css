@@ -41,7 +41,7 @@ body { background-color: var(--asa-bg-main); }
     color: var(--asa-primary-dark); /* Darker color for prominence */
     font-weight: 700; /* Bolder font weight */
     padding: 10px 20px; /* Padding for the frame */
-    border: 2px solid rgba(var(--asa-primary-rgb), 0.3); /* More transparent frame border */
+    border: 2px solid rgba(var(--asa-primary-color-rgb), 0.3); /* More transparent frame border */
     border-radius: var(--asa-radius); /* Rounded corners for the frame */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Slightly more pronounced shadow for the frame */
     display: inline-block; /* To make border and padding work correctly */

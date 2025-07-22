@@ -22,6 +22,9 @@ ASA AI Sales Agent is a powerful WordPress plugin that integrates a smart AI cha
 
 Enhance your customer engagement and boost your sales with an intelligent AI assistant that's always ready to help!
 
+== Privacy and AI Disclaimer ==
+This plugin sends visitor messages and page content to Google's Gemini API to generate replies. Google may process this data according to its terms. AI-generated responses can be inaccurate or biased; always review the output before relying on it.
+
 == Installation ==
 1.  **Upload the plugin files** to the `/wp-content/plugins/asa-ai-sales-agent` directory, or install the plugin through the WordPress plugins screen directly.
 2.  **Activate the plugin** through the 'Plugins' screen in WordPress.
