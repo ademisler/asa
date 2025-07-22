@@ -150,6 +150,12 @@
     justify-content: center;
 }
 
+#asa-chatbot .asa-avatar-bg {
+    background-size: cover;
+    background-position: center;
+    display: inline-block;
+}
+
 #asa-chatbot .asa-avatar.fa-solid,
 #asa-chatbot .asa-avatar.fas,
 #asa-chatbot .asa-avatar.fa {
