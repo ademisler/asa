@@ -146,8 +146,8 @@
 }
 
 #asa-chatbot .asa-window {
-    width: 370px;
-    height: 500px;
+    width: min(90vw, 370px);
+    height: min(80vh, 500px);
     background: var(--asa-bg-light);
     border-radius: 16px;
     box-shadow: 0 5px 25px rgba(0,0,0,0.08);

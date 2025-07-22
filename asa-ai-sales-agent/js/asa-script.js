@@ -12,6 +12,8 @@
         const clearBtn = chatbot.find('.asa-clear-input');
         const welcomeWrapper = chatbot.find('.asa-welcome-wrapper');
         const proactiveCloseBtn = chatbot.find('.asa-proactive-close');
+        const proactiveClosedKey = 'asa_proactive_closed';
+        const proactiveDelay = parseInt(asaSettings.proactiveDelay, 10) || 3000;
         const clearHistoryBtn = chatbot.find('.asa-clear-history');
 
         let focusableEls = $();
@@ -50,6 +52,9 @@
         }
 
         function fetchProactiveMessage() {
+            if (sessionStorage.getItem(proactiveClosedKey) === 'true') {
+                return;
+            }
             $.ajax({
                 url: asaSettings.proactiveMessageAjaxUrl,
                 type: 'POST',
@@ -63,26 +68,27 @@
                 dataType: 'json',
                 success: function(response) {
                     if (response.success && response.data) {
-                        const delay = Math.floor(Math.random() * 2000) + 2000;
                         setTimeout(() => {
                             welcomeWrapper.find('.asa-proactive-message').text(response.data);
                             welcomeWrapper.addClass('active');
-                            // İyileştirme: 15 saniye sonra gizle
-                            proactiveMessageTimeout = setTimeout(() => welcomeWrapper.removeClass('active'), 15000);
-                        }, delay);
+                            proactiveMessageTimeout = setTimeout(() => hideProactiveMessage(), 15000);
+                        }, proactiveDelay);
                     }
                 }
             });
         }
         
-        function hideProactiveMessage() {
+        function hideProactiveMessage(permanent = false) {
             clearTimeout(proactiveMessageTimeout);
             welcomeWrapper.removeClass('active');
+            if (permanent) {
+                sessionStorage.setItem(proactiveClosedKey, 'true');
+            }
         }
 
         proactiveCloseBtn.on('click', (e) => {
             e.stopPropagation();
-            hideProactiveMessage();
+            hideProactiveMessage(true);
         });
 
         function updateFocusable() {

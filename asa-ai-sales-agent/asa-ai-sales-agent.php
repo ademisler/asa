@@ -3,7 +3,7 @@
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
 
-Version: 1.0.4
+Version: 1.0.5
 Author: Adem Isler
 Author URI: https://ademisler.com
 Text Domain: asa-ai-sales-agent
@@ -13,7 +13,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('ASA_VERSION', '1.0.4');
+define('ASA_VERSION', '1.0.5');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -75,6 +75,7 @@ class ASAAISalesAgent {
             'showCredit' => get_option('asa_show_credit', 'yes'),
             'hasApiKey' => ! empty(get_option('asa_api_key')),
             'proactiveMessage' => $this->generate_proactive_message(),
+            'proactiveDelay'  => intval(get_option('asa_proactive_delay', 3000)),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('asa_chat_nonce'),
             'currentPageUrl' => get_permalink(),
@@ -140,6 +141,7 @@ class ASAAISalesAgent {
             'asa_show_credit'       => 'sanitize_text_field',
             'asa_auto_insert'      => 'sanitize_text_field',
             'asa_history_limit'    => 'absint',
+            'asa_proactive_delay'  => 'absint',
             'asa_display_types'    => [ $this, 'sanitize_display_types' ]
         ];
 
@@ -166,6 +168,7 @@ class ASAAISalesAgent {
         update_option('asa_show_credit', sanitize_text_field(wp_unslash($_POST['asa_show_credit'] ?? '')));
         update_option('asa_auto_insert', sanitize_text_field(wp_unslash($_POST['asa_auto_insert'] ?? 'no')));
         update_option('asa_history_limit', absint(wp_unslash($_POST['asa_history_limit'] ?? 50)));
+        update_option('asa_proactive_delay', absint(wp_unslash($_POST['asa_proactive_delay'] ?? 3000)));
         $display_types = isset($_POST['asa_display_types']) ? (array) wp_unslash($_POST['asa_display_types']) : [];
         update_option('asa_display_types', $this->sanitize_display_types($display_types));
 
@@ -366,6 +369,13 @@ class ASAAISalesAgent {
                             <label class="asa-section-label"><?php esc_html_e('History Limit', 'asa-ai-sales-agent'); ?></label>
                             <div class="asa-section-content">
                                 <input type="number" name="asa_history_limit" min="1" value="<?php echo esc_attr(get_option('asa_history_limit', 50)); ?>" />
+                            </div>
+                        </div>
+                        <div class="asa-card-section">
+                            <label class="asa-section-label"><?php esc_html_e('Proactive Delay (ms)', 'asa-ai-sales-agent'); ?></label>
+                            <div class="asa-section-content">
+                                <input type="number" name="asa_proactive_delay" min="0" value="<?php echo esc_attr(get_option('asa_proactive_delay', 3000)); ?>" />
+                                <p class="description"><?php esc_html_e('Delay before the proactive message appears.', 'asa-ai-sales-agent'); ?></p>
                             </div>
                         </div>
                     </div>
@@ -674,6 +684,7 @@ function asa_activate_plugin() {
     add_option('asa_auto_insert', 'yes');
     add_option('asa_display_types', ['everywhere']);
     add_option('asa_history_limit', 50);
+    add_option('asa_proactive_delay', 3000);
 }
 register_activation_hook(__FILE__, 'asa_activate_plugin');
 
