@@ -172,10 +172,12 @@ class ASAAISalesAgent {
         update_option('asa_proactive_delay', absint(wp_unslash($_POST['asa_proactive_delay'] ?? 3000)));
         $display_types = [];
         if ( isset( $_POST['asa_display_types'] ) ) {
-            $raw_types    = (array) wp_unslash( $_POST['asa_display_types'] );
-            $display_types = array_map( 'sanitize_text_field', $raw_types );
+            $display_types = array_map(
+                'sanitize_text_field',
+                (array) wp_unslash( $_POST['asa_display_types'] )
+            );
         }
-        update_option('asa_display_types', $this->sanitize_display_types($display_types));
+        update_option( 'asa_display_types', $this->sanitize_display_types( $display_types ) );
 
         wp_send_json_success(esc_html__('Settings saved.', 'asa-ai-sales-agent'));
     }
@@ -419,7 +421,10 @@ class ASAAISalesAgent {
                     ]
                 );
             } else {
-                $avatar_html = '<img src="' . esc_url( $avatar_image_url ) . '" class="asa-avatar" alt="' . esc_attr__( 'Chatbot avatar', 'asa-ai-sales-agent' ) . '" />';
+                $avatar_html = sprintf(
+                    '<span class="asa-avatar asa-avatar-bg" style="background-image:url(%s);" aria-hidden="true"></span>',
+                    esc_url( $avatar_image_url )
+                );
             }
         } else {
             $avatar_html = '<i class="' . esc_attr( $avatar_icon ) . ' asa-avatar" aria-hidden="true"></i>';
@@ -653,7 +658,7 @@ class ASAAISalesAgent {
     private function log_error( $message ) {
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
             $time = gmdate( 'Y-m-d H:i:s' );
-            error_log( "[ASA AI Sales Agent] [$time] $message" );
+            trigger_error( "[ASA AI Sales Agent] [$time] $message", E_USER_NOTICE );
         }
     }
 
