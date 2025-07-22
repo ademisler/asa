@@ -4,7 +4,7 @@ Tags: ai, chatbot, sales, gemini, google
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,11 @@ Yes, the ASA AI Sales Agent plugin is 100% free to use. While the plugin itself 
 4. Chatbot on Frontend
 
 == Changelog ==
+
+= 1.0.1 =
+* Added DOMPurify sanitization for AI responses.
+* Added uninstall script to clean plugin data on deletion.
+
 
 = 1.0.0 =
 *   Initial Release.
