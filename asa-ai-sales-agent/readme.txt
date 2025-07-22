@@ -4,7 +4,7 @@ Tags: ai, chatbot, sales, gemini, google
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -26,7 +26,7 @@ Enhance your customer engagement and boost your sales with an intelligent AI ass
 1.  **Upload the plugin files** to the `/wp-content/plugins/asa-ai-sales-agent` directory, or install the plugin through the WordPress plugins screen directly.
 2.  **Activate the plugin** through the 'Plugins' screen in WordPress.
 3.  **Go to `Settings > ASA AI Sales Agent`** to configure your Gemini API Key and customize the chatbot's appearance and behavior.
-4.  **Add the shortcode `[asa_chatbot]`** to any page or post where you want the chatbot to appear. Alternatively, the chatbot will automatically appear on all pages if the shortcode is not used, as it's hooked into `wp_footer`.
+4.  **Add the shortcode `[asa_chatbot]`** to any page or post where you want the chatbot to appear. The plugin can also insert the bot automatically on selected page types via the settings page.
 
 == Frequently Asked Questions ==
 
@@ -43,6 +43,11 @@ Yes, the ASA AI Sales Agent plugin is 100% free to use. While the plugin itself 
 4. Chatbot on Frontend
 
 == Changelog ==
+
+= 1.0.2 =
+* Added option to disable automatic footer injection and choose page types.
+* Implemented API error logging to `error.log`.
+* Limited stored chat history with configurable limit.
 
 = 1.0.1 =
 * Added DOMPurify sanitization for AI responses.

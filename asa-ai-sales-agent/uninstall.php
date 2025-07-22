@@ -12,7 +12,10 @@ $option_names = [
     'asa_avatar_icon',
     'asa_avatar_image_url',
     'asa_position',
-    'asa_show_credit'
+    'asa_show_credit',
+    'asa_auto_insert',
+    'asa_display_types',
+    'asa_history_limit'
 ];
 
 foreach ($option_names as $option) {
