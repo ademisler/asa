@@ -62,6 +62,26 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    // --- 4. TEST API KEY ---
+    $('#asa-test-api-key').on('click', function(e) {
+        e.preventDefault();
+        const statusEl = $('#asa-api-key-test-status');
+        statusEl.text(asaAdminSettings.testingText).removeClass('success error');
+        $.post(asaAdminSettings.ajaxUrl, {
+            action: 'asa_test_api_key',
+            security: asaAdminSettings.nonce,
+            apiKey: $('#asa_api_key').val()
+        }).done(function(res) {
+            if (res.success) {
+                statusEl.text(asaAdminSettings.testSuccessText).addClass('success');
+            } else {
+                statusEl.text(asaAdminSettings.testErrorText).addClass('error');
+            }
+        }).fail(function(jqXHR) {
+            statusEl.text(asaAdminSettings.ajaxErrorText + jqXHR.statusText).addClass('error');
+        });
+    });
     
     
 

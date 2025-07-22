@@ -3,7 +3,7 @@
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot powered by Google Gemini API.
 
-Version: 1.0.2
+Version: 1.0.3
 Author: Adem Isler
 Author URI: https://ademisler.com
 Text Domain: asa-ai-sales-agent
@@ -13,7 +13,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('ASA_VERSION', '1.0.2');
+define('ASA_VERSION', '1.0.3');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
@@ -21,7 +21,6 @@ if (!defined('ABSPATH')) {
 
 class ASAAISalesAgent {
     private static $instance = null;
-    private $default_avatar;
 
     public static function get_instance() {
         if (self::$instance === null) {
@@ -43,8 +42,8 @@ class ASAAISalesAgent {
         add_action('wp_ajax_asa_generate_proactive_message', array($this, 'handle_proactive_message_request'));
         add_action('wp_ajax_nopriv_asa_generate_proactive_message', array($this, 'handle_proactive_message_request'));
         add_action('wp_ajax_asa_save_settings', array($this, 'asa_save_settings'));
-        
-        
+        add_action('wp_ajax_asa_test_api_key', array($this, 'asa_test_api_key'));
+
         add_action('wp_footer', array($this, 'maybe_print_chatbot'));
     }
 
@@ -104,12 +103,15 @@ class ASAAISalesAgent {
         wp_enqueue_style('asa-fa', plugins_url('assets/css/all.min.css', __FILE__), [], ASA_VERSION);
         wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), ASA_VERSION, true);
         wp_localize_script('asa-admin-script', 'asaAdminSettings', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('asa_settings_nonce'),
-            'savingText' => esc_html__('Saving...', 'asa-ai-sales-agent'),
-            'savedText' => esc_html__('Saved!', 'asa-ai-sales-agent'),
-            'errorText' => esc_html__('Error!', 'asa-ai-sales-agent'),
-            'ajaxErrorText' => esc_html__('AJAX error: ', 'asa-ai-sales-agent'),
+            'ajaxUrl'         => admin_url('admin-ajax.php'),
+            'nonce'           => wp_create_nonce('asa_settings_nonce'),
+            'savingText'      => esc_html__('Saving...', 'asa-ai-sales-agent'),
+            'savedText'       => esc_html__('Saved!', 'asa-ai-sales-agent'),
+            'errorText'       => esc_html__('Error!', 'asa-ai-sales-agent'),
+            'ajaxErrorText'   => esc_html__('AJAX error: ', 'asa-ai-sales-agent'),
+            'testingText'     => esc_html__('Testing...', 'asa-ai-sales-agent'),
+            'testSuccessText' => esc_html__('Valid API Key!', 'asa-ai-sales-agent'),
+            'testErrorText'   => esc_html__('Invalid API Key.', 'asa-ai-sales-agent'),
 
         ]);
         wp_enqueue_style('thickbox');
@@ -170,6 +172,55 @@ class ASAAISalesAgent {
         wp_send_json_success(esc_html__('Settings saved.', 'asa-ai-sales-agent'));
     }
 
+    public function asa_test_api_key() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => esc_html__('Unauthorized', 'asa-ai-sales-agent')]);
+        }
+
+        check_ajax_referer('asa_settings_nonce', 'security');
+
+        $api_key = sanitize_text_field(wp_unslash($_POST['apiKey'] ?? ''));
+        if (empty($api_key)) {
+            wp_send_json_error(['message' => esc_html__('API key is missing.', 'asa-ai-sales-agent')]);
+        }
+
+        $payload = json_encode([
+            'contents' => [['role' => 'user', 'parts' => [['text' => 'Hello']]]],
+            'system_instruction' => ['parts' => [['text' => 'Say hello']]]
+        ]);
+
+        $response = wp_remote_post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' . $api_key, [
+            'headers' => ['Content-Type' => 'application/json'],
+            'body'    => $payload,
+            'timeout' => 15,
+        ]);
+
+        if (is_wp_error($response)) {
+            $this->log_error('API key test error: ' . $response->get_error_message());
+            wp_send_json_error(['message' => $response->get_error_message()]);
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        if (200 !== $code) {
+            $this->log_error('API key test HTTP status: ' . $code);
+            wp_send_json_error(['message' => 'HTTP ' . $code]);
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (!empty($data['error'])) {
+            $this->log_error('API key test API error: ' . $data['error']['message']);
+            wp_send_json_error(['message' => $data['error']['message']]);
+        }
+
+        if (isset($data['candidates'][0]['content']['parts'][0]['text'])) {
+            wp_send_json_success(['message' => esc_html__('API Key is valid.', 'asa-ai-sales-agent')]);
+        }
+
+        wp_send_json_error(['message' => esc_html__('Unexpected response.', 'asa-ai-sales-agent')]);
+    }
+
     public function render_settings_page() {
         ?>
         <div class="wrap">
@@ -202,6 +253,10 @@ class ASAAISalesAgent {
                                 <div class="asa-api-key-input-group">
                                     <input type="text" name="asa_api_key" id="asa_api_key" value="<?php echo esc_attr(get_option('asa_api_key')); ?>" class="regular-text asa-api-key-input" />
                                      <a href="https://aistudio.google.com/app/apikey" target="_blank" class="button asa-api-key-link-button asa-api-key-button"><?php esc_html_e('Get API Key', 'asa-ai-sales-agent'); ?></a>
+                                </div>
+                                <div class="asa-api-key-test-group">
+                                    <button type="button" class="button" id="asa-test-api-key"><?php esc_html_e('Test API Key', 'asa-ai-sales-agent'); ?></button>
+                                    <span id="asa-api-key-test-status"></span>
                                 </div>
                                 <p class="description"><?php esc_html_e('Enter your Google Gemini API Key here.', 'asa-ai-sales-agent'); ?></p>
                             </div>
@@ -434,6 +489,12 @@ class ASAAISalesAgent {
             wp_send_json_error(esc_html__('API request failed: ', 'asa-ai-sales-agent') . $response->get_error_message());
         }
 
+        $code = wp_remote_retrieve_response_code($response);
+        if (200 !== $code) {
+            $this->log_error('Chat request HTTP status: ' . $code);
+            wp_send_json_error(esc_html__('HTTP status: ', 'asa-ai-sales-agent') . $code);
+        }
+
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
@@ -488,6 +549,12 @@ class ASAAISalesAgent {
         if (is_wp_error($response)) {
             $this->log_error('Proactive request error: ' . $response->get_error_message());
             wp_send_json_error(['message' => esc_html__('API request failed: ', 'asa-ai-sales-agent') . $response->get_error_message()]);
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        if (200 !== $code) {
+            $this->log_error('Proactive request HTTP status: ' . $code);
+            wp_send_json_error(['message' => 'HTTP ' . $code]);
         }
 
         $body = wp_remote_retrieve_body($response);
@@ -610,4 +677,4 @@ function asa_activate_plugin() {
 register_activation_hook(__FILE__, 'asa_activate_plugin');
 
 ASAAISalesAgent::get_instance();
-?>
+
