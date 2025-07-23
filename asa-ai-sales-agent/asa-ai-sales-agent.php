@@ -3,7 +3,7 @@
 Plugin Name: ASA AI Sales Agent
 Description: AI Sales Agent chatbot that sends user input to the Google Gemini API. AI responses may be inaccurate.
 
-Version: 1.0.6
+Version: 1.0.7
 Author: Adem Isler
 Author URI: https://ademisler.com
 Text Domain: asa-ai-sales-agent
@@ -13,7 +13,7 @@ License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('ASA_VERSION', '1.0.6');
+define('ASA_VERSION', '1.0.7');
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
