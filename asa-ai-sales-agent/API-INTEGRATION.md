@@ -1,10 +1,10 @@
 # Google Gemini API Integration Documentation 🤖
 
-This document provides comprehensive technical details about ASA AI Sales Agent's integration with Google's Gemini API, including implementation details, best practices, and optimization strategies.
+This document provides comprehensive technical details about Ai Sales Agent (ASA)'s integration with Google's Gemini API, including implementation details, best practices, and optimization strategies.
 
 ## 📋 Overview
 
-ASA AI Sales Agent integrates with Google's Gemini 2.0 Flash model to provide intelligent, contextual chat responses and proactive messaging. The integration is designed for reliability, security, and optimal performance.
+Ai Sales Agent (ASA) integrates with Google's Gemini 2.0 Flash model to provide intelligent, contextual chat responses and proactive messaging. The integration is designed for reliability, security, and optimal performance.
 
 ### Key Integration Features
 
@@ -860,14 +860,14 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 
 ---
 
-This comprehensive API integration documentation should provide developers with all the technical details needed to understand, maintain, and extend the Google Gemini API integration in ASA AI Sales Agent. For additional technical support or custom development needs, contact the plugin developer.
+This comprehensive API integration documentation should provide developers with all the technical details needed to understand, maintain, and extend the Google Gemini API integration in Ai Sales Agent (ASA). For additional technical support or custom development needs, contact the plugin developer.
 
 ## 📞 Support & Resources
 
 - **Google AI Documentation**: [https://ai.google.dev/docs](https://ai.google.dev/docs)
 - **Plugin Support**: [WordPress.org Support Forum](https://wordpress.org/support/plugin/asa-ai-sales-agent/)
-- **Developer Contact**: [Adem Isler](https://ademisler.com)
+- **Developer Contact**: [Adem Isler](https://ademisler.com/en)
 
 ---
 
-*Last Updated: 2025 - This document reflects the current implementation of ASA AI Sales Agent v1.0.7*
+*Last Updated: 2025 - This document reflects the current implementation of Ai Sales Agent (ASA) v1.0.7*

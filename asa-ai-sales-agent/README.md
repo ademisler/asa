@@ -1,4 +1,4 @@
-# ASA AI Sales Agent 🤖
+# Ai Sales Agent (ASA) 🤖
 
 [![WordPress Plugin Version](https://img.shields.io/badge/WordPress-5.0%2B-blue.svg)](https://wordpress.org/)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)](https://php.net/)
@@ -9,7 +9,7 @@ Transform your website into a sales powerhouse with an intelligent AI chatbot po
 
 ## 🌟 Overview
 
-ASA AI Sales Agent is a cutting-edge WordPress plugin that revolutionizes how you engage with website visitors. Unlike traditional chatbots that wait for users to initiate contact, ASA proactively starts conversations based on the content visitors are viewing, creating personalized and contextual interactions that drive engagement and conversions.
+Ai Sales Agent (ASA) is a cutting-edge WordPress plugin that revolutionizes how you engage with website visitors. Unlike traditional chatbots that wait for users to initiate contact, ASA proactively starts conversations based on the content visitors are viewing, creating personalized and contextual interactions that drive engagement and conversions.
 
 ### ✨ Key Highlights
 
@@ -33,8 +33,8 @@ ASA AI Sales Agent is a cutting-edge WordPress plugin that revolutionizes how yo
 
 1. **Download & Install**
    ```bash
-   # Via WordPress Admin
-   Plugins → Add New → Search "ASA AI Sales Agent" → Install → Activate
+       # Via WordPress Admin
+    Plugins → Add New → Search "Ai Sales Agent (ASA)" → Install → Activate
    
    # Or upload manually to /wp-content/plugins/asa-ai-sales-agent/
    ```
@@ -46,7 +46,7 @@ ASA AI Sales Agent is a cutting-edge WordPress plugin that revolutionizes how yo
 
 3. **Configure Plugin**
    ```
-   WordPress Admin → Settings → ASA AI Sales Agent
+   WordPress Admin → Settings → Ai Sales Agent (ASA)
    → Paste API key → Test connection → Configure appearance → Save
    ```
 
@@ -569,7 +569,7 @@ This project is licensed under the GPL v2 or later - see the [LICENSE](LICENSE) 
 
 - **WordPress Support Forum**: [Plugin Support](https://wordpress.org/support/plugin/asa-ai-sales-agent/)
 - **Documentation**: [Plugin Page](https://wordpress.org/plugins/asa-ai-sales-agent/)
-- **Developer**: [Adem Isler](https://ademisler.com)
+- **Developer**: [Adem Isler](https://ademisler.com/en)
 
 ## 💝 Support Development
 
@@ -577,4 +577,4 @@ If this plugin helps your business grow, consider [supporting development](https
 
 ---
 
-**Transform your website visitors into customers with intelligent, proactive AI engagement. Install ASA AI Sales Agent today and watch your conversions grow!** 🚀
+**Transform your website visitors into customers with intelligent, proactive AI engagement. Install Ai Sales Agent (ASA) today and watch your conversions grow!** 🚀

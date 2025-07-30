@@ -1,10 +1,10 @@
-# ASA AI Sales Agent - Installation & Setup Guide 🚀
+# Ai Sales Agent (ASA) - Installation & Setup Guide 🚀
 
-This comprehensive guide will walk you through the complete installation and configuration process for ASA AI Sales Agent, from initial setup to customization.
+This comprehensive guide will walk you through the complete installation and configuration process for Ai Sales Agent (ASA), from initial setup to customization.
 
 ## 📋 Prerequisites
 
-Before installing ASA AI Sales Agent, ensure your environment meets these requirements:
+Before installing Ai Sales Agent (ASA), ensure your environment meets these requirements:
 
 ### System Requirements
 - **WordPress**: Version 5.0 or higher ✅
@@ -38,7 +38,7 @@ Before installing ASA AI Sales Agent, ensure your environment meets these requir
 
 3. **Search for Plugin**
    ```
-   Search: "ASA AI Sales Agent"
+       Search: "Ai Sales Agent (ASA)"
    ```
 
 4. **Install & Activate**
@@ -59,7 +59,7 @@ Before installing ASA AI Sales Agent, ensure your environment meets these requir
 
 3. **Activate Plugin**
    ```
-   Plugins → Installed Plugins → ASA AI Sales Agent → Activate
+   Plugins → Installed Plugins → Ai Sales Agent (ASA) → Activate
    ```
 
 ### Method 3: FTP Upload (Advanced)
@@ -76,7 +76,7 @@ Before installing ASA AI Sales Agent, ensure your environment meets these requir
 
 3. **Activate in WordPress**
    ```
-   Plugins → Installed Plugins → ASA AI Sales Agent → Activate
+   Plugins → Installed Plugins → Ai Sales Agent (ASA) → Activate
    ```
 
 ---
@@ -128,7 +128,7 @@ Before installing ASA AI Sales Agent, ensure your environment meets these requir
 
 1. **Navigate to Settings**
    ```
-   WordPress Admin → Settings → ASA AI Sales Agent
+   WordPress Admin → Settings → Ai Sales Agent (ASA)
    ```
 
 2. **Settings Interface**
@@ -719,7 +719,7 @@ add_filter('asa_system_prompt', function($prompt) {
 - Plugin reviews and Q&A
 
 **Professional Support:**
-- Developer contact: [Adem Isler](https://ademisler.com)
+- Developer contact: [Adem Isler](https://ademisler.com/en)
 - Custom development services
 - Priority support options
 
@@ -743,7 +743,7 @@ add_filter('asa_system_prompt', function($prompt) {
 
 ## 🎉 Congratulations!
 
-You've successfully installed and configured ASA AI Sales Agent! Your website now has an intelligent AI assistant that will:
+You've successfully installed and configured Ai Sales Agent (ASA)! Your website now has an intelligent AI assistant that will:
 
 - **Engage visitors proactively** with contextual conversation starters
 - **Answer questions intelligently** using Google's advanced AI
@@ -763,4 +763,4 @@ You've successfully installed and configured ASA AI Sales Agent! Your website no
 
 ---
 
-*For additional support or custom development needs, visit [ademisler.com](https://ademisler.com) or the [WordPress support forum](https://wordpress.org/support/plugin/asa-ai-sales-agent/).*
+*For additional support or custom development needs, visit [ademisler.com](https://ademisler.com/en) or the [WordPress support forum](https://wordpress.org/support/plugin/asa-ai-sales-agent/).*

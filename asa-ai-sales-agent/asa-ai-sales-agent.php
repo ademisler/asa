@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: ASA AI Sales Agent
+ * Plugin Name: Ai Sales Agent (ASA)
  * Plugin URI: https://wordpress.org/plugins/asa-ai-sales-agent/
  * Description: Transform your website into a sales powerhouse with an intelligent AI chatbot powered by Google Gemini that proactively engages visitors, analyzes page content, and drives conversions through contextual conversations.
  * Version: 1.0.7
  * Author: Adem Isler
- * Author URI: https://ademisler.com
+ * Author URI: https://ademisler.com/en
  * Text Domain: asa-ai-sales-agent
  * Domain Path: /languages
  * Requires at least: 5.0
@@ -20,18 +20,18 @@
  * @copyright 2025 Adem Isler
  * @license GPL-2.0-or-later
  * 
- * ASA AI Sales Agent is free software: you can redistribute it and/or modify
+ * Ai Sales Agent (ASA) is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
  * any later version.
  * 
- * ASA AI Sales Agent is distributed in the hope that it will be useful,
+ * Ai Sales Agent (ASA) is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with ASA AI Sales Agent. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
+ * along with Ai Sales Agent (ASA). If not, see https://www.gnu.org/licenses/gpl-2.0.html.
  * 
  * PRIVACY NOTICE: This plugin sends user messages and page content to Google's Gemini API
  * for processing. Please review Google's privacy policy and ensure compliance with
@@ -47,7 +47,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Main ASA AI Sales Agent Plugin Class
+ * Main Ai Sales Agent (ASA) Plugin Class
  * 
  * This class handles all plugin functionality including:
  * - Settings management and admin interface
@@ -214,8 +214,8 @@ class ASAAISalesAgent {
 
     public function register_settings_page() {
         add_options_page(
-            'ASA AI Sales Agent',
-            esc_html__('ASA AI Sales Agent', 'asa-ai-sales-agent'),
+            'Ai Sales Agent (ASA)',
+            esc_html__('Ai Sales Agent (ASA)', 'asa-ai-sales-agent'),
             'manage_options',
             'asa-ai-sales-agent',
             array($this, 'render_settings_page')
@@ -333,7 +333,7 @@ class ASAAISalesAgent {
                 <div class="asa-header-links">
                     <div class="asa-support-wrapper">
                         <a href="https://buymeacoffee.com/ademisler" target="_blank" class="asa-bmac-button">
-                            <i class="fas fa-heart"></i> <?php esc_html_e('Support ASA\'s Development', 'asa-ai-sales-agent'); ?>
+                            <i class="fas fa-heart"></i> <?php esc_html_e('Support Development', 'asa-ai-sales-agent'); ?>
                         </a>
                         <span class="asa-support-text"><?php esc_html_e('This plugin is 100% free. If you find it useful, your support helps keep the updates coming!', 'asa-ai-sales-agent'); ?></span>
                     </div>
@@ -564,7 +564,7 @@ class ASAAISalesAgent {
                     </div>
                 </div>
                 <?php if (get_option('asa_show_credit', 'yes') === 'yes'): ?>
-                    <div class="asa-credit"><?php esc_html_e('Developed by:', 'asa-ai-sales-agent'); ?> <a href="https://ademisler.com" target="_blank" class="ai-name-reveal"><span class="short-name">AI</span><span class="full-name">Adem Isler</span></a></div>
+                    <div class="asa-credit"><?php esc_html_e('Developed by:', 'asa-ai-sales-agent'); ?> <a href="https://ademisler.com/en" target="_blank" class="ai-name-reveal"><span class="short-name">AI</span><span class="full-name">Adem Isler</span></a></div>
                 <?php endif; ?>
             </div>
         </div>

@@ -1,12 +1,12 @@
-# ASA AI Sales Agent - Troubleshooting Guide 🔧
+# Ai Sales Agent (ASA) - Troubleshooting Guide 🔧
 
-This comprehensive troubleshooting guide will help you diagnose and resolve common issues with ASA AI Sales Agent. Follow the step-by-step solutions to get your chatbot working perfectly.
+This comprehensive troubleshooting guide will help you diagnose and resolve common issues with Ai Sales Agent (ASA). Follow the step-by-step solutions to get your chatbot working perfectly.
 
 ## 🚨 Quick Diagnostic Checklist
 
 Before diving into specific issues, run through this quick checklist:
 
-- [ ] **Plugin Active**: ASA AI Sales Agent is activated in WordPress
+- [ ] **Plugin Active**: Ai Sales Agent (ASA) is activated in WordPress
 - [ ] **API Key Set**: Google Gemini API key is configured and tested
 - [ ] **WordPress Version**: Running WordPress 5.0 or higher
 - [ ] **PHP Version**: Server running PHP 7.4 or higher
@@ -31,7 +31,7 @@ Before diving into specific issues, run through this quick checklist:
 ```
 Problem: Auto-insert setting is turned off
 Solution: 
-1. Go to Settings → ASA AI Sales Agent → Behavior Tab
+1. Go to Settings → Ai Sales Agent (ASA) → Behavior Tab
 2. Check "Enable Auto Insert"
 3. Select appropriate page types
 4. Save settings
@@ -633,7 +633,7 @@ console.log('Has API Key:', asaSettings.hasApiKey);
 - Installation guide
 
 **Professional Support:**
-- Developer: [Adem Isler](https://ademisler.com)
+- Developer: [Adem Isler](https://ademisler.com/en)
 - Custom development services
 - Priority support options
 
@@ -788,6 +788,6 @@ console.log('Has API Key:', asaSettings.hasApiKey);
 
 ---
 
-This troubleshooting guide should help you resolve most issues with ASA AI Sales Agent. If you encounter problems not covered here, don't hesitate to reach out for support through the WordPress.org support forum or contact the developer directly.
+This troubleshooting guide should help you resolve most issues with Ai Sales Agent (ASA). If you encounter problems not covered here, don't hesitate to reach out for support through the WordPress.org support forum or contact the developer directly.
 
 Remember: Most issues can be resolved by following the systematic approach outlined above. Start with the basics and work your way through to more advanced solutions. 🔧✨

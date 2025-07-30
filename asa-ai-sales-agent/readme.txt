@@ -1,4 +1,4 @@
-=== ASA AI Sales Agent ===
+=== Ai Sales Agent (ASA) ===
 Contributors: ademisler
 Tags: ai, chatbot, sales, gemini, google, artificial intelligence, customer support, lead generation, conversational ai, proactive messaging
 Requires at least: 5.0
@@ -12,7 +12,7 @@ Transform your website into a sales powerhouse with an intelligent AI chatbot po
 
 == Description ==
 
-**ASA AI Sales Agent** is a cutting-edge WordPress plugin that revolutionizes how you engage with website visitors. Powered by Google's advanced Gemini AI, this intelligent chatbot doesn't just wait for questions—it proactively initiates meaningful conversations based on the content your visitors are viewing.
+**Ai Sales Agent (ASA)** is a cutting-edge WordPress plugin that revolutionizes how you engage with website visitors. Powered by Google's advanced Gemini AI, this intelligent chatbot doesn't just wait for questions—it proactively initiates meaningful conversations based on the content your visitors are viewing.
 
 ### 🚀 **Key Features**
 
@@ -99,7 +99,7 @@ This plugin sends visitor messages and page content to Google's Gemini API to ge
 
 **Step 1: Install the Plugin**
 1. Upload the plugin files to `/wp-content/plugins/asa-ai-sales-agent/` directory
-2. Or install directly through WordPress Admin → Plugins → Add New → Search "ASA AI Sales Agent"
+2. Or install directly through WordPress Admin → Plugins → Add New → Search "Ai Sales Agent (ASA)"
 3. Activate the plugin through the 'Plugins' screen in WordPress
 
 **Step 2: Get Your Google Gemini API Key**
@@ -109,7 +109,7 @@ This plugin sends visitor messages and page content to Google's Gemini API to ge
 4. Note: Google Gemini API offers generous free tier limits
 
 **Step 3: Configure the Plugin**
-1. Go to WordPress Admin → Settings → ASA AI Sales Agent
+1. Go to WordPress Admin → Settings → Ai Sales Agent (ASA)
 2. Paste your API Key in the "Gemini API Key" field
 3. Click "Test API Key" to verify connection
 4. Customize appearance settings (title, colors, avatar)
@@ -150,7 +150,7 @@ Visit [Google AI Studio](https://aistudio.google.com/app/apikey) to generate you
 
 = Is this plugin completely free? =
 
-Yes! The ASA AI Sales Agent plugin is 100% free with no premium versions or hidden costs. However, the Google Gemini API has usage-based pricing after the free tier limits. Most small to medium websites stay within the free tier.
+Yes! The Ai Sales Agent (ASA) plugin is 100% free with no premium versions or hidden costs. However, the Google Gemini API has usage-based pricing after the free tier limits. Most small to medium websites stay within the free tier.
 
 = What are the Google Gemini API costs? =
 

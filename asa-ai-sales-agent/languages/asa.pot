@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ASA AI Sales Agent 1.0.7\n"
+"Project-Id-Version: Ai Sales Agent (ASA) 1.0.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/asa-ai-sales-agent\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 #. Plugin Name of the plugin
 #: asa-ai-sales-agent.php
 #: asa-ai-sales-agent.php:123
-msgid "ASA AI Sales Agent"
+msgid "Ai Sales Agent (ASA)"
 msgstr ""
 
 #. Description of the plugin
@@ -32,7 +32,7 @@ msgstr ""
 
 #. Author URI of the plugin
 #: asa-ai-sales-agent.php
-msgid "https://ademisler.com"
+msgid "https://ademisler.com/en"
 msgstr ""
 
 #: asa-ai-sales-agent.php:83
