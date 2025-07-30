@@ -66,9 +66,29 @@
 
         // Extract page content for contextual AI responses
         // Look for common content containers in WordPress themes
-        const mainContent = document.querySelector('.entry-content, .post-content, article, main, body');
-        const currentPageContent = mainContent ? 
-            mainContent.innerText.replace(/\s\s+/g, ' ').trim().substring(0, 4000) : '';
+        let currentPageContent = '';
+        
+        // Function to get page content
+        function getPageContent() {
+            const selectors = ['.entry-content', '.post-content', 'article', 'main', '.content', '#content', '.site-content', 'body'];
+            let content = '';
+            
+            for (const selector of selectors) {
+                const element = document.querySelector(selector);
+                if (element && element.innerText.trim().length > 100) {
+                    content = element.innerText.replace(/\s\s+/g, ' ').trim().substring(0, 4000);
+                    break;
+                }
+            }
+            
+            // If no substantial content found, wait a bit more and try again
+            if (content.length < 100) {
+                const bodyContent = document.body ? document.body.innerText.replace(/\s\s+/g, ' ').trim() : '';
+                content = bodyContent.substring(0, 4000);
+            }
+            
+            return content;
+        }
 
         // Initialize chatbot based on API key availability
         if (!asaSettings.hasApiKey) {
@@ -76,14 +96,56 @@
             inputEl.prop('disabled', true).attr('placeholder', asaSettings.apiKeyPlaceholder);
             sendBtn.prop('disabled', true);
         } else {
-            // Fetch proactive message if API key is available
-            fetchProactiveMessage();
+            // Wait for page to be fully loaded before fetching proactive message
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    currentPageContent = getPageContent();
+                    console.log('ASA: DOMContentLoaded - Content length:', currentPageContent.length);
+                    // Small delay to ensure all content is rendered
+                    setTimeout(() => {
+                        currentPageContent = getPageContent(); // Get content again after delay
+                        console.log('ASA: After delay - Content length:', currentPageContent.length);
+                        fetchProactiveMessage();
+                    }, 1000);
+                });
+            } else {
+                // Page already loaded
+                currentPageContent = getPageContent();
+                console.log('ASA: Page already loaded - Content length:', currentPageContent.length);
+                // Add small delay even for already loaded pages to ensure content is ready
+                setTimeout(() => {
+                    currentPageContent = getPageContent(); // Refresh content
+                    console.log('ASA: After refresh - Content length:', currentPageContent.length);
+                    fetchProactiveMessage();
+                }, 500);
+            }
         }
 
         function fetchProactiveMessage() {
-            if (sessionStorage.getItem(proactiveClosedKey) === 'true') {
+            console.log('ASA: fetchProactiveMessage called for page:', window.location.pathname);
+            
+            // Check if proactive message was closed for this specific page
+            const currentPageKey = proactiveClosedKey + '_' + window.location.pathname;
+            if (sessionStorage.getItem(currentPageKey) === 'true') {
+                console.log('ASA: Proactive message was closed for this page, skipping');
                 return;
             }
+            
+            // Also check general proactive closed status (but only for current session)
+            if (sessionStorage.getItem(proactiveClosedKey) === 'true') {
+                // Reset general closed status if user navigated to a new page
+                // This allows proactive messages on new pages even if closed on previous page
+                const lastClosedPage = sessionStorage.getItem(proactiveClosedKey + '_lastPage');
+                if (lastClosedPage !== window.location.pathname) {
+                    console.log('ASA: Resetting proactive closed status for new page');
+                    sessionStorage.removeItem(proactiveClosedKey);
+                } else {
+                    console.log('ASA: Proactive message was closed generally, skipping');
+                    return;
+                }
+            }
+            
+            console.log('ASA: Making AJAX request for proactive message');
             $.ajax({
                 url: asaSettings.proactiveMessageAjaxUrl,
                 type: 'POST',
@@ -96,23 +158,33 @@
                 },
                 dataType: 'json',
                 success: function(response) {
+                    console.log('ASA: Proactive message AJAX response:', response);
                     if (response.success && response.data) {
                         const proactiveText = response.data;
+                        console.log('ASA: Proactive message text:', proactiveText);
 
                         // If chat is already open, add the message directly and stop.
                         if (chatbot.hasClass('asa-open')) {
+                            console.log('ASA: Chat is open, adding message directly');
                             updateHistoryAndRender('model', proactiveText);
                             return;
                         }
 
                         // Otherwise, prepare the external bubble for later.
                         lastProactiveMessage = proactiveText;
+                        console.log('ASA: Setting proactive message with delay:', proactiveDelay + 'ms');
                         setTimeout(() => {
+                            console.log('ASA: Showing proactive message bubble');
                             welcomeWrapper.find('.asa-proactive-message').text(proactiveText);
                             welcomeWrapper.addClass('active');
                             proactiveMessageTimeout = setTimeout(() => hideProactiveMessage(), 15000);
                         }, proactiveDelay);
+                    } else {
+                        console.log('ASA: No proactive message generated or error occurred');
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.log('ASA: Proactive message AJAX error:', error);
                 }
             });
         }
@@ -121,7 +193,13 @@
             clearTimeout(proactiveMessageTimeout);
             welcomeWrapper.removeClass('active');
             if (permanent) {
+                // Store both general and page-specific closed status
                 sessionStorage.setItem(proactiveClosedKey, 'true');
+                sessionStorage.setItem(proactiveClosedKey + '_lastPage', window.location.pathname);
+                
+                // Also store page-specific closed status
+                const currentPageKey = proactiveClosedKey + '_' + window.location.pathname;
+                sessionStorage.setItem(currentPageKey, 'true');
             }
         }
 
