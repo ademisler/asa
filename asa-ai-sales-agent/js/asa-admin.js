@@ -1,25 +1,51 @@
+/**
+ * ASA AI Sales Agent Admin JavaScript
+ * 
+ * Handles admin interface functionality including:
+ * - Settings tabs management
+ * - Color contrast validation
+ * - AJAX form submission and API testing
+ * - Icon picker interface
+ * - Real-time feedback and notifications
+ * 
+ * @since 1.0.0
+ * @package ASA_AI_Sales_Agent
+ */
 jQuery(document).ready(function($) {
+    'use strict';
 
-    // --- 1. TABS MANAGEMENT ---
-    // Sayfa yüklendiğinde doğru sekmenin görünür olduğundan emin ol
+    // =============================================================================
+    // 1. TABS MANAGEMENT
+    // =============================================================================
+    
+    /**
+     * Initialize settings tabs
+     * Ensures the correct tab is visible on page load and handles tab switching
+     */
     const initialActiveTab = $('.asa-tabs .nav-tab-active').attr('href');
     if (initialActiveTab) {
         $('.asa-tab-content').hide();
         $(initialActiveTab).show();
     }
 
-    // Sekmelere tıklama olayı
+    /**
+     * Handle tab click events
+     * Switches between General, Appearance, and Behavior settings tabs
+     */
     $('.asa-tabs a').on('click', function(e) {
         e.preventDefault();
         const target = $(this).attr('href');
 
+        // Don't do anything if this tab is already active
         if ($(this).hasClass('nav-tab-active')) {
-            return; // Zaten aktifse işlem yapma
+            return;
         }
 
+        // Update active tab styling
         $('.asa-tabs a').removeClass('nav-tab-active');
         $(this).addClass('nav-tab-active');
 
+        // Show target tab content, hide others
         $('.asa-tab-content').hide();
         $(target).show();
     });

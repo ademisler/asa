@@ -1,50 +1,82 @@
+/**
+ * ASA AI Sales Agent Frontend JavaScript
+ * 
+ * Handles all frontend chatbot functionality including:
+ * - Chat window management and user interactions
+ * - Proactive messaging based on page content
+ * - Chat history management with localStorage
+ * - AJAX communication with WordPress backend
+ * - Accessibility features and keyboard navigation
+ * 
+ * @since 1.0.0
+ * @package ASA_AI_Sales_Agent
+ */
 (function($) {
+    'use strict';
+    
+    // Initialize when DOM is ready
     $(function() {
+        // Get main chatbot container - exit if not found
         const chatbot = $('#asa-chatbot');
         if (chatbot.length === 0) return;
 
-        const launcher = chatbot.find('.asa-launcher');
-        const windowEl = chatbot.find('.asa-window');
-        const messagesEl = chatbot.find('.asa-messages');
-        const typingEl = chatbot.find('.asa-typing');
-        const inputEl = chatbot.find('.asa-text');
-        const sendBtn = chatbot.find('.asa-send');
-        const clearBtn = chatbot.find('.asa-clear-input');
-        const welcomeWrapper = chatbot.find('.asa-welcome-wrapper');
-        const proactiveCloseBtn = chatbot.find('.asa-proactive-close');
-        const proactiveClosedKey = 'asa_proactive_closed';
-        const proactiveDelay = parseInt(asaSettings.proactiveDelay, 10) || 3000;
-        const clearHistoryBtn = chatbot.find('.asa-clear-history');
+        // Cache DOM elements for better performance
+        const launcher = chatbot.find('.asa-launcher');              // Chat launcher button
+        const windowEl = chatbot.find('.asa-window');                // Main chat window
+        const messagesEl = chatbot.find('.asa-messages');            // Messages container
+        const typingEl = chatbot.find('.asa-typing');                // Typing indicator
+        const inputEl = chatbot.find('.asa-text');                   // Message input field
+        const sendBtn = chatbot.find('.asa-send');                   // Send message button
+        const clearBtn = chatbot.find('.asa-clear-input');           // Clear input button
+        const welcomeWrapper = chatbot.find('.asa-welcome-wrapper'); // Proactive message wrapper
+        const proactiveCloseBtn = chatbot.find('.asa-proactive-close'); // Close proactive message
+        const clearHistoryBtn = chatbot.find('.asa-clear-history');  // Clear chat history button
 
-        let focusableEls = $();
-        let firstFocusable;
-        let lastFocusable;
+        // Configuration constants
+        const proactiveClosedKey = 'asa_proactive_closed';           // localStorage key for dismissed proactive messages
+        const proactiveDelay = parseInt(asaSettings.proactiveDelay, 10) || 3000; // Delay before showing proactive message
+        const historyLimit = parseInt(asaSettings.historyLimit, 10) || 50;       // Maximum chat history entries
+
+        // Accessibility variables for focus management
+        let focusableEls = $();    // All focusable elements in chat window
+        let firstFocusable;        // First focusable element
+        let lastFocusable;         // Last focusable element
         
-        let history = [];
-        const historyLimit = parseInt(asaSettings.historyLimit, 10) || 50;
-        let proactiveMessageTimeout;
-        let lastProactiveMessage = null; // Store the last proactive message
+        // Chat functionality variables
+        let history = [];                    // Chat history array
+        let proactiveMessageTimeout;         // Timeout for proactive message display
+        let lastProactiveMessage = null;     // Store the last generated proactive message
 
+        // Load and restore chat history from localStorage
         try {
             const storedHistory = JSON.parse(localStorage.getItem('asa_chat_history'));
             if (Array.isArray(storedHistory)) {
+                // Limit history to prevent localStorage bloat
                 history = storedHistory.slice(-historyLimit);
+                // Restore messages to chat window
                 history.forEach(msg => {
                     renderMessage(msg.role, msg.parts[0].text);
                 });
             }
         } catch (e) {
+            // Handle corrupted localStorage data gracefully
             console.error('Could not parse chat history:', e);
             localStorage.removeItem('asa_chat_history');
         }
 
+        // Extract page content for contextual AI responses
+        // Look for common content containers in WordPress themes
         const mainContent = document.querySelector('.entry-content, .post-content, article, main, body');
-        const currentPageContent = mainContent ? mainContent.innerText.replace(/\s\s+/g, ' ').trim().substring(0, 4000) : '';
+        const currentPageContent = mainContent ? 
+            mainContent.innerText.replace(/\s\s+/g, ' ').trim().substring(0, 4000) : '';
 
+        // Initialize chatbot based on API key availability
         if (!asaSettings.hasApiKey) {
+            // Disable functionality if no API key is configured
             inputEl.prop('disabled', true).attr('placeholder', asaSettings.apiKeyPlaceholder);
             sendBtn.prop('disabled', true);
         } else {
+            // Fetch proactive message if API key is available
             fetchProactiveMessage();
         }
 

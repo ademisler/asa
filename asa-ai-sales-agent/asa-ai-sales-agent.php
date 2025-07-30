@@ -1,27 +1,83 @@
 <?php
-/*
-Plugin Name: ASA AI Sales Agent
-Description: AI Sales Agent chatbot that sends user input to the Google Gemini API. AI responses may be inaccurate.
+/**
+ * Plugin Name: ASA AI Sales Agent
+ * Plugin URI: https://wordpress.org/plugins/asa-ai-sales-agent/
+ * Description: Transform your website into a sales powerhouse with an intelligent AI chatbot powered by Google Gemini that proactively engages visitors, analyzes page content, and drives conversions through contextual conversations.
+ * Version: 1.0.7
+ * Author: Adem Isler
+ * Author URI: https://ademisler.com
+ * Text Domain: asa-ai-sales-agent
+ * Domain Path: /languages
+ * Requires at least: 5.0
+ * Tested up to: 6.4
+ * Requires PHP: 7.4
+ * Network: false
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * 
+ * @package ASA_AI_Sales_Agent
+ * @author Adem Isler
+ * @copyright 2025 Adem Isler
+ * @license GPL-2.0-or-later
+ * 
+ * ASA AI Sales Agent is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ * 
+ * ASA AI Sales Agent is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with ASA AI Sales Agent. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
+ * 
+ * PRIVACY NOTICE: This plugin sends user messages and page content to Google's Gemini API
+ * for processing. Please review Google's privacy policy and ensure compliance with
+ * applicable privacy regulations in your jurisdiction.
+ */
 
-Version: 1.0.7
-Author: Adem Isler
-Author URI: https://ademisler.com
-Text Domain: asa-ai-sales-agent
-Domain Path: /languages
-
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
-*/
-
+// Define plugin version constant for cache busting and version checks
 define('ASA_VERSION', '1.0.7');
 
+// Prevent direct access to this file for security
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+/**
+ * Main ASA AI Sales Agent Plugin Class
+ * 
+ * This class handles all plugin functionality including:
+ * - Settings management and admin interface
+ * - Frontend chatbot rendering and functionality
+ * - Google Gemini API integration
+ * - AJAX handlers for chat and proactive messaging
+ * - Asset enqueuing and localization
+ * 
+ * @since 1.0.0
+ * @package ASA_AI_Sales_Agent
+ */
 class ASAAISalesAgent {
+    
+    /**
+     * Single instance of the plugin class
+     * 
+     * @var ASAAISalesAgent|null
+     * @since 1.0.0
+     */
     private static $instance = null;
 
+    /**
+     * Get single instance of the plugin class (Singleton pattern)
+     * 
+     * Ensures only one instance of the plugin class exists throughout
+     * the WordPress request lifecycle.
+     * 
+     * @return ASAAISalesAgent The single instance of the plugin
+     * @since 1.0.0
+     */
     public static function get_instance() {
         if (self::$instance === null) {
             self::$instance = new self();
@@ -29,37 +85,72 @@ class ASAAISalesAgent {
         return self::$instance;
     }
 
+    /**
+     * Private constructor to prevent direct instantiation
+     * 
+     * Initializes all WordPress hooks and actions needed for the plugin to function.
+     * This includes admin interface, frontend functionality, AJAX handlers, and
+     * shortcode registration.
+     * 
+     * @since 1.0.0
+     */
     private function __construct() {
-
+        // Admin interface hooks
         add_action('admin_menu', array($this, 'register_settings_page'));
         add_action('admin_init', array($this, 'register_settings'));
         
+        // Asset enqueuing hooks
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
+        
+        // Frontend functionality
         add_shortcode('asa_chatbot', array($this, 'render_chatbot'));
+        add_action('wp_footer', array($this, 'maybe_print_chatbot'));
+        
+        // AJAX handlers for chat functionality (both logged in and logged out users)
         add_action('wp_ajax_asa_chat', array($this, 'handle_chat_request'));
         add_action('wp_ajax_nopriv_asa_chat', array($this, 'handle_chat_request'));
+        
+        // AJAX handlers for proactive messaging (both logged in and logged out users)
         add_action('wp_ajax_asa_generate_proactive_message', array($this, 'handle_proactive_message_request'));
         add_action('wp_ajax_nopriv_asa_generate_proactive_message', array($this, 'handle_proactive_message_request'));
+        
+        // AJAX handlers for admin functionality (logged in users only)
         add_action('wp_ajax_asa_save_settings', array($this, 'asa_save_settings'));
         add_action('wp_ajax_asa_test_api_key', array($this, 'asa_test_api_key'));
-
-        add_action('wp_footer', array($this, 'maybe_print_chatbot'));
     }
 
-    
-
+    /**
+     * Enqueue frontend assets (CSS and JavaScript)
+     * 
+     * Loads all necessary stylesheets and scripts for the frontend chatbot functionality.
+     * This includes:
+     * - Main chatbot styles and FontAwesome icons
+     * - Google Fonts for typography
+     * - Third-party libraries (Showdown for Markdown, DOMPurify for sanitization)
+     * - Main chatbot JavaScript with localized settings
+     * 
+     * @since 1.0.0
+     * @hook wp_enqueue_scripts
+     */
     public function enqueue_assets() {
+        // Enqueue stylesheets
         wp_enqueue_style('asa-style', plugins_url('css/asa-style.css', __FILE__), [], ASA_VERSION);
         wp_enqueue_style('asa-fa', plugins_url('assets/css/all.min.css', __FILE__), [], ASA_VERSION);
         
-        // Google Fonts'u buraya ekleyin
+        // Load Google Fonts for better typography
         wp_enqueue_style('asa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], ASA_VERSION);
+        
+        // Enqueue third-party JavaScript libraries
         wp_enqueue_script('showdown', plugins_url('assets/js/showdown.min.js', __FILE__), [], '2.1.0', true);
         wp_enqueue_script('dompurify', plugins_url('assets/js/dompurify.min.js', __FILE__), [], '2.4.1', true);
+        
+        // Enqueue main chatbot script with dependencies
         wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown', 'dompurify'), ASA_VERSION, true);
+        
+        // Localize script with settings and translations
         wp_localize_script('asa-script', 'asaSettings', [
-            
+            // Plugin configuration
             'systemPrompt' => get_option('asa_system_prompt'),
             'title' => get_option('asa_title'),
             'subtitle' => get_option('asa_subtitle'),
@@ -68,20 +159,28 @@ class ASAAISalesAgent {
             'avatar_icon' => get_option('asa_avatar_icon', 'fas fa-robot'),
             'position' => get_option('asa_position', 'right'),
             'showCredit' => get_option('asa_show_credit', 'yes'),
+            
+            // API and functionality settings
             'hasApiKey' => ! empty(get_option('asa_api_key')),
             'proactiveMessage' => $this->generate_proactive_message(),
             'proactiveDelay'  => intval(get_option('asa_proactive_delay', 3000)),
+            'historyLimit' => intval(get_option('asa_history_limit', 50)),
+            
+            // AJAX URLs and security
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('asa_chat_nonce'),
+            'proactiveMessageAjaxUrl' => admin_url('admin-ajax.php?action=asa_generate_proactive_message'),
+            
+            // Current page context
             'currentPageUrl' => get_permalink(),
             'currentPageTitle' => get_the_title(),
-            'proactiveMessageAjaxUrl' => admin_url('admin-ajax.php?action=asa_generate_proactive_message'),
+            
+            // Translatable strings
             'apiKeyPlaceholder' => esc_attr__('Configure API key in settings', 'asa-ai-sales-agent'),
             'errorMessage' => esc_html__('Sorry, an error occurred: ', 'asa-ai-sales-agent'),
             'noResponseText' => esc_html__('No response received.', 'asa-ai-sales-agent'),
             'serverErrorText' => esc_html__('Sorry, could not communicate with the server. Please try again later.', 'asa-ai-sales-agent'),
             'clearHistoryConfirm' => esc_html__('Are you sure you want to clear the chat history?', 'asa-ai-sales-agent'),
-            'historyLimit' => intval(get_option('asa_history_limit', 50)),
         ]);
     }
 
