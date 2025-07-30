@@ -154,9 +154,16 @@
                     security: asaSettings.nonce,
                     currentPageUrl: window.location.href,
                     currentPageTitle: document.title,
-                    currentPageContent: currentPageContent
+                    currentPageContent: currentPageContent,
+                    _cache_bust: Date.now() // Cache busting parameter
                 },
                 dataType: 'json',
+                cache: false, // Prevent jQuery from caching
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                },
                 success: function(response) {
                     console.log('ASA: Proactive message AJAX response:', response);
                     if (response.success && response.data) {
@@ -327,9 +334,16 @@
                     security: asaSettings.nonce,
                     currentPageUrl: asaSettings.currentPageUrl,
                     currentPageTitle: asaSettings.currentPageTitle,
-                    currentPageContent: currentPageContent
+                    currentPageContent: currentPageContent,
+                    _cache_bust: Date.now() // Cache busting parameter
                 },
-                dataType: 'json'
+                dataType: 'json',
+                cache: false, // Prevent jQuery from caching
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                },
             }).done(function(res) {
                 if (res.success && res.data) {
                     updateHistoryAndRender('model', res.data);

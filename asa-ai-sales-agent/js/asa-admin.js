@@ -116,7 +116,13 @@ jQuery(document).ready(function($) {
         $.ajax({
             url: asaAdminSettings.ajaxUrl,
             type: 'POST',
-            data: formData + '&action=asa_save_settings&security=' + asaAdminSettings.nonce,
+            data: formData + '&action=asa_save_settings&security=' + asaAdminSettings.nonce + '&_cache_bust=' + Date.now(),
+            cache: false, // Prevent jQuery from caching
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            },
             success: function(response) {
                 if (response.success) {
                     submitButton.val(asaAdminSettings.savedText).removeClass('asa-saving').addClass('asa-success');
@@ -142,10 +148,21 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         const statusEl = $('#asa-api-key-test-status');
         statusEl.text(asaAdminSettings.testingText).removeClass('success error');
-        $.post(asaAdminSettings.ajaxUrl, {
-            action: 'asa_test_api_key',
-            security: asaAdminSettings.nonce,
-            apiKey: $('#asa_api_key').val()
+        $.ajax({
+            url: asaAdminSettings.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'asa_test_api_key',
+                security: asaAdminSettings.nonce,
+                apiKey: $('#asa_api_key').val(),
+                _cache_bust: Date.now()
+            },
+            cache: false,
+            headers: {
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
         }).done(function(res) {
             if (res.success) {
                 statusEl.text(asaAdminSettings.testSuccessText).addClass('success');

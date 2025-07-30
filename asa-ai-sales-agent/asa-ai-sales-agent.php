@@ -134,19 +134,19 @@ class ASAAISalesAgent {
      * @hook wp_enqueue_scripts
      */
     public function enqueue_assets() {
-        // Enqueue stylesheets
-        wp_enqueue_style('asa-style', plugins_url('css/asa-style.css', __FILE__), [], ASA_VERSION);
+        // Enqueue stylesheets with cache busting
+        wp_enqueue_style('asa-style', plugins_url('css/asa-style.css', __FILE__), [], ASA_VERSION . '-' . get_option('asa_cache_bust', time()));
         wp_enqueue_style('asa-fa', plugins_url('assets/css/all.min.css', __FILE__), [], ASA_VERSION);
         
-        // Load Google Fonts for better typography
-        wp_enqueue_style('asa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], ASA_VERSION);
+        // Load Google Fonts for better typography (with display=swap for performance)
+        wp_enqueue_style('asa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], null);
         
         // Enqueue third-party JavaScript libraries
         wp_enqueue_script('showdown', plugins_url('assets/js/showdown.min.js', __FILE__), [], '2.1.0', true);
         wp_enqueue_script('dompurify', plugins_url('assets/js/dompurify.min.js', __FILE__), [], '2.4.1', true);
         
-        // Enqueue main chatbot script with dependencies
-        wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown', 'dompurify'), ASA_VERSION, true);
+        // Enqueue main chatbot script with dependencies and cache busting
+        wp_enqueue_script('asa-script', plugins_url('js/asa-script.js', __FILE__), array('jquery', 'showdown', 'dompurify'), ASA_VERSION . '-' . get_option('asa_cache_bust', time()), true);
         
         // Localize script with settings and translations
         wp_localize_script('asa-script', 'asaSettings', [
@@ -194,9 +194,9 @@ class ASAAISalesAgent {
             return;
         }
         wp_enqueue_style('wp-color-picker');
-        wp_enqueue_style('asa-admin-style', plugins_url('css/asa-admin.css', __FILE__), [], ASA_VERSION);
+        wp_enqueue_style('asa-admin-style', plugins_url('css/asa-admin.css', __FILE__), [], ASA_VERSION . '-' . get_option('asa_cache_bust', time()));
         wp_enqueue_style('asa-fa', plugins_url('assets/css/all.min.css', __FILE__), [], ASA_VERSION);
-        wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), ASA_VERSION, true);
+        wp_enqueue_script('asa-admin-script', plugins_url('js/asa-admin.js', __FILE__), array('jquery', 'wp-color-picker', 'media-upload', 'thickbox'), ASA_VERSION . '-' . get_option('asa_cache_bust', time()), true);
         wp_localize_script('asa-admin-script', 'asaAdminSettings', [
             'ajaxUrl'         => admin_url('admin-ajax.php'),
             'nonce'           => wp_create_nonce('asa_settings_nonce'),
@@ -245,6 +245,9 @@ class ASAAISalesAgent {
     }
 
     public function asa_save_settings() {
+        // Set cache headers to prevent caching of dynamic content
+        $this->set_no_cache_headers();
+        
         if (!current_user_can('manage_options')) {
             wp_send_json_error(esc_html__('You do not have sufficient permissions to access this page.', 'asa-ai-sales-agent'));
         }
@@ -271,11 +274,20 @@ class ASAAISalesAgent {
             );
         }
         update_option( 'asa_display_types', $this->sanitize_display_types( $display_types ) );
+        
+        // Update cache busting value to force asset refresh
+        update_option('asa_cache_bust', time());
+        
+        // Clear various caches
+        $this->clear_plugin_caches();
 
         wp_send_json_success(esc_html__('Settings saved.', 'asa-ai-sales-agent'));
     }
 
     public function asa_test_api_key() {
+        // Set cache headers to prevent caching of dynamic content
+        $this->set_no_cache_headers();
+        
         if (!current_user_can('manage_options')) {
             wp_send_json_error(['message' => esc_html__('Unauthorized', 'asa-ai-sales-agent')]);
         }
@@ -573,6 +585,9 @@ class ASAAISalesAgent {
     }
 
     public function handle_chat_request() {
+        // Set cache headers to prevent caching of dynamic content
+        $this->set_no_cache_headers();
+        
         check_ajax_referer('asa_chat_nonce', 'security');
 
         $api_key = get_option('asa_api_key');
@@ -648,6 +663,9 @@ class ASAAISalesAgent {
     }
 
     public function handle_proactive_message_request() {
+        // Set cache headers to prevent caching of dynamic content
+        $this->set_no_cache_headers();
+        
         check_ajax_referer('asa_chat_nonce', 'security');
 
         $api_key = get_option('asa_api_key');
@@ -754,6 +772,105 @@ class ASAAISalesAgent {
         // To enable logging, you can add: error_log( print_r( $message, true ) );
     }
 
+    /**
+     * Set no-cache headers for AJAX responses
+     * 
+     * Prevents caching of dynamic content by CDNs, proxies, and browsers.
+     * Essential for proper functionality with Cloudflare, WP Rocket, etc.
+     * 
+     * @since 1.0.8
+     */
+    private function set_no_cache_headers() {
+        if (!headers_sent()) {
+            // Prevent caching by browsers
+            header('Cache-Control: no-cache, no-store, must-revalidate, max-age=0');
+            header('Pragma: no-cache');
+            header('Expires: Wed, 11 Jan 1984 05:00:00 GMT');
+            
+            // Additional headers for CDN compatibility
+            header('X-Accel-Expires: 0'); // Nginx
+            header('Surrogate-Control: no-store'); // Varnish/Fastly
+            header('X-Cache-Control: no-cache'); // CloudFlare
+            
+            // Prevent proxy caching
+            header('Vary: *');
+        }
+    }
+
+    /**
+     * Clear various plugin and WordPress caches
+     * 
+     * Attempts to clear caches from popular caching plugins and systems
+     * to ensure updated settings take effect immediately.
+     * 
+     * @since 1.0.8
+     */
+    private function clear_plugin_caches() {
+        // Clear WordPress object cache
+        if (function_exists('wp_cache_flush')) {
+            wp_cache_flush();
+        }
+        
+        // Clear WP Rocket cache
+        if (function_exists('rocket_clean_domain')) {
+            rocket_clean_domain();
+        }
+        
+        // Clear W3 Total Cache
+        if (function_exists('w3tc_flush_all')) {
+            w3tc_flush_all();
+        }
+        
+        // Clear WP Super Cache
+        if (function_exists('wp_cache_clear_cache')) {
+            wp_cache_clear_cache();
+        }
+        
+        // Clear LiteSpeed Cache
+        if (class_exists('LiteSpeed_Cache_API')) {
+            LiteSpeed_Cache_API::purge_all();
+        }
+        
+        // Clear WP Fastest Cache
+        if (class_exists('WpFastestCache')) {
+            $wpfc = new WpFastestCache();
+            $wpfc->deleteCache(true);
+        }
+        
+        // Clear Autoptimize cache
+        if (class_exists('autoptimizeCache')) {
+            autoptimizeCache::clearall();
+        }
+        
+        // Clear our own transients
+        $this->clear_plugin_transients();
+    }
+
+    /**
+     * Clear plugin-specific transients
+     * 
+     * @since 1.0.8
+     */
+    private function clear_plugin_transients() {
+        global $wpdb;
+        
+        // Clear proactive message transients
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+                $wpdb->esc_like('_transient_asa_proactive_message_') . '%'
+            )
+        );
+        
+        // Clear timeout transients
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+                $wpdb->esc_like('_transient_timeout_asa_proactive_message_') . '%'
+            )
+        );
+    }
+
     public function sanitize_display_types( $input ) {
         $allowed = [ 'everywhere', 'front_page', 'posts', 'pages', 'archives' ];
         if ( ! is_array( $input ) ) {
@@ -812,6 +929,9 @@ function asa_activate_plugin() {
     add_option('asa_display_types', ['everywhere']);
     add_option('asa_history_limit', 50);
     add_option('asa_proactive_delay', 3000);
+    
+    // Set cache busting value for CDN compatibility
+    add_option('asa_cache_bust', time());
 }
 register_activation_hook(__FILE__, 'asa_activate_plugin');
 
