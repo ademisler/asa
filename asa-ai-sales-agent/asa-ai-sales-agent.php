@@ -3,7 +3,7 @@
  * Plugin Name: Ai Sales Agent (ASA)
  * Plugin URI: https://wordpress.org/plugins/asa-ai-sales-agent/
  * Description: Transform your website into a sales powerhouse with an intelligent AI chatbot powered by Google Gemini that proactively engages visitors, analyzes page content, and drives conversions through contextual conversations.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Adem Isler
  * Author URI: https://ademisler.com/en
  * Text Domain: asa-ai-sales-agent
@@ -44,7 +44,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin version constant for cache busting and version checks
-define('ASAAISAA_VERSION', '1.0.7');
+define('ASAAISAA_VERSION', '1.0.8');
 
 /**
  * Main Ai Sales Agent (ASA) Plugin Class
