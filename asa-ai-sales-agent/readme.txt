@@ -1,14 +1,14 @@
 === Ai Sales Agent (ASA) ===
 Contributors: ademisler
-Tags: ai, chatbot, sales, gemini, google, artificial intelligence, customer support, lead generation, conversational ai, proactive messaging
+Tags: ai, chatbot, sales, gemini, google
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Transform your website into a sales powerhouse with an intelligent AI chatbot powered by Google Gemini that proactively engages visitors and drives conversions.
+Transform your website into a sales powerhouse with an intelligent AI chatbot powered by Google Gemini.
 
 == Description ==
 

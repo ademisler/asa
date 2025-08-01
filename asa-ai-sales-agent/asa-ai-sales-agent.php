@@ -9,9 +9,9 @@
  * Text Domain: asa-ai-sales-agent
  * Domain Path: /languages
  * Requires at least: 5.0
- * Tested up to: 6.4
+ * Tested up to: 6.8
  * Requires PHP: 7.4
- * Network: false
+
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * 
@@ -139,7 +139,7 @@ class ASAAISAA_SalesAgent {
         wp_enqueue_style('asaaisaa-fa', plugins_url('assets/css/all.min.css', __FILE__), [], ASAAISAA_VERSION);
         
         // Load Google Fonts for better typography (with display=swap for performance)
-        wp_enqueue_style('asaaisaa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], null);
+        wp_enqueue_style('asaaisaa-google-fonts', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', [], ASAAISAA_VERSION);
         
         // Enqueue third-party JavaScript libraries
         wp_enqueue_script('asaaisaa-showdown', plugins_url('assets/js/showdown.min.js', __FILE__), [], '2.1.0', true);
@@ -854,21 +854,26 @@ class ASAAISAA_SalesAgent {
     private function asaaisaa_clear_plugin_transients() {
         global $wpdb;
         
-        // Clear proactive message transients
-        $wpdb->query(
+        // Clear proactive message transients using WordPress functions
+        global $wpdb;
+        
+        // Get all transient keys to delete
+        $transient_keys = $wpdb->get_col(
             $wpdb->prepare(
-                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-                $wpdb->esc_like('_transient_asa_proactive_message_') . '%'
+                "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
+                $wpdb->esc_like('_transient_asaaisaa_proactive_message_') . '%',
+                $wpdb->esc_like('_transient_timeout_asaaisaa_proactive_message_') . '%'
             )
         );
         
-        // Clear timeout transients
-        $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-                $wpdb->esc_like('_transient_timeout_asa_proactive_message_') . '%'
-            )
-        );
+        // Delete transients using WordPress functions
+        foreach ($transient_keys as $key) {
+            if (strpos($key, '_transient_timeout_') === 0) {
+                continue; // Skip timeout keys, they'll be cleaned up automatically
+            }
+            $transient_name = str_replace('_transient_', '', $key);
+            delete_transient($transient_name);
+        }
     }
 
     public function asaaisaa_sanitize_display_types( $input ) {
