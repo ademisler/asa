@@ -144,9 +144,9 @@ jQuery(document).ready(function($) {
     });
 
     // --- 4. TEST API KEY ---
-    $('#asa-test-api-key').on('click', function(e) {
+    $('#asaaisaa-test-api-key').on('click', function(e) {
         e.preventDefault();
-        const statusEl = $('#asa-api-key-test-status');
+        const statusEl = $('#asaaisaa-api-key-test-status');
         statusEl.text(asaaisaaAdminSettings.testingText).removeClass('success error');
         $.ajax({
             url: asaaisaaAdminSettings.ajaxUrl,
@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'asaaisaa_test_api_key',
                 security: asaaisaaAdminSettings.nonce,
-                apiKey: $('#asa_api_key').val(),
+                apiKey: $('#asaaisaa_api_key').val(),
                 _cache_bust: Date.now()
             },
             cache: false,
