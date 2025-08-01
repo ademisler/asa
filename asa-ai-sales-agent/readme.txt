@@ -4,7 +4,7 @@ Tags: ai, chatbot, sales, gemini, google, artificial intelligence, customer supp
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -229,7 +229,15 @@ Visit the [plugin support forum](https://wordpress.org/support/plugin/asa-ai-sal
 
 == Changelog ==
 
-= 1.0.7 - Latest Release =
+= 1.0.8 - Security & Compatibility Update =
+**WordPress.org Compliance & Security**
+* 🔒 **Enhanced Security:** Added proper prefix to all functions, classes, constants, and globals (asaaisaa_)
+* 📦 **Updated Dependencies:** Upgraded DOMPurify from 2.4.1 to 3.2.6 for latest security patches
+* 🛡️ **Direct Access Protection:** Improved file security with proper ABSPATH checks
+* ✅ **WordPress.org Compliance:** Full compliance with WordPress Plugin Directory guidelines
+* 🔧 **Code Standards:** Enhanced code organization and naming conventions for better compatibility
+
+= 1.0.7 - Previous Release =
 **Enhanced User Experience**
 * ✨ **Improved Proactive Messaging:** Smarter chat window opening with enhanced message handling
 * 📱 **Better Mobile Layout:** Full-screen chat interface with improved pointer events and touch interactions
@@ -294,6 +302,12 @@ Visit the [plugin support forum](https://wordpress.org/support/plugin/asa-ai-sal
 * 📁 **Asset Organization:** Structured /languages and /assets directories for better organization
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+* Enhanced security with proper function/class prefixing
+* Updated DOMPurify to latest version (3.2.6)
+* Improved direct file access protection
+* Full WordPress.org Plugin Directory compliance
 
 = 1.0.7 =
 Enhanced proactive messaging and mobile experience. Recommended update for all users.

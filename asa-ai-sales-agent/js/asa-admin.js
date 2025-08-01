@@ -109,14 +109,14 @@ jQuery(document).ready(function($) {
         const submitButton = $('#submit');
         const originalText = submitButton.val();
 
-        submitButton.val(asaAdminSettings.savingText).prop('disabled', true).removeClass('asa-success asa-error').addClass('asa-saving');
+        submitButton.val(asaaisaaAdminSettings.savingText).prop('disabled', true).removeClass('asa-success asa-error').addClass('asa-saving');
 
         const formData = $(this).serialize(); // Düzeltme: FormData yerine .serialize() kullanıldı.
 
         $.ajax({
-            url: asaAdminSettings.ajaxUrl,
+            url: asaaisaaAdminSettings.ajaxUrl,
             type: 'POST',
-            data: formData + '&action=asa_save_settings&security=' + asaAdminSettings.nonce + '&_cache_bust=' + Date.now(),
+            data: formData + '&action=asaaisaa_save_settings&security=' + asaaisaaAdminSettings.nonce + '&_cache_bust=' + Date.now(),
             cache: false, // Prevent jQuery from caching
             headers: {
                 'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -125,15 +125,15 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    submitButton.val(asaAdminSettings.savedText).removeClass('asa-saving').addClass('asa-success');
+                    submitButton.val(asaaisaaAdminSettings.savedText).removeClass('asa-saving').addClass('asa-success');
                 } else {
-                    submitButton.val(asaAdminSettings.errorText).removeClass('asa-saving').addClass('asa-error');
+                    submitButton.val(asaaisaaAdminSettings.errorText).removeClass('asa-saving').addClass('asa-error');
                     showNotice('error', 'Error: ' + (response.data.message || 'Unknown error occurred.'));
                 }
             },
             error: function(jqXHR) {
-                submitButton.val(asaAdminSettings.errorText).removeClass('asa-saving').addClass('asa-error');
-                showNotice('error', asaAdminSettings.ajaxErrorText + jqXHR.statusText);
+                submitButton.val(asaaisaaAdminSettings.errorText).removeClass('asa-saving').addClass('asa-error');
+                showNotice('error', asaaisaaAdminSettings.ajaxErrorText + jqXHR.statusText);
             },
             complete: function() {
                 setTimeout(function() {
@@ -147,13 +147,13 @@ jQuery(document).ready(function($) {
     $('#asa-test-api-key').on('click', function(e) {
         e.preventDefault();
         const statusEl = $('#asa-api-key-test-status');
-        statusEl.text(asaAdminSettings.testingText).removeClass('success error');
+        statusEl.text(asaaisaaAdminSettings.testingText).removeClass('success error');
         $.ajax({
-            url: asaAdminSettings.ajaxUrl,
+            url: asaaisaaAdminSettings.ajaxUrl,
             type: 'POST',
             data: {
-                action: 'asa_test_api_key',
-                security: asaAdminSettings.nonce,
+                action: 'asaaisaa_test_api_key',
+                security: asaaisaaAdminSettings.nonce,
                 apiKey: $('#asa_api_key').val(),
                 _cache_bust: Date.now()
             },
@@ -165,12 +165,12 @@ jQuery(document).ready(function($) {
             }
         }).done(function(res) {
             if (res.success) {
-                statusEl.text(asaAdminSettings.testSuccessText).addClass('success');
+                statusEl.text(asaaisaaAdminSettings.testSuccessText).addClass('success');
             } else {
-                statusEl.text(asaAdminSettings.testErrorText).addClass('error');
+                statusEl.text(asaaisaaAdminSettings.testErrorText).addClass('error');
             }
         }).fail(function(jqXHR) {
-            statusEl.text(asaAdminSettings.ajaxErrorText + jqXHR.statusText).addClass('error');
+            statusEl.text(asaaisaaAdminSettings.ajaxErrorText + jqXHR.statusText).addClass('error');
         });
     });
     

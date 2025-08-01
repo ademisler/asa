@@ -34,8 +34,8 @@
 
         // Configuration constants
         const proactiveClosedKey = 'asa_proactive_closed';           // localStorage key for dismissed proactive messages
-        const proactiveDelay = parseInt(asaSettings.proactiveDelay, 10) || 3000; // Delay before showing proactive message
-        const historyLimit = parseInt(asaSettings.historyLimit, 10) || 50;       // Maximum chat history entries
+        const proactiveDelay = parseInt(asaaisaaSettings.proactiveDelay, 10) || 3000; // Delay before showing proactive message
+        const historyLimit = parseInt(asaaisaaSettings.historyLimit, 10) || 50;       // Maximum chat history entries
 
         // Accessibility variables for focus management
         let focusableEls = $();    // All focusable elements in chat window
@@ -49,7 +49,7 @@
 
         // Load and restore chat history from localStorage
         try {
-            const storedHistory = JSON.parse(localStorage.getItem('asa_chat_history'));
+            const storedHistory = JSON.parse(localStorage.getItem('asaaisaa_chat_history'));
             if (Array.isArray(storedHistory)) {
                 // Limit history to prevent localStorage bloat
                 history = storedHistory.slice(-historyLimit);
@@ -61,7 +61,7 @@
         } catch (e) {
             // Handle corrupted localStorage data gracefully
             console.error('Could not parse chat history:', e);
-            localStorage.removeItem('asa_chat_history');
+            localStorage.removeItem('asaaisaa_chat_history');
         }
 
         // Extract page content for contextual AI responses
@@ -91,9 +91,9 @@
         }
 
         // Initialize chatbot based on API key availability
-        if (!asaSettings.hasApiKey) {
+        if (!asaaisaaSettings.hasApiKey) {
             // Disable functionality if no API key is configured
-            inputEl.prop('disabled', true).attr('placeholder', asaSettings.apiKeyPlaceholder);
+            inputEl.prop('disabled', true).attr('placeholder', asaaisaaSettings.apiKeyPlaceholder);
             sendBtn.prop('disabled', true);
         } else {
             // Wait for page to be fully loaded before fetching proactive message
@@ -147,11 +147,11 @@
             
             console.log('ASA: Making AJAX request for proactive message');
             $.ajax({
-                url: asaSettings.proactiveMessageAjaxUrl,
+                url: asaaisaaSettings.proactiveMessageAjaxUrl,
                 type: 'POST',
                 data: {
-                    action: 'asa_generate_proactive_message',
-                    security: asaSettings.nonce,
+                    action: 'asaaisaa_generate_proactive_message',
+                    security: asaaisaaSettings.nonce,
                     currentPageUrl: window.location.href,
                     currentPageTitle: document.title,
                     currentPageContent: currentPageContent,
@@ -291,9 +291,9 @@
         chatbot.find('.asa-close').on('click', () => launcher.trigger('click'));
 
         clearHistoryBtn.on('click', function() {
-            if (confirm(asaSettings.clearHistoryConfirm)) {
+            if (confirm(asaaisaaSettings.clearHistoryConfirm)) {
                 history = [];
-                localStorage.removeItem('asa_chat_history');
+                localStorage.removeItem('asaaisaa_chat_history');
                 messagesEl.empty();
             }
         });
@@ -326,14 +326,14 @@
             
             $.ajax({
                 type: 'POST',
-                url: asaSettings.ajaxUrl,
+                url: asaaisaaSettings.ajaxUrl,
                 data: {
-                    action: 'asa_chat',
+                    action: 'asaaisaa_chat',
                     message: text,
                     history: JSON.stringify(history),
-                    security: asaSettings.nonce,
-                    currentPageUrl: asaSettings.currentPageUrl,
-                    currentPageTitle: asaSettings.currentPageTitle,
+                    security: asaaisaaSettings.nonce,
+                    currentPageUrl: asaaisaaSettings.currentPageUrl,
+                    currentPageTitle: asaaisaaSettings.currentPageTitle,
                     currentPageContent: currentPageContent,
                     _cache_bust: Date.now() // Cache busting parameter
                 },
@@ -348,10 +348,10 @@
                 if (res.success && res.data) {
                     updateHistoryAndRender('model', res.data);
                 } else {
-                    renderMessage('bot', asaSettings.errorMessage + (res.data.message || asaSettings.noResponseText));
+                    renderMessage('bot', asaaisaaSettings.errorMessage + (res.data.message || asaaisaaSettings.noResponseText));
                 }
             }).fail(function() {
-                renderMessage('bot', asaSettings.serverErrorText);
+                renderMessage('bot', asaaisaaSettings.serverErrorText);
             }).always(function() {
                 typingEl.hide();
                 inputEl.prop('disabled', false);
@@ -384,7 +384,7 @@
             if (history.length > historyLimit) {
                 history = history.slice(-historyLimit);
             }
-            localStorage.setItem('asa_chat_history', JSON.stringify(history));
+            localStorage.setItem('asaaisaa_chat_history', JSON.stringify(history));
             renderMessage(sender, text);
         }
     });
