@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
 
     iconList.on('click', 'i', function() {
         const selectedIcon = $(this).data('icon');
-        $('#asa_avatar_icon').val(selectedIcon);
+        $('#asaaisaa_avatar_icon').val(selectedIcon);
         $('.asa-icon-preview i').attr('class', selectedIcon);
         modal.hide();
     });
